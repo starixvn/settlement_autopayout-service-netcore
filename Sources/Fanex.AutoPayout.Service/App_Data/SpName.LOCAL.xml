@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Functions>
+  <Function Name="AutoPayout">
+    <Setting Key="WriteLog_UserLog_Settle" SpName="WriteLog_UserLog_Settle" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
+    <Setting Key="NAP_Set_AutoPayout_MatchSelDetail" SpName="NAP_Set_AutoPayout_MatchSelDetail" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_MatchSelHedge" SpName="NAP_Set_MatchSelHedge" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_AutoPayout_ScheduleSel" SpName="NAP_Set_AutoPayout_ScheduleSel" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_AutoPayout_ResultDetailByMatchIdSel" SpName="NAP_Set_AutoPayout_ResultDetailByMatchIdSel" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_AutoPayoutResultIns" SpName="NAP_Set_AutoPayoutResultIns" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Settlement_1_AutoPayout_Push" SpName="NAP_Admin_Settlement_1_AutoPayout_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_AutoPayout_MatchChecking" SpName="NAP_Set_AutoPayout_MatchChecking" DbName="DBTXN.bodb02.bodbAdminNet" />
+  </Function>
+</Functions>
