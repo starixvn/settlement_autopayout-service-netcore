@@ -28,13 +28,7 @@ namespace AutoPayout.Sportsbook.Services
             lockObject = new object();
         }
 
-        public List<Match> PoolOfMatches
-        {
-            get
-            {
-                return poolOfMatches;
-            }
-        }
+        public List<Match> PoolOfMatches => poolOfMatches;
 
         public void Remove(Match match)
         {

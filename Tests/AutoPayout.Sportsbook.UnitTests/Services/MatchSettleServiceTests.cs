@@ -51,7 +51,7 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
 
 
         [Fact]
-        public async Task Settle_IsFail_ReturnsResultWithErrCode()
+        public void Settle_IsFail_ReturnsResultWithErrCode()
         {
             // Arrange
             var match = new Match();
@@ -70,15 +70,15 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
             mapper);
 
             // Act
-            var result = await service.Settle(match, 1);
+            var result = service.Settle(match, 1);
 
             // Assert
-            await matchQueryService.DidNotReceive().GetHedgeMatchId(1);
-            Assert.True(result.ErrCode > 0);
+            matchQueryService.DidNotReceive().GetHedgeMatchId(1);
+            Assert.True(result.Result.ErrCode > 0);
         }
 
         [Fact]
-        public async Task Settle_IsSuccessAndNotHedgeMatch_CallOnceExecuteMethodAndRightResourceResult()
+        public void Settle_IsSuccessAndNotHedgeMatch_CallOnceExecuteMethodAndRightResourceResult()
         {
             // Arrange
             var match = new Match { TypeId = 1 };
@@ -101,15 +101,15 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
             mapper);
 
             // Act
-            var result = await service.Settle(match, 1);
+            var result = service.Settle(match, 1);
 
             // Assert
-            await matchQueryService.Received(1).Execute(Arg.Any<MatchSettleCriteria>());
-            Assert.True(result.ErrCode == 0);
+            matchQueryService.Received(1).Execute(Arg.Any<MatchSettleCriteria>());
+            Assert.True(result.Result.ErrCode == 0);
         }
 
         [Fact]
-        public async Task Settle_IsSuccessAndHedgeMatch_ReturnsErrCodeIsZeroAndInvokeTwiceExecuteMethod()
+        public void Settle_IsSuccessAndHedgeMatch_ReturnsErrCodeIsZeroAndInvokeTwiceExecuteMethod()
         {
             // Arrange
             var match = new Match { TypeId = 1 };
@@ -130,11 +130,11 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
             mapper);
 
             // Act
-            var result = await service.Settle(match, 1);
+            var result = service.Settle(match, 1);
 
             // Assert
-            await matchQueryService.Received(2).Execute(Arg.Any<MatchSettleCriteria>());
-            Assert.True(result.ErrCode == 0);
+            matchQueryService.Received(2).Execute(Arg.Any<MatchSettleCriteria>());
+            Assert.True(result.Result.ErrCode == 0);
         }
     }
 }

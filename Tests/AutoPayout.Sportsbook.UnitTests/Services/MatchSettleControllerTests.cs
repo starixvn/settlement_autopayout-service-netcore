@@ -10,7 +10,7 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
     public class MatchSettleControllerUnitTests
     {
         [Fact]
-        public async Task Process_ScoreMatchedAndSettleSuccess_InvokeAllRelatedMethods()
+        public void Process_ScoreMatchedAndSettleSuccess_InvokeAllRelatedMethods()
         {
             // Arrange
             var anyMatch = new Match { MatchId = 1 };
@@ -28,7 +28,7 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
                 autoPayoutResultService);
 
             // Assert
-           await controller.Process(anyMatch);
+           controller.Process(anyMatch);
 
             Received.InOrder(() =>
             {
@@ -37,7 +37,7 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
         }
 
         [Fact]
-        public async Task Process_ScoreMatchedButSettleUnSuccess_InvokeAllRelatedMethods()
+        public void Process_ScoreMatchedButSettleUnSuccess_InvokeAllRelatedMethods()
         {
             // Arrange
             var anyMatch = new Match { MatchId = 1 };
@@ -50,7 +50,7 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
             var controller = new MatchSettleControllerImp(matchSettleService, scoreMatcherController, settleLogService, matchListingService, autoPayoutResultService);
 
             // Assert
-            await controller.Process(anyMatch);
+            controller.Process(anyMatch);
 
             Received.InOrder(() =>
             {
@@ -61,7 +61,7 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
         }
 
         [Fact]
-        public async Task Process_ThrowExceptionOnVerifyMatch_InvokeAllRelatedMethods()
+        public void Process_ThrowExceptionOnVerifyMatch_InvokeAllRelatedMethods()
         {
             // Arrange
             var anyMatch = new Match { MatchId = 1 };
@@ -75,7 +75,7 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
             scoreMatcherController.Verify(anyMatch).Returns(Task.FromException<int>(new AutoPayoutException()));
 
             // Assert
-            await controller.Process(anyMatch);
+            controller.Process(anyMatch);
 
             Received.InOrder(() =>
             {

@@ -1,6 +1,7 @@
 ﻿using AutoPayout.Sportsbook.Services;
 using NSubstitute;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 using AutoPayout.Sportsbook.Models;
@@ -24,19 +25,19 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
         }
 
         [Fact]
-        public async Task ProcessAsync_HasMatches_InvokeProcessMethod()
+        public void ProcessAsync_HasMatches_InvokeProcessMethod()
         {
             // Arrange
             var match = new Match { MatchId = 123 };
             var matches = new List<Match> { match };
 
             matchSettlingPoolService.PeekNewMatch().Returns(matches);
-
+            Thread.Sleep(1000);
             // Act
-            await controller.ProcessAsync();
+            controller.ProcessAsync();
 
             // Assert
-            await matchSettleController.Received().Process(match);
+            matchSettleController.Received().Process(match);
         }
     }
 }
