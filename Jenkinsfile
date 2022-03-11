@@ -10,7 +10,6 @@ pipeline {
   triggers{
     pollSCM("H/15 * * * *")
   } 
-
   stages {
     stage('Build') {
       steps {        
@@ -22,7 +21,7 @@ pipeline {
       }
     }
    
-     stage("Test"){
+    stage("Test"){
       parallel{
         stage("C# Unit Test"){
           steps{

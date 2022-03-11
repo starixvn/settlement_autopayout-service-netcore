@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using Xunit;
-
 namespace AutoPayout.Result.UnitTests
 {
     public static class AssertExtension
