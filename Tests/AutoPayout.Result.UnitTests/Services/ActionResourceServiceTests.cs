@@ -12,7 +12,7 @@ namespace AutoPayout.Result.UnitTests.Services
 
         private readonly GoalRecordService goalRecordService;
 
-        private List<XmlResource> ExpectedHalftimeResource()
+        private static List<XmlResource> ExpectedHalftimeResourceWithExistHtFgLg()
         {
             return new List<XmlResource> {
                new XmlResource
@@ -33,7 +33,20 @@ namespace AutoPayout.Result.UnitTests.Services
             };
         }
 
-        private List<XmlResource> ExpectedFullTimeResource()
+        private static List<XmlResource> ExpectedHalftimeResourceWithExistFgNg()
+        {
+            return new List<XmlResource> {
+                new XmlResource
+                {
+                    ResourceId = "14F",
+                    ResultStatusId = 5,
+                    SettlementStatusId = 4,
+                    HomeValue = "A"
+                }
+            };
+        }
+
+        private static List<XmlResource> ExpectedFullTimeResource()
         {
             return new List<XmlResource> {
             new XmlResource
@@ -54,7 +67,7 @@ namespace AutoPayout.Result.UnitTests.Services
             };
         }
 
-        private List<XmlResource> FullTimeGoalRecordResources()
+        private static List<XmlResource> FullTimeGoalRecordResources()
         {
             return new List<XmlResource>{
                     new XmlResource
@@ -96,7 +109,23 @@ namespace AutoPayout.Result.UnitTests.Services
             var actualResources = service.HalftimeResources(goal);
 
             // Assert
-            var expectedResources = ExpectedHalftimeResource();
+            var expectedResources = ExpectedHalftimeResourceWithExistHtFgLg();
+            AssertExtension.AreEqual(expectedResources, actualResources);
+        }
+
+        [Fact]
+        public void HalftimeResources_IsExistFgNg_ReturnsExpectedResources()
+        {
+            // Arrange
+            var goal = new Goal { IsExistFgNg = true };
+            firstGoalService.FirstGoal(Arg.Any<string>()).Returns("A");
+            var service = new ActionResourceServiceImp(firstGoalService, goalRecordService);
+
+            // Act
+            var actualResources = service.HalftimeResources(goal);
+
+            // Assert
+            var expectedResources = ExpectedHalftimeResourceWithExistFgNg();
             AssertExtension.AreEqual(expectedResources, actualResources);
         }
 
