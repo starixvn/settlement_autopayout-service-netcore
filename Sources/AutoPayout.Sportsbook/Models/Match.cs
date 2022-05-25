@@ -1,5 +1,7 @@
 ﻿using System;
+using AutoPayout.Sportsbook.Constants;
 using Kaden.Extensions;
+using System.Linq;
 
 namespace AutoPayout.Sportsbook.Models
 {
@@ -64,6 +66,15 @@ namespace AutoPayout.Sportsbook.Models
         public bool IsFullTimeConfirmed { get; set; }
 
         public bool IsHalfTimeCalculated { get; set; }
+
+        public int LeagueGroupId { get; set; }
+
+        public int ChildMatchType { get; set; }
+
+        public bool IsCalculateAllForPenaltyMatch => TypeId == SettleType.FullTime && IsSabaPenaltyShootout;
+
+        private bool IsSabaPenaltyShootout => SabaSoccer.LeagueGroupIds.Contains(LeagueGroupId) && SabaSoccer.LeagueIds.Contains(LeagueId)
+            && (ChildMatchType == SoccerChildMatchType.PenaltyShootoutHDP || ChildMatchType == SoccerChildMatchType.PenaltyShootoutOU);
 
         public override bool Equals(object obj)
         {

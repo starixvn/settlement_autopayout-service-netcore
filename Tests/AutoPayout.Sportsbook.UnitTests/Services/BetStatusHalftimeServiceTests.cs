@@ -6,16 +6,6 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
 {
     public class BetStatusHalftimeServiceTests
     {
-        private readonly BetStatusService betStatusService;
-
-        private readonly BetStatusHalftimeService service;
-
-        public BetStatusHalftimeServiceTests()
-        {
-            betStatusService = Substitute.For<BetStatusService>();
-            service = new BetStatusHalftimeServiceImp(betStatusService);
-        }
-
         [Theory]
         [InlineData("", "1FL:1-2;")]
         [InlineData("FL:2-0;", "1FL:1-2;FL:2-0;")]
@@ -24,6 +14,8 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
         public void BetStatus_WithCurrentBetStatusAndNewHalftimeFgLg_ReturnsRightExpectedBetStatus(string currentBetStatus, string expectedBetStatus)
         {
             // Arrange
+            var betStatusService = Substitute.For<BetStatusService>();
+            var service = new BetStatusHalftimeServiceImp(betStatusService);
             betStatusService.GenerateBetStatus(Arg.Any<string>(), Arg.Any<string>()).Returns("1FL:1-2;");
 
             // Act
@@ -44,6 +36,8 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
         public void AppendFullTimeBetStatus_BetStatus_ReturnsExpectedNewBetStatus(string betStatus, string fullTimeBetStatus, string expectedNewBetStatus)
         {
             // Act
+            var betStatusService = Substitute.For<BetStatusService>();
+            var service = new BetStatusHalftimeServiceImp(betStatusService);
             var actualBetStatus = service.AppendFullTimeBetStatus(betStatus, fullTimeBetStatus);
 
             // Assert

@@ -14,12 +14,6 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
 {
     public class MatchByLeagueServiceTest
     {
-        private readonly MatchQueryService matchQueryService;
-
-        private readonly MatchByLeagueService matchByLeagueService;
-
-        private readonly ICache cache;
-
         private List<Match> CreateMatchesWithLeagueOne(params int[] matchIds)
         {
             var leagueId = 1;
@@ -55,10 +49,11 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
             }
         }
 
-        public MatchByLeagueServiceTest()
+        [Fact]
+        public async Task GetMatches_ExcludeLeagueIds_ReturnsRightMatches()
         {
-            matchQueryService = Substitute.For<MatchQueryService>();
-            cache = new RedisCache(new RedisCacheOptions
+            // Arrange
+            var cache = new RedisCache(new RedisCacheOptions
             {
                 ConnectionString = $"ha.nexdev.net:16379,password=foo1@bared,defaultDatabase=11",
                 ApplicationName = "Settlement-LOCAL"
@@ -71,13 +66,8 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
                 EnvironmentName = "Local"
             };
             var appSettingsOptions = Options.Create(settings);
-            matchByLeagueService = new MatchByLeagueServiceImp(matchQueryService, cache, appSettingsOptions);
-        }
-
-        [Fact]
-        public async Task GetMatches_ExcludeLeagueIds_ReturnsRightMatches()
-        {
-            // Arrange
+            var matchQueryService = Substitute.For<MatchQueryService>();
+            var matchByLeagueService = new MatchByLeagueServiceImp(matchQueryService, cache, appSettingsOptions);
             const string KEY_LEAGUEID = "Settlement-AutoPayout-AutoInstant-LeagueId";
             const int CACHE_EXPIRED_IN_DAYS = 1095;
             var cachePolicy = new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromDays(CACHE_EXPIRED_IN_DAYS));

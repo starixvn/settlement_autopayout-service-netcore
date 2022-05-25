@@ -6,19 +6,12 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
 {
     public class MatchSettleCriteriaServiceTests
     {
-        private readonly BetStatusHalftimeService betStatusHalftimeService;
-        private readonly BetStatusFullTimeService betStatusFullTimeService;
-
-        public MatchSettleCriteriaServiceTests()
-        {
-            betStatusHalftimeService = Substitute.For<BetStatusHalftimeService>();
-            betStatusFullTimeService = Substitute.For<BetStatusFullTimeService>();
-        }
-
         [Fact]
         public void CreateSettleCriteria_MatchIsHalftime_ReturnsRightActionName()
         {
             // Arrange
+            var betStatusHalftimeService = Substitute.For<BetStatusHalftimeService>();
+            var betStatusFullTimeService = Substitute.For<BetStatusFullTimeService>();
             var match = new Models.Match { TypeId = 1 };
             var matchChecking = new Models.MatchChecking();
             var matchSettleCriteriaService = new MatchSettleCriteriaServiceImp(betStatusHalftimeService, betStatusFullTimeService);
@@ -37,6 +30,8 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
         public void CreateSettleCriteria_MatchIsHalftime_ReturnsRightExpectedBetStatus(string currentBetStatus, string expectedBetStatus)
         {
             // Arrange
+            var betStatusHalftimeService = Substitute.For<BetStatusHalftimeService>();
+            var betStatusFullTimeService = Substitute.For<BetStatusFullTimeService>();
             var match = new Models.Match { TypeId = 1, BetStatus = currentBetStatus };
             var matchChecking = new Models.MatchChecking();
             var matchSettleCriteriaService = new MatchSettleCriteriaServiceImp(betStatusHalftimeService, betStatusFullTimeService);
@@ -52,6 +47,8 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
         public void CreateSettleCriteria_MatchIsHalftimeAndIsExistHtFgLg_ReturnsExpectedBetStatusFromBetStatusHalftimeService()
         {
             // Arrange
+            var betStatusHalftimeService = Substitute.For<BetStatusHalftimeService>();
+            var betStatusFullTimeService = Substitute.For<BetStatusFullTimeService>();
             const string expectedBetStatus = "1FL:1-1;";
             var match = new Models.Match { TypeId = 1 };
             var matchChecking = new Models.MatchChecking { IsExistHtFgLg = true };
@@ -70,6 +67,8 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
         public void CreateSettleCriteria_MatchIsHalftimeIsExistHtFgLgAndIsExistFgNg_ReturnsExpectedBetStatus()
         {
             // Arrange
+            var betStatusHalftimeService = Substitute.For<BetStatusHalftimeService>();
+            var betStatusFullTimeService = Substitute.For<BetStatusFullTimeService>();
             const string expectedBetStatus = "1FL:1-1;FL:x-0";
             var match = new Models.Match { TypeId = 1 };
             var matchChecking = new Models.MatchChecking { IsExistHtFgLg = true, IsExistFgNg = true};
@@ -89,6 +88,8 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
         public void CreateSettleCriteria_MatchIsFullTime_ReturnsSettleFullTimeCriteria()
         {
             // Arrange
+            var betStatusHalftimeService = Substitute.For<BetStatusHalftimeService>();
+            var betStatusFullTimeService = Substitute.For<BetStatusFullTimeService>();
             const string expectedAction = "CAL-FT";
             const string expectedBetStatus = "1FL:1-2;";
             var match = new Models.Match { TypeId = 2, BetStatus = "1FL:1-2;" };
@@ -107,6 +108,8 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
         public void CreateSettleCriteria_MatchIsFullTimeAndIsExistFgLg_ReturnsExpectedBetStatusFromBetStatusFullTimeService()
         {
             // Arrange
+            var betStatusHalftimeService = Substitute.For<BetStatusHalftimeService>();
+            var betStatusFullTimeService = Substitute.For<BetStatusFullTimeService>();
             const string expectedBetStatus = "1FL:1-1;FL:1-1;";
             var match = new Models.Match { TypeId = 2 };
             var matchChecking = new Models.MatchChecking { IsExistFgLg = true };
