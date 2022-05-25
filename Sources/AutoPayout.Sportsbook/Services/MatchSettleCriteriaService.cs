@@ -38,7 +38,16 @@ namespace AutoPayout.Sportsbook.Services
 
         private string BetStatusHalftime(Match match, MatchChecking matchChecking)
         {
-            return matchChecking.IsExistHtFgLg ? betStatusHalftimeService.BetStatus(match.BetStatus, match.GoalRecord) : match.BetStatus;
+            var betStatus = matchChecking.IsExistHtFgLg ? betStatusHalftimeService.BetStatus(match.BetStatus, match.GoalRecord) : match.BetStatus;
+
+            if (matchChecking.IsExistFgNg)
+            {
+                var fullTimeBetStatus = betStatusHalftimeService.FullTimeBetStatus(match.GoalRecord);
+
+                return betStatusHalftimeService.AppendFullTimeBetStatus(betStatus, fullTimeBetStatus);
+            }
+
+            return betStatus;
         }
 
         private string BetStatusFullTime(Match match, MatchChecking matchChecking)

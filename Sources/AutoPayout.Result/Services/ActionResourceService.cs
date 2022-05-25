@@ -32,19 +32,23 @@ namespace AutoPayout.Result.Services
             var resources = new List<XmlResource>();
 
             var halftimeGoal = goalRecordService.HalftimeGoal(goal.GoalRecord);
+            var firstGoal = goalResultService.FirstGoal(halftimeGoal);
 
             if (goal.IsExistHtFgLg)
             {
-                var fristGoal = goalResultService.FirstGoal(halftimeGoal);
                 var lastGoal = goalResultService.LastGoal(halftimeGoal);
-                resources.Add(CreateCalculateResource(ResourceKey.HalftimeFirstGoal, fristGoal));
+                resources.Add(CreateCalculateResource(ResourceKey.HalftimeFirstGoal, firstGoal));
                 resources.Add(CreateCalculateResource(ResourceKey.HalftimeLastGoal, lastGoal));
+            }
+
+            if (goal.IsExistFgNg)
+            {
+                resources.Add(CreateCalculateResource(ResourceKey.FullTimeFirstGoal, firstGoal));
             }
 
             if (goal.IsEnabledGoalRecordHt)
             {
-                var resource = CreateCalculateResource(ResourceKey.HalftimeGoalRecord, halftimeGoal);
-                resources.Add(resource);
+                resources.Add(CreateCalculateResource(ResourceKey.HalftimeGoalRecord, halftimeGoal));
             }
 
             return resources;
@@ -57,9 +61,9 @@ namespace AutoPayout.Result.Services
             if (goal.IsExistFgLg)
             {
                 var fullTimeGoal = goalRecordService.FullTimeGoal(goal.GoalRecord);
-                var fristGoal = goalResultService.FirstGoal(fullTimeGoal);
+                var firstGoal = goalResultService.FirstGoal(fullTimeGoal);
                 var lastGoal = goalResultService.LastGoal(fullTimeGoal);
-                resources.Add(CreateCalculateResource(ResourceKey.FullTimeFirstGoal, fristGoal));
+                resources.Add(CreateCalculateResource(ResourceKey.FullTimeFirstGoal, firstGoal));
                 resources.Add(CreateCalculateResource(ResourceKey.FullTimeLastGoal, lastGoal));
             }
 

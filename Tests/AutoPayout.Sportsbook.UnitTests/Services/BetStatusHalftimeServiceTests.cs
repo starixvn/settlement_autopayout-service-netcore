@@ -32,5 +32,22 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
             // Assert
             Assert.Equal(expectedBetStatus, actual);
         }
+
+        [Theory]
+        [InlineData("1FL:1-0;", "", "1FL:1-0;")]
+        [InlineData("Refund;1FL:1-0;", "", "Refund;1FL:1-0;")]
+        [InlineData("", "FL:x-0;", "FL:x-0;")]
+        [InlineData("1FL:1-0;", "FL:2-0;", "1FL:1-0;FL:2-0;")]
+        [InlineData("FL:1-0;", "FL:2-0;", "FL:2-0;")]
+        [InlineData(null, "", "")]
+
+        public void AppendFullTimeBetStatus_BetStatus_ReturnsExpectedNewBetStatus(string betStatus, string fullTimeBetStatus, string expectedNewBetStatus)
+        {
+            // Act
+            var actualBetStatus = service.AppendFullTimeBetStatus(betStatus, fullTimeBetStatus);
+
+            // Assert
+            Assert.Equal(expectedNewBetStatus, actualBetStatus);
+        }
     }
 }
