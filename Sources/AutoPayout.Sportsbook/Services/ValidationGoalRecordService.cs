@@ -39,7 +39,7 @@ namespace AutoPayout.Sportsbook.Services
                     throw new GoalRecordHalftimeScoreNotConsistentException();
                 }
 
-                if (!scoreAndGoalRecordService.IsConsistentFullTime(match))
+                if (!match.IsSabaPenaltyShootout && !scoreAndGoalRecordService.IsConsistentFullTime(match))
                 {
                     throw new GoalRecordFinalScoreNotConsistentException();
                 }
