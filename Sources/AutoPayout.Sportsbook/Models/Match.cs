@@ -71,9 +71,7 @@ namespace AutoPayout.Sportsbook.Models
 
         public int ChildMatchType { get; set; }
 
-        public bool IsCalculateAllForPenaltyMatch => TypeId == SettleType.FullTime && IsSabaPenaltyShootout;
-
-        private bool IsSabaPenaltyShootout => SabaSoccer.LeagueGroupIds.Contains(LeagueGroupId) && SabaSoccer.LeagueIds.Contains(LeagueId)
+        public bool IsSabaPenaltyShootout => SabaSoccer.LeagueGroupIds.Contains(LeagueGroupId) && SabaSoccer.LeagueIds.Contains(LeagueId)
             && (ChildMatchType == SoccerChildMatchType.PenaltyShootoutHDP || ChildMatchType == SoccerChildMatchType.PenaltyShootoutOU);
 
         public override bool Equals(object obj)

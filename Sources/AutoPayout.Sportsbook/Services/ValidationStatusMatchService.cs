@@ -22,7 +22,7 @@ namespace AutoPayout.Sportsbook.Services
             }
 
             var isHalfTimeNotDone = IsHalfTimeNotDone(match);
-            if (!match.IsCalculateAllForPenaltyMatch && isHalfTimeNotDone)
+            if (!match.IsSabaPenaltyShootout && isHalfTimeNotDone)
             {
                 throw new HalftimeNotDoneException();
             }
