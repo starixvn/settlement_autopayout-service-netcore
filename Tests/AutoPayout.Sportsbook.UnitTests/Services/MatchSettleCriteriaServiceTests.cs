@@ -50,10 +50,10 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
             var betStatusHalftimeService = Substitute.For<BetStatusHalftimeService>();
             var betStatusFullTimeService = Substitute.For<BetStatusFullTimeService>();
             const string expectedBetStatus = "1FL:1-1;";
-            var match = new Models.Match { TypeId = 1 };
+            var match = new Models.Match { TypeId = 1, BetStatus = "TestBetStatus", GoalRecord = "TestGoalRecord" };
             var matchChecking = new Models.MatchChecking { IsExistHtFgLg = true };
 
-            betStatusHalftimeService.BetStatus(Arg.Any<string>(), Arg.Any<string>()).Returns("1FL:1-1;");
+            betStatusHalftimeService.BetStatus(Arg.Is<string>(s => s != null), Arg.Is<string>(s => s != null)).Returns("1FL:1-1;");
             var matchSettleCriteriaService = new MatchSettleCriteriaServiceImp(betStatusHalftimeService, betStatusFullTimeService);
 
             // Act
@@ -111,10 +111,10 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
             var betStatusHalftimeService = Substitute.For<BetStatusHalftimeService>();
             var betStatusFullTimeService = Substitute.For<BetStatusFullTimeService>();
             const string expectedBetStatus = "1FL:1-1;FL:1-1;";
-            var match = new Models.Match { TypeId = 2 };
+            var match = new Models.Match { TypeId = 2, BetStatus = "TestBetStatus", GoalRecord = "TestGoalRecord" };
             var matchChecking = new Models.MatchChecking { IsExistFgLg = true };
 
-            betStatusFullTimeService.BetStatus(Arg.Any<string>(), Arg.Any<string>()).Returns("1FL:1-1;FL:1-1;");
+            betStatusFullTimeService.BetStatus(Arg.Is<string>(s => s != null), Arg.Is<string>(s => s != null)).Returns("1FL:1-1;FL:1-1;");
             var matchSettleCriteriaService = new MatchSettleCriteriaServiceImp(betStatusHalftimeService, betStatusFullTimeService);
 
             // Act

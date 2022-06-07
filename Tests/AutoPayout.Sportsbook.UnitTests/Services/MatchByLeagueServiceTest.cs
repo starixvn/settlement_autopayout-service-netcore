@@ -72,7 +72,8 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
             const int CACHE_EXPIRED_IN_DAYS = 1095;
             var cachePolicy = new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromDays(CACHE_EXPIRED_IN_DAYS));
             cache.Set(KEY_LEAGUEID, 1, cachePolicy);
-            matchQueryService.GetWaitingMatches().Returns(CreateMatches);
+            var mockMatches = CreateMatches;
+            matchQueryService.GetWaitingMatches().Returns(mockMatches);
 
             // Act
             var matches = await matchByLeagueService.GetMatches();

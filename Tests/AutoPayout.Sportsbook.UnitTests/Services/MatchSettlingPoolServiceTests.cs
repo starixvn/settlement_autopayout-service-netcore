@@ -18,11 +18,13 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
             var matchListingService = new MatchSettlingPoolServiceImp(matchByLeagueService);
 
             // Act1
-            matchByLeagueService.GetMatches().Returns(CreateMatches(1, 2));
+            var expected1 = CreateMatches(1, 2);
+            matchByLeagueService.GetMatches().Returns(expected1);
             await matchListingService.PeekNewMatch();
 
             // Act2
-            matchByLeagueService.GetMatches().Returns(CreateMatches(2, 3));
+            var expected2 = CreateMatches(2, 3);
+            matchByLeagueService.GetMatches().Returns(expected2);
             await matchListingService.PeekNewMatch();
 
             // Assert
