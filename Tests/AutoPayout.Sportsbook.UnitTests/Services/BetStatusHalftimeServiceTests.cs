@@ -16,7 +16,7 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
             // Arrange
             var betStatusService = Substitute.For<BetStatusService>();
             var service = new BetStatusHalftimeServiceImp(betStatusService);
-            betStatusService.GenerateBetStatus(Arg.Is<string>(s => s != null), Arg.Is<string>(s => s != null)).Returns("1FL:1-2;");
+            betStatusService.GenerateBetStatus(Arg.Any<string>(), Arg.Any<string>()).Returns("1FL:1-2;");
 
             // Act
             var actual = service.BetStatus(currentBetStatus, string.Empty);

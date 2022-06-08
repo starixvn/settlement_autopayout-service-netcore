@@ -22,7 +22,7 @@ namespace AutoPayout.Sportsbook.Services
             }
 
             var isHalfTimeNotDone = IsHalfTimeNotDone(match);
-            if (!(match.IsSabaPenaltyShootout && match.TypeId == SettleType.FullTime) && isHalfTimeNotDone)
+            if (isHalfTimeNotDone)
             {
                 throw new HalftimeNotDoneException();
             }
@@ -35,7 +35,7 @@ namespace AutoPayout.Sportsbook.Services
 
         private static bool IsHalfTimeNotDone(Match match)
         {
-            return match.TypeId == SettleType.FullTime && !match.IsHalfTimeCalculated;
+            return match.TypeId == SettleType.FullTime && !match.IsHalfTimeCalculated && !match.IsSabaPenaltyShootout;
         }
     }
 }

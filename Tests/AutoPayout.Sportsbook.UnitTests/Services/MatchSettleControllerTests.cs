@@ -15,9 +15,9 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
             // Arrange
             var anyMatch = new Match { MatchId = 1 };
             var scoreMatcherController = Substitute.For<ScoreMatcherController>();
-            scoreMatcherController.Verify(Arg.Is<Match>(m => m != null)).Returns(1);
+            scoreMatcherController.Verify(Arg.Any<Match>()).Returns(1);
             var matchSettleService = Substitute.For<MatchSettleService>();
-            matchSettleService.Settle(Arg.Is<Match>(m => m != null), Arg.Is<int>(i => i != 0)).Returns(new Models.Result());
+            matchSettleService.Settle(Arg.Any<Match>(), Arg.Any<int>()).Returns(new Models.Result());
             var settleLogService = Substitute.For<SettleLogService>();
             var matchListingService = Substitute.For<MatchSettlingPoolService>();
             var autoPayoutResultService = Substitute.For<AutoPayoutResultService>();
@@ -40,9 +40,9 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
             // Arrange
             var anyMatch = new Match { MatchId = 1 };
             var scoreMatcherController = Substitute.For<ScoreMatcherController>();
-            scoreMatcherController.Verify(Arg.Is<Match>(m => m != null)).Returns(1);
+            scoreMatcherController.Verify(Arg.Any<Match>()).Returns(1);
             var matchSettleService = Substitute.For<MatchSettleService>();
-            matchSettleService.Settle(Arg.Is<Match>(m => m != null), Arg.Is<int>(i => i != 0)).Returns(new Models.Result { ErrMsg = "Error message"});
+            matchSettleService.Settle(Arg.Any<Match>(), Arg.Any<int>()).Returns(new Models.Result { ErrMsg = "Error message"});
             var settleLogService = Substitute.For<SettleLogService>();
             var matchListingService = Substitute.For<MatchSettlingPoolService>();
             var autoPayoutResultService = Substitute.For<AutoPayoutResultService>();
@@ -63,7 +63,7 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
             var anyMatch = new Match { MatchId = 1 };
             var scoreMatcherController = Substitute.For<ScoreMatcherController>();
             var matchSettleService = Substitute.For<MatchSettleService>();
-            matchSettleService.Settle(Arg.Is<Match>(m => m != null), Arg.Is<int>(i => i != 0)).Returns(new Models.Result { ErrCode = 1 });
+            matchSettleService.Settle(Arg.Any<Match>(), Arg.Any<int>()).Returns(new Models.Result { ErrCode = 1 });
             var settleLogService = Substitute.For<SettleLogService>();
             var matchListingService = Substitute.For<MatchSettlingPoolService>();
             var autoPayoutResultService = Substitute.For<AutoPayoutResultService>();

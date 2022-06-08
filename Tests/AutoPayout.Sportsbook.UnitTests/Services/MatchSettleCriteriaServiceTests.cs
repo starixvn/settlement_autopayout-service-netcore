@@ -53,7 +53,7 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
             var match = new Models.Match { TypeId = 1, BetStatus = "TestBetStatus", GoalRecord = "TestGoalRecord" };
             var matchChecking = new Models.MatchChecking { IsExistHtFgLg = true };
 
-            betStatusHalftimeService.BetStatus(Arg.Is<string>(s => s != null), Arg.Is<string>(s => s != null)).Returns("1FL:1-1;");
+            betStatusHalftimeService.BetStatus(Arg.Any<string>(), Arg.Any<string>()).Returns("1FL:1-1;");
             var matchSettleCriteriaService = new MatchSettleCriteriaServiceImp(betStatusHalftimeService, betStatusFullTimeService);
 
             // Act
@@ -114,7 +114,7 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
             var match = new Models.Match { TypeId = 2, BetStatus = "TestBetStatus", GoalRecord = "TestGoalRecord" };
             var matchChecking = new Models.MatchChecking { IsExistFgLg = true };
 
-            betStatusFullTimeService.BetStatus(Arg.Is<string>(s => s != null), Arg.Is<string>(s => s != null)).Returns("1FL:1-1;FL:1-1;");
+            betStatusFullTimeService.BetStatus(Arg.Any<string>(), Arg.Any<string>()).Returns("1FL:1-1;FL:1-1;");
             var matchSettleCriteriaService = new MatchSettleCriteriaServiceImp(betStatusHalftimeService, betStatusFullTimeService);
 
             // Act

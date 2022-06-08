@@ -78,7 +78,7 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
             // Arrange
             var match = new Match { MatchId = 1, TypeId = 2 };
             var dynamicRepository = Substitute.For<IDynamicRepository>();
-            dynamicRepository.FetchAsync<Score>(Arg.Is<ICriteria>(x => x != null)).Returns(new List<Score>());
+            dynamicRepository.FetchAsync<Score>(Arg.Any<ICriteria>()).Returns(new List<Score>());
             var service = new ScoreServiceImp(dynamicRepository, appSettingsKey);
 
             // Act
