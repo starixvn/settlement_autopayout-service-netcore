@@ -55,6 +55,7 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
                 matchQueryService);
             var match = new Match();
 
+            matchQueryService.GetMatchRemark(Arg.Any<int>()).Returns(new RemarkSettingModel());
             scoreService.TryGetScore(Arg.Any<Match>()).Returns(new Score { SourceId = Source.Sbo });
 
             // Act

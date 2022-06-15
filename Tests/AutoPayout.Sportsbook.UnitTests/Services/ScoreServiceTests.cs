@@ -53,7 +53,6 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
         {
             // Arrange
             var match = new Match { MatchId = 1, TypeId = 2 };
-            var emptyScores = new List<Score>();
             var fakeScores = new List<Score>
             {
                 new Score { MatchId = 1, HomeValue = "1", AwayValue = "0", TypeId = SettleType.FullTime,  SourceId = Source.Sbo },

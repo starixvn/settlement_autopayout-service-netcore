@@ -32,7 +32,9 @@ namespace AutoPayout.Sportsbook.Services
             else
             {
                 var betStatus = BetStatusFullTime(match, matchChecking);
-                return new MatchSettleFullTimeCriteria(match, betStatus);
+                return match.IsSabaPenaltyShootout
+                    ? new MatchSettleAllCriteria(match, betStatus)
+                    : new MatchSettleFullTimeCriteria(match, betStatus);
             }
         }
 

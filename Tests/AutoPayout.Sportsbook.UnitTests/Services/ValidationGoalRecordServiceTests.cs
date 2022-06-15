@@ -127,8 +127,8 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
                 TypeId = SettleType.FullTime
             };
 
-            scoreAndGoalRecordService.IsConsistentHalftime(Arg.Any<Match>()).Returns(true);
-            scoreAndGoalRecordService.IsConsistentFullTime(Arg.Any<Match>()).Returns(true);
+            scoreAndGoalRecordService.IsConsistentHalftime(Arg.Is<Match>(match)).Returns(true);
+            scoreAndGoalRecordService.IsConsistentFullTime(Arg.Is<Match>(match)).Returns(true);
             var service = new ValidationGoalRecordServiceImp(scoreAndGoalRecordService);
 
             // Assert

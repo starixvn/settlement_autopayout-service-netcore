@@ -50,8 +50,14 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
             Assert.Throws<HalftimeNotDoneException>(() => service.VerifyStatusMatch(match));
         }
 
-        [Fact]
-        public void VerifyStatusMatch_ValidMatch_DoesNotThrowException()
+        [Theory]
+        [InlineData(2, true, 1, 1, 1)]
+        [InlineData(2, false, 42, 202, 95730)]
+        [InlineData(2, true, 42, 202, 95730)]
+        [InlineData(1, true, 42, 202, 95730)]
+        [InlineData(1, true, 1, 1, 1)]
+        public void VerifyStatusMatch_ValidMatch_DoesNotThrowException(
+            int typeId, bool isHalfTimeCalculated, int leagueGroupId, int childMatchType, int leagueId)
         {
             // Arrange
             var match = new Match
@@ -63,8 +69,11 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
                 HtAwayScore = 1,
                 FinalHomeScore = 1,
                 FinalAwayScore = 1,
-                TypeId = SettleType.FullTime,
-                IsHalfTimeCalculated = true
+                TypeId = typeId,
+                IsHalfTimeCalculated = isHalfTimeCalculated,
+                LeagueGroupId = leagueGroupId,
+                LeagueId = leagueId,
+                ChildMatchType = childMatchType
             };
 
             // Assert

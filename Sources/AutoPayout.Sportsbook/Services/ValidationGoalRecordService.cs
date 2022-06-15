@@ -34,12 +34,12 @@ namespace AutoPayout.Sportsbook.Services
             }
             else
             {
-                if (!scoreAndGoalRecordService.IsConsistentHalftime(match))
+                if (!match.IsSabaPenaltyShootout && !scoreAndGoalRecordService.IsConsistentHalftime(match))
                 {
                     throw new GoalRecordHalftimeScoreNotConsistentException();
                 }
 
-                if (!scoreAndGoalRecordService.IsConsistentFullTime(match))
+                if (!match.IsSabaPenaltyShootout && !scoreAndGoalRecordService.IsConsistentFullTime(match))
                 {
                     throw new GoalRecordFinalScoreNotConsistentException();
                 }
