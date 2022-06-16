@@ -50,6 +50,14 @@ namespace AutoPayout.Sportsbook.Services
                 validationGoalRecordService.VerifyGoalRecord(match);
                 return Source.AdminSite;
             }
+            else if (match.IsTotalCornerGoalMatch)
+            {
+                var results = await scoreService.TryGetRelatedResults(match);
+                validationScoreService.VerifyResultsConsistent(match, results);
+                var matchRemark = await matchQueryService.GetMatchRemark(match.MatchId);
+                validationSettingMatchService.VerifySettingMatch(matchRemark);
+                return Source.AdminSite;
+            }
             else
             {
                 var score = await scoreService.TryGetScore(match);

@@ -6,6 +6,7 @@ using AutoPayout.Sportsbook.Constants;
 using AutoPayout.Sportsbook.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace AutoPayout.Sportsbook.Services
 {
@@ -26,18 +27,22 @@ namespace AutoPayout.Sportsbook.Services
 
         private readonly IMapper mapper;
 
+        private readonly OtherInfoService otherInfoService;
+
         public MatchSettleServiceImp(
             MatchQueryService matchQueryService,
             MatchSettleCriteriaService matchSettleCriteriaService,
             ActionResourceService actionResourceService,
             XmlConvertService xmlConvertService,
-            IMapper mapper)
+            IMapper mapper,
+            OtherInfoService otherInfoService)
         {
             this.matchQueryService = matchQueryService;
             this.matchSettleCriteriaService = matchSettleCriteriaService;
             this.actionResourceService = actionResourceService;
             this.xmlConvertService = xmlConvertService;
             this.mapper = mapper;
+            this.otherInfoService = otherInfoService;
         }
 
         public async Task<Models.Result> Settle(Match match, int sourceId)
@@ -71,6 +76,7 @@ namespace AutoPayout.Sportsbook.Services
             var criteria = matchSettleCriteriaService.CreateSettleCriteria(match, matchChecking);
             criteria.SourceId = sourceId;
             criteria.ResourceResult = resourceResult;
+            criteria.RefResult = await GetRelatedInfo(match);
             return await matchQueryService.Execute(criteria);
         }
 
@@ -97,6 +103,20 @@ namespace AutoPayout.Sportsbook.Services
             {
                 return string.Empty;
             }
+        }
+
+        private async Task<string> GetRelatedInfo(Match match)
+        {
+            if (match.IsTotalCornerGoalMatch) {
+                var resourceId = match.TypeId == SettleType.Halftime ? ResourceId.HalfTime : ResourceId.FullTime;
+                var results = await matchQueryService.GetToalGoalCornerRelatedResults(match.MatchId);
+                var resultsChecking = results.Where(result => result.ResourceId == resourceId).ToList();
+                var (mainScore, cornerScore) = otherInfoService.GetRelatedMatchesScore(resultsChecking);
+
+                return $"{mainScore}; {cornerScore}";
+            }
+
+            return null;
         }
     }
 }

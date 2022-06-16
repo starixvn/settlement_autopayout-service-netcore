@@ -18,6 +18,8 @@ namespace AutoPayout.Sportsbook.Services
         Task<RemarkSettingModel> GetMatchRemark(int matchId);
 
         Task<Models.Result> Execute(MatchSettleCriteria criteria);
+
+        Task<IEnumerable<ResultDetail>> GetToalGoalCornerRelatedResults(int matchId);
     }
 
     public class MatchQueryServiceImp : MatchQueryService
@@ -51,8 +53,8 @@ namespace AutoPayout.Sportsbook.Services
         public async Task<RemarkSettingModel> GetMatchRemark(int matchId)
         {
             var criteria = new MatchRemarkCriteria { MatchId = matchId };
-            var match = await repository.GetAsync<MatchRemark>(criteria);
-            return match.Remark;
+            var (match, _) = await repository.FetchMultipleAsync<MatchRemark, ResultDetail>(criteria);
+            return match.FirstOrDefault().Remark;
         }
 
         public async Task<Models.Result> Execute(MatchSettleCriteria criteria)
@@ -64,6 +66,13 @@ namespace AutoPayout.Sportsbook.Services
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg
             };
+        }
+
+        public async Task<IEnumerable<ResultDetail>> GetToalGoalCornerRelatedResults(int matchId)
+        {
+            var criteria = new MatchRemarkCriteria { MatchId = matchId };
+            var(_, results) = await repository.FetchMultipleAsync<MatchRemark, ResultDetail>(criteria);
+            return results;
         }
     }
 }

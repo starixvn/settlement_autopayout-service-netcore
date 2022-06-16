@@ -6,12 +6,15 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using System.Collections.Generic;
 
 namespace AutoPayout.Sportsbook.Services
 {
     public interface ScoreService
     {
         Task<Score> TryGetScore(Match match);
+
+        Task<List<ResultDetail>> TryGetRelatedResults(Match match);
     }
 
     public class ScoreServiceImp : ScoreService
@@ -20,12 +23,16 @@ namespace AutoPayout.Sportsbook.Services
 
         private readonly AppSettingsKey appSettingsKey;
 
+        private readonly MatchQueryService matchQueryService;
+
         public ScoreServiceImp(
             IDynamicRepository repository,
-            IOptions<AppSettingsKey> appSettingsKey)
+            IOptions<AppSettingsKey> appSettingsKey,
+            MatchQueryService matchQueryService)
         {
             this.repository = repository;
             this.appSettingsKey = appSettingsKey.Value;
+            this.matchQueryService = matchQueryService;
         }
 
         public async Task<Score> TryGetScore(Match match)
@@ -54,6 +61,34 @@ namespace AutoPayout.Sportsbook.Services
             return (await repository.FetchAsync<Score>(criteria))
                              .Where(s => s.SourceId == Source.Sbo)
                              .FirstOrDefault(s => s.TypeId == match.TypeId);
+        }
+
+        public async Task<List<ResultDetail>> TryGetRelatedResults(Match match)
+        {
+            var resultDetails = new List<ResultDetail>();
+            for (var i = 0; i < appSettingsKey.TotalGoalCornerRetryCount; i++)
+            {
+                var resourceId = match.TypeId == SettleType.Halftime ? ResourceId.HalfTime : ResourceId.FullTime;
+                var results = await matchQueryService.GetToalGoalCornerRelatedResults(match.MatchId);
+                var resultsChecking = results.Where(result => result.ResourceId == resourceId);
+                if (resultsChecking != null && resultsChecking.Any() && IsResultsCalculated(resultsChecking))
+                {
+                    return resultsChecking.ToList();
+                }
+
+                resultDetails = resultsChecking.ToList();
+                if (i < appSettingsKey.RetryCount - 1)
+                {
+                    await Task.Delay(appSettingsKey.TotalGoalCornerInterval);
+                }
+            }
+
+            return resultDetails;
+        }
+
+        private static bool IsResultsCalculated(IEnumerable<ResultDetail> resultDetails)
+        {
+            return resultDetails.All(resultDetail => resultDetail.ResultStatusId == ResultStatus.ManualCompleted || resultDetail.ResultStatusId == ResultStatus.AutoCompleted);
         }
     }
 }

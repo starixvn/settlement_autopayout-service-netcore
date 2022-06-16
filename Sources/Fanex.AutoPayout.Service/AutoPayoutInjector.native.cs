@@ -47,6 +47,7 @@ namespace Fanex.AutoPayout.Service
              service.AddSingleton<BetStatusService, BetStatusServiceImp>();
              service.AddSingleton<ScoreAndGoalRecordService, ScoreAndGoalRecordServiceImp>();
              service.AddSingleton<MatchByLeagueService, MatchByLeagueServiceImp>();
+             service.AddSingleton<OtherInfoService, OtherInfoServiceImp>();
 
 
             service.AddSingleton(new UMClientConfiguration().Initialize(configuration));

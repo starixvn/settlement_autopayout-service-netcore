@@ -32,6 +32,8 @@ namespace AutoPayout.Sportsbook.Criteria
 
         public string ErrMsg { get; set; }
 
+        public string RefResult { get; set; }
+
         public override bool IsValid()
         {
             return true;
