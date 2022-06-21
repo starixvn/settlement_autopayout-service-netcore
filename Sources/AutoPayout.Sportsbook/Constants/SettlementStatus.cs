@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace AutoPayout.Sportsbook.Constants
 {
-    public static class ResultStatus
+    public static class SettlementStatus
     {
-        public const int ManualCompleted = 2;
-
-        public const int AutoCompleted = 5;
+        public const byte Calculated = 4;
     }
 }

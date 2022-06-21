@@ -91,7 +91,7 @@ namespace AutoPayout.Sportsbook.Services
 
         private static bool IsResultsCalculated(ResultDetail resultDetail)
         {
-            return resultDetail.ResultStatusId == ResultStatus.ManualCompleted || resultDetail.ResultStatusId == ResultStatus.AutoCompleted;
+            return resultDetail.SettlementStatusId == SettlementStatus.Calculated;
         }
     }
 }

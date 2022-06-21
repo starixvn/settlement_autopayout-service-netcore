@@ -14,8 +14,8 @@ namespace AutoPayout.Sportsbook.Models
 
         public string AwayValue { get; set; }
 
-        public byte ResultStatusId { get; set; }
-
         public int ChildMatchType { get; set; }
+
+        public byte SettlementStatusId { get; set; }
     }
 }
