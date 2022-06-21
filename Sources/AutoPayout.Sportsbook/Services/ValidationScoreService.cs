@@ -52,15 +52,13 @@ namespace AutoPayout.Sportsbook.Services
         {
             if (!results.Any())
             {
-                var remark = match.TypeId == SettleType.Halftime ? "HT" : "FT";
-                throw new RelatedMatchesNotCalculatedException(remark);
+                throw new RelatedMatchesNotCalculatedException(match.TypeId);
             }
 
             if (IsMatchScoreInconsistentWithRelatedMatches(match, results))
             {
-                var type = match.TypeId == SettleType.Halftime ? "HT" : "FT";
                 var (mainScore, cornerScore) = otherInfoService.GetRelatedMatchesScore(results);
-                throw new RelatedMatchesInconsistentException(type, mainScore, cornerScore);
+                throw new RelatedMatchesInconsistentException(match.TypeId, mainScore, cornerScore);
             }
         }
 

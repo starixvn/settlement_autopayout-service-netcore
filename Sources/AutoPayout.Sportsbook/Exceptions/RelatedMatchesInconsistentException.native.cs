@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using AutoPayout.Sportsbook.Constants;
 
 namespace AutoPayout.Sportsbook.Exceptions
 {
     [Serializable]
     public class RelatedMatchesInconsistentException : AutoPayoutException
     {
-        public RelatedMatchesInconsistentException(string type, string mainScore, string cornerScore)
+        public RelatedMatchesInconsistentException(int typeId, string mainScore, string cornerScore)
         {
-            const string message = "Failed: Cannot proceed due to {0} value from current, {1}, and {2} are inconsistent.";
-            Description = string.Format(message, type, mainScore, cornerScore);
+            var type = typeId == SettleType.Halftime ? "HT" : "FT";
+            Description = $"Failed: Cannot proceed due to {type} value from current, {mainScore}, and {cornerScore} are inconsistent.";
         }
 
         public RelatedMatchesInconsistentException(string message, Exception innerException)

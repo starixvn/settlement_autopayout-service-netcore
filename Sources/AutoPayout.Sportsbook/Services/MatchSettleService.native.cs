@@ -109,8 +109,8 @@ namespace AutoPayout.Sportsbook.Services
         {
             if (match.IsTotalCornerGoalMatch) {
                 var resourceId = match.TypeId == SettleType.Halftime ? ResourceId.HalfTime : ResourceId.FullTime;
-                var results = await matchQueryService.GetToalGoalCornerRelatedResults(match.MatchId);
-                var resultsChecking = results.Where(result => result.ResourceId == resourceId).ToList();
+                var (_, resultDetail) = await matchQueryService.GetMatchAndResultDetail(match.MatchId);
+                var resultsChecking = resultDetail.Where(result => result.ResourceId == resourceId).ToList();
                 var (mainScore, cornerScore) = otherInfoService.GetRelatedMatchesScore(resultsChecking);
 
                 return $"{mainScore}; {cornerScore}";

@@ -15,11 +15,9 @@ namespace AutoPayout.Sportsbook.Services
 
         Task<MatchChecking> GetMatchInfo(int matchId);
 
-        Task<RemarkSettingModel> GetMatchRemark(int matchId);
-
         Task<Models.Result> Execute(MatchSettleCriteria criteria);
 
-        Task<IEnumerable<ResultDetail>> GetToalGoalCornerRelatedResults(int matchId);
+        Task<(RemarkSettingModel matchRemark, List<ResultDetail> resultDetail)> GetMatchAndResultDetail(int matchId);
     }
 
     public class MatchQueryServiceImp : MatchQueryService
@@ -49,14 +47,7 @@ namespace AutoPayout.Sportsbook.Services
             var criteria = new MatchCheckingCriteria { MatchId = matchId };
             return await repository.GetAsync<MatchChecking>(criteria);
         }
-
-        public async Task<RemarkSettingModel> GetMatchRemark(int matchId)
-        {
-            var criteria = new MatchRemarkCriteria { MatchId = matchId };
-            var (match, _) = await repository.FetchMultipleAsync<MatchRemark, ResultDetail>(criteria);
-            return match.FirstOrDefault().Remark;
-        }
-
+        
         public async Task<Models.Result> Execute(MatchSettleCriteria criteria)
         {
             await repository.ExecuteAsync(criteria);
@@ -67,12 +58,13 @@ namespace AutoPayout.Sportsbook.Services
                 ErrMsg = criteria.ErrMsg
             };
         }
-
-        public async Task<IEnumerable<ResultDetail>> GetToalGoalCornerRelatedResults(int matchId)
+       
+        public async Task<(RemarkSettingModel matchRemark, List<ResultDetail> resultDetail)> GetMatchAndResultDetail(int matchId)
         {
-            var criteria = new MatchRemarkCriteria { MatchId = matchId };
-            var(_, results) = await repository.FetchMultipleAsync<MatchRemark, ResultDetail>(criteria);
-            return results;
+            var criteria = new MatchDetailCriteria { MatchId = matchId };
+            var (matchRemark, resultDetail) = await repository.FetchMultipleAsync<MatchRemark, ResultDetail>(criteria);
+
+            return (matchRemark.FirstOrDefault()?.Remark, resultDetail.ToList());
         }
     }
 }

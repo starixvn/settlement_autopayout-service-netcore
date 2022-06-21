@@ -50,24 +50,30 @@ namespace AutoPayout.Sportsbook.Services
                 validationGoalRecordService.VerifyGoalRecord(match);
                 return Source.AdminSite;
             }
-            else if (match.IsTotalCornerGoalMatch)
+
+            return await GetSourceId(match);
+        }
+
+        private async Task<int> GetSourceId(Match match)
+        {
+            var sourceId = Source.AdminSite;
+            if (match.IsTotalCornerGoalMatch)
             {
                 var results = await scoreService.TryGetRelatedResults(match);
                 validationScoreService.VerifyResultsConsistent(match, results);
-                var matchRemark = await matchQueryService.GetMatchRemark(match.MatchId);
-                validationSettingMatchService.VerifySettingMatch(matchRemark);
-                return Source.AdminSite;
             }
             else
             {
                 var score = await scoreService.TryGetScore(match);
+                sourceId = score.SourceId;
                 validationScoreService.VerifyScore(match, score);
                 validationGoalRecordService.VerifyGoalRecord(match);
-                var matchRemark = await matchQueryService.GetMatchRemark(match.MatchId);
-                validationSettingMatchService.VerifySettingMatch(matchRemark);
-
-                return score.SourceId;
             }
+
+            var (matchRemark, _) = await matchQueryService.GetMatchAndResultDetail(match.MatchId);
+            validationSettingMatchService.VerifySettingMatch(matchRemark);
+
+            return sourceId;
         }
     }
 }

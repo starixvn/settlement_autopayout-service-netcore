@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AutoPayout.Sportsbook.Constants;
+using System;
 using System.Runtime.Serialization;
 
 namespace AutoPayout.Sportsbook.Exceptions
@@ -6,10 +7,10 @@ namespace AutoPayout.Sportsbook.Exceptions
     [Serializable]
     public class RelatedMatchesNotCalculatedException : AutoPayoutException
     {
-        public RelatedMatchesNotCalculatedException(string remark)
+        public RelatedMatchesNotCalculatedException(int typeId)
         {
-            const string message = "Failed: Cannot proceed due to {0} from main or corner match has not been calculated.";
-            Description = string.Format(message, remark);
+            var type = typeId == SettleType.Halftime ? "HT" : "FT";
+            Description = $"Failed: Cannot proceed due to {type} from main or corner match has not been calculated.";
         }
 
         public RelatedMatchesNotCalculatedException(string message, Exception innerException)
