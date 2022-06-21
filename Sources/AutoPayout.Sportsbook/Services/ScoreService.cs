@@ -68,7 +68,7 @@ namespace AutoPayout.Sportsbook.Services
             for (var i = 0; i < appSettingsKey.TotalGoalCornerRetryCount; i++)
             {
                 var resultsChecking = await GetResultDetail(match);
-                if (resultsChecking.Any())
+                if (IsResultsCalculated(resultsChecking))
                 {
                     return resultsChecking;
                 }
@@ -85,13 +85,13 @@ namespace AutoPayout.Sportsbook.Services
         private async Task<List<ResultDetail>> GetResultDetail(Match match)
         {
             var resourceId = match.TypeId == SettleType.Halftime ? ResourceId.HalfTime : ResourceId.FullTime;
-            var (_, resultDetail) = await matchQueryService.GetMatchAndResultDetail(match.MatchId);
-            return resultDetail.Where(result => result.ResourceId == resourceId && IsResultsCalculated(result)).ToList();
+            var (_, resultDetails) = await matchQueryService.GetMatchAndResultDetail(match.MatchId);
+            return resultDetails.Where(result => result.ResourceId == resourceId).ToList();
         }
 
-        private static bool IsResultsCalculated(ResultDetail resultDetail)
+        private static bool IsResultsCalculated(IEnumerable<ResultDetail> resultDetails)
         {
-            return resultDetail.SettlementStatusId == SettlementStatus.Calculated;
+            return resultDetails.All(resultDetail => resultDetail.SettlementStatusId == SettlementStatus.Calculated);
         }
     }
 }
