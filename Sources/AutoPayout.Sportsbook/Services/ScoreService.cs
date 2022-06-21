@@ -73,7 +73,7 @@ namespace AutoPayout.Sportsbook.Services
                     return resultsChecking;
                 }
 
-                if (i < appSettingsKey.RetryCount - 1)
+                if (i < appSettingsKey.TotalGoalCornerRetryCount - 1)
                 {
                     await Task.Delay(appSettingsKey.TotalGoalCornerInterval);
                 }
