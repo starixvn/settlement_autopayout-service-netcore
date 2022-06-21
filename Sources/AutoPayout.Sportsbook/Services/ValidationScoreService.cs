@@ -1,6 +1,7 @@
 ﻿using AutoPayout.Sportsbook.Constants;
 using AutoPayout.Sportsbook.Exceptions;
 using AutoPayout.Sportsbook.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -49,8 +50,7 @@ namespace AutoPayout.Sportsbook.Services
 
         public void VerifyResultsConsistent(Match match, List<ResultDetail> results)
         {
-            var isRelatedMatchesCalculated = results.All(result => result.ResultStatusId == ResultStatus.ManualCompleted || result.ResultStatusId == ResultStatus.AutoCompleted);
-            if (!isRelatedMatchesCalculated)
+            if (!results.Any())
             {
                 var remark = match.TypeId == SettleType.Halftime ? "HT" : "FT";
                 throw new RelatedMatchesNotCalculatedException(remark);
@@ -64,10 +64,10 @@ namespace AutoPayout.Sportsbook.Services
             }
         }
 
-        private bool IsMatchScoreInconsistentWithRelatedMatches(Match match, List<ResultDetail> results)
+        private static bool IsMatchScoreInconsistentWithRelatedMatches(Match match, List<ResultDetail> results)
         {
-            var totalHomeScore = results.Sum(result => result.HomeValue);
-            var totalAwayScore = results.Sum(result => result.AwayValue);
+            var totalHomeScore = results.Sum(result => Convert.ToInt32(result.HomeValue));
+            var totalAwayScore = results.Sum(result => Convert.ToInt32(result.AwayValue));
 
             var homeScoreToCompare = match.TypeId == SettleType.Halftime ? match.HtHomeScore : match.FinalHomeScore;
             var awayScoreToCompare = match.TypeId == SettleType.Halftime ? match.HtAwayScore : match.FinalAwayScore;

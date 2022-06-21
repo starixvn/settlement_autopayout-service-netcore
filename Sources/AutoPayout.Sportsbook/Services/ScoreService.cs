@@ -65,30 +65,28 @@ namespace AutoPayout.Sportsbook.Services
 
         public async Task<List<ResultDetail>> TryGetRelatedResults(Match match)
         {
-            var resultDetails = new List<ResultDetail>();
             for (var i = 0; i < appSettingsKey.TotalGoalCornerRetryCount; i++)
             {
                 var resourceId = match.TypeId == SettleType.Halftime ? ResourceId.HalfTime : ResourceId.FullTime;
                 var results = await matchQueryService.GetToalGoalCornerRelatedResults(match.MatchId);
-                var resultsChecking = results.Where(result => result.ResourceId == resourceId);
-                if (resultsChecking != null && resultsChecking.Any() && IsResultsCalculated(resultsChecking))
+                var resultsChecking = results.Where(result => result.ResourceId == resourceId && IsResultsCalculated(result));
+                if (resultsChecking.Any())
                 {
                     return resultsChecking.ToList();
                 }
 
-                resultDetails = resultsChecking.ToList();
                 if (i < appSettingsKey.RetryCount - 1)
                 {
                     await Task.Delay(appSettingsKey.TotalGoalCornerInterval);
                 }
             }
 
-            return resultDetails;
+            return new List<ResultDetail>();
         }
 
-        private static bool IsResultsCalculated(IEnumerable<ResultDetail> resultDetails)
+        private static bool IsResultsCalculated(ResultDetail resultDetail)
         {
-            return resultDetails.All(resultDetail => resultDetail.ResultStatusId == ResultStatus.ManualCompleted || resultDetail.ResultStatusId == ResultStatus.AutoCompleted);
+            return resultDetail.ResultStatusId == ResultStatus.ManualCompleted || resultDetail.ResultStatusId == ResultStatus.AutoCompleted;
         }
     }
 }

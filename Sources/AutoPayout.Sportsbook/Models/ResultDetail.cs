@@ -10,9 +10,9 @@ namespace AutoPayout.Sportsbook.Models
     {
         public string ResourceId { get; set; }
 
-        public int? HomeValue { get; set; }
+        public string HomeValue { get; set; }
 
-        public int? AwayValue { get; set; }
+        public string AwayValue { get; set; }
 
         public byte ResultStatusId { get; set; }
 
