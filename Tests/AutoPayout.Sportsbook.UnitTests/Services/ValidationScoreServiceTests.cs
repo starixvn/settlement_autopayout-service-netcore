@@ -4,6 +4,7 @@ using AutoPayout.Sportsbook.Models;
 using NSubstitute;
 using AutoPayout.Sportsbook.Services;
 using Xunit;
+using System.Collections.Generic;
 
 namespace AutoPayout.Sportsbook.UnitTests.Services
 {
@@ -13,7 +14,8 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
 
         public ValidationScoreServiceTests()
         {
-            service = new ValidationScoreServiceImp();
+            var otherInfoService = Substitute.For<OtherInfoService>();
+            service = new ValidationScoreServiceImp(otherInfoService);
         }
 
         [Fact]
@@ -76,6 +78,47 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
             // Assert
             var exception = Record.Exception(() => service.VerifyScore(match, score));
             Assert.Null(exception);
+        }
+
+        [Fact]
+        public void VerifyResultsConsistent_EmptyResultDetails_ThrowException()
+        {
+            var match = new Match();
+            var resultDetails = new List<ResultDetail>();
+
+            Assert.Throws<RelatedMatchesNotCalculatedException>(() => service.VerifyResultsConsistent(match, resultDetails));
+        }
+
+        [Fact]
+        public void VerifyResultsConsistent_MatchAndResultsFullTimeNotConsistent_ThrowException()
+        {
+            var match = new Match
+            {
+                TypeId = 2,
+                FinalHomeScore = 4,
+                FinalAwayScore = 5
+            };
+            var resultDetails = new List<ResultDetail>();
+
+            Assert.Throws<RelatedMatchesNotCalculatedException>(() => service.VerifyResultsConsistent(match, resultDetails));
+        }
+
+        [Fact]
+        public void VerifyResultsConsistent_MatchAndResultsHalfTimeNotConsistent_ThrowException()
+        {
+            var match = new Match
+            {
+                TypeId = 1,
+                HtHomeScore = 4,
+                HtAwayScore = 5
+            };
+            var resultDetails = new List<ResultDetail>
+            {
+                new ResultDetail { ChildMatchType = 204, HomeValue = "2", AwayValue = "3" },
+                new ResultDetail { HomeValue = "2", AwayValue = "4" }
+            };
+
+            Assert.Throws<RelatedMatchesInconsistentException>(() => service.VerifyResultsConsistent(match, resultDetails));
         }
     }
 }
