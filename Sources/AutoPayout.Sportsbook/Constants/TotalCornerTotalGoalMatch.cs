@@ -10,6 +10,6 @@ namespace AutoPayout.Sportsbook.Constants
     {
         public const int ChildLeagueType = 1029;
 
-        public const int MatchType = 33;
+        public const int MainType = 33;
     }
 }

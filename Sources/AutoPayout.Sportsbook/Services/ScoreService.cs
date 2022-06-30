@@ -65,17 +65,17 @@ namespace AutoPayout.Sportsbook.Services
 
         public async Task<List<ResultDetail>> TryGetRelatedResults(Match match)
         {
-            for (var i = 0; i < appSettingsKey.TotalGoalCornerRetryCount; i++)
+            for (var i = 0; i < appSettingsKey.RetryCount; i++)
             {
                 var resultsChecking = await GetResultDetail(match);
-                if (IsResultsCalculated(resultsChecking))
+                if (resultsChecking.Any() && IsResultsCalculated(resultsChecking))
                 {
                     return resultsChecking;
                 }
 
-                if (i < appSettingsKey.TotalGoalCornerRetryCount - 1)
+                if (i < appSettingsKey.RetryCount - 1)
                 {
-                    await Task.Delay(appSettingsKey.TotalGoalCornerInterval);
+                    await Task.Delay(appSettingsKey.RetryInterval);
                 }
             }
 

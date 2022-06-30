@@ -84,7 +84,7 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
                 scoreService,
                 validationGoalRecordService,
                 matchQueryService);
-            var match = new Match { MatchType = 33, ChildLeagueType = 1029 };
+            var match = new Match { MainType = 33, ChildLeagueType = 1029 };
 
             matchQueryService.GetMatchAndResultDetail(Arg.Any<int>()).Returns((new RemarkSettingModel(), new List<ResultDetail>()));
             scoreService.TryGetRelatedResults(Arg.Any<Match>()).Returns(new List<ResultDetail>());

@@ -20,8 +20,6 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
                 RetryInterval = 1000,
                 RetryCount = 1,
                 EnvironmentName = "Local",
-                TotalGoalCornerInterval = 1000,
-                TotalGoalCornerRetryCount = 1,
             };
             appSettingsKey = Options.Create(settings);
         }

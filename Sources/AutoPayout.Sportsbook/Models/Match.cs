@@ -71,14 +71,14 @@ namespace AutoPayout.Sportsbook.Models
 
         public int ChildMatchType { get; set; }
 
-        public int MatchType { get; set; }
+        public int MainType { get; set; }
 
         public int ChildLeagueType { get; set; }
 
         public bool IsSabaPenaltyShootout => SabaSoccer.LeagueGroupIds.Contains(LeagueGroupId) && SabaSoccer.LeagueIds.Contains(LeagueId)
             && (ChildMatchType == SoccerChildMatchType.PenaltyShootoutHDP || ChildMatchType == SoccerChildMatchType.PenaltyShootoutOU);
 
-        public bool IsTotalCornerGoalMatch => MatchType == TotalCornerTotalGoalMatch.MatchType && ChildLeagueType == TotalCornerTotalGoalMatch.ChildLeagueType;
+        public bool IsTotalCornerGoalMatch => MainType == TotalCornerTotalGoalMatch.MainType && ChildLeagueType == TotalCornerTotalGoalMatch.ChildLeagueType;
 
         public override bool Equals(object obj)
         {
