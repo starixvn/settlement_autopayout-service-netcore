@@ -15,9 +15,9 @@ namespace AutoPayout.Sportsbook.Services
 
         Task<MatchChecking> GetMatchInfo(int matchId);
 
-        Task<RemarkSettingModel> GetMatchRemark(int matchId);
-
         Task<Models.Result> Execute(MatchSettleCriteria criteria);
+
+        Task<(RemarkSettingModel matchRemark, List<ResultDetail> resultDetail)> GetMatchAndResultDetail(int matchId);
     }
 
     public class MatchQueryServiceImp : MatchQueryService
@@ -47,14 +47,7 @@ namespace AutoPayout.Sportsbook.Services
             var criteria = new MatchCheckingCriteria { MatchId = matchId };
             return await repository.GetAsync<MatchChecking>(criteria);
         }
-
-        public async Task<RemarkSettingModel> GetMatchRemark(int matchId)
-        {
-            var criteria = new MatchRemarkCriteria { MatchId = matchId };
-            var match = await repository.GetAsync<MatchRemark>(criteria);
-            return match.Remark;
-        }
-
+        
         public async Task<Models.Result> Execute(MatchSettleCriteria criteria)
         {
             await repository.ExecuteAsync(criteria);
@@ -64,6 +57,14 @@ namespace AutoPayout.Sportsbook.Services
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg
             };
+        }
+       
+        public async Task<(RemarkSettingModel matchRemark, List<ResultDetail> resultDetail)> GetMatchAndResultDetail(int matchId)
+        {
+            var criteria = new MatchDetailCriteria { MatchId = matchId };
+            var (matchRemark, resultDetail) = await repository.FetchMultipleAsync<MatchRemark, ResultDetail>(criteria);
+
+            return (matchRemark.FirstOrDefault()?.Remark, resultDetail.ToList());
         }
     }
 }

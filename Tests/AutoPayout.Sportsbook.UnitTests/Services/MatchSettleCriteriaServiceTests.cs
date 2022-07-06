@@ -123,5 +123,23 @@ namespace AutoPayout.Sportsbook.UnitTests.Services
             // Assert
             Assert.Equal(expectedBetStatus, actual.BetStatus);
         }
+
+        [Fact]
+        public void CreateSettleCriteria_MatchIsFullTimeAndSabaPenaltyShootout_ReturnsExpectedCriteria()
+        {
+            // Arrange
+            var betStatusHalftimeService = Substitute.For<BetStatusHalftimeService>();
+            var betStatusFullTimeService = Substitute.For<BetStatusFullTimeService>();
+            var match = new Models.Match { TypeId = 2, BetStatus = "TestBetStatus", GoalRecord = "TestGoalRecord", LeagueGroupId = 42,
+                LeagueId = 95730, ChildMatchType = 202 };
+            var matchChecking = new Models.MatchChecking { IsExistFgLg = false };
+            var matchSettleCriteriaService = new MatchSettleCriteriaServiceImp(betStatusHalftimeService, betStatusFullTimeService);
+
+            // Act
+            var actual = matchSettleCriteriaService.CreateSettleCriteria(match, matchChecking);
+
+            // Assert
+            Assert.Equal("CAL", actual.Action);
+        }
     }
 }

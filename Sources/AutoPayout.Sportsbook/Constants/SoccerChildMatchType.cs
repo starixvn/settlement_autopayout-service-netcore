@@ -13,5 +13,7 @@ namespace AutoPayout.Sportsbook.Constants
         public const int PenaltyShootoutHDP = 202;
 
         public const int PenaltyShootoutOU = 203;
+
+        public const int Corner = 204;
     }
 }

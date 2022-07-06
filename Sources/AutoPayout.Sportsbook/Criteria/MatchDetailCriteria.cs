@@ -2,7 +2,7 @@
 
 namespace AutoPayout.Sportsbook.Criteria
 {
-    public class MatchRemarkCriteria : CriteriaBase
+    public class MatchDetailCriteria : CriteriaBase
     {
         public int MatchId { get; set; }
 
