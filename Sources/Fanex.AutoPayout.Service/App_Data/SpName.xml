@@ -7,7 +7,15 @@
     <Setting Key="NAP_Set_AutoPayout_ScheduleSel" SpName="NAP_Set_AutoPayout_ScheduleSel" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_AutoPayout_ResultDetailByMatchIdSel" SpName="NAP_Set_AutoPayout_ResultDetailByMatchIdSel" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_AutoPayoutResultIns" SpName="NAP_Set_AutoPayoutResultIns" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Settlement_Validation_Event" SpName="NAP_Admin_Settlement_Validation_Event" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Admin_Settlement_1_AutoPayout_Push" SpName="NAP_Admin_Settlement_1_AutoPayout_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_AutoPayout_MatchChecking" SpName="NAP_Set_AutoPayout_MatchChecking" DbName="DBTXN.bodb02.bodbAdminNet" />
+  </Function>
+
+  <Function Name="Scale Out TransDb">
+    <Function Name="NAP_Admin_Settlement_Validation_Ticket">
+      <Setting Key="NAP_Admin_Settlement_Validation_Ticket_DBTXN" SpName="NAP_Admin_Settlement_Validation_Ticket" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_Validation_Ticket_SITEDB01" SpName="NAP_Admin_Settlement_Validation_Ticket" DbName="SITEDB01.bodb02.bodbAdminNet" />
+    </Function>
   </Function>
 </Functions>
