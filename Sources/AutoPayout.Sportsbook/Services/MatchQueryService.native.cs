@@ -70,24 +70,16 @@ namespace AutoPayout.Sportsbook.Services
             foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
-                var item = await repository.GetAsync<MatchChecking>(criteria);
+                var item = await repository.GetAsync<MatchChecking>(criteria) ?? new MatchChecking();
                 listMatchChecking.Add(item);
             }
 
-            return CheckTicketGoalAllSiteDb(listMatchChecking);
-        }
-
-        private static MatchChecking CheckTicketGoalAllSiteDb(List<MatchChecking> list)
-        {
-            var matchChecking = new MatchChecking();
-            foreach (var item in list)
+            return new MatchChecking
             {
-                matchChecking.IsExistHtFgLg |= item.IsExistHtFgLg;
-                matchChecking.IsExistFgLg |= item.IsExistFgLg;
-                matchChecking.IsExistFgNg |= item.IsExistFgNg;
-            }
-
-            return matchChecking;
+                IsExistHtFgLg = listMatchChecking.Exists(item => item.IsExistHtFgLg),
+                IsExistFgLg = listMatchChecking.Exists(item => item.IsExistFgLg),
+                IsExistFgNg = listMatchChecking.Exists(item => item.IsExistFgNg),
+            };
         }
 
         public void ExecuteAllSiteDb(MatchSettleCriteria criteria)
