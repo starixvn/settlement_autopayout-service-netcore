@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using AutoPayout.Result.Models;
 using AutoPayout.Result.Services;
 using Kaden.XmlConverter;
@@ -7,6 +8,9 @@ using AutoPayout.Sportsbook.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using Fanex.Settlement.ScaleOut.Constants;
+using Fanex.Settlement.ScaleOut.Services;
+using Fanex.Settlement.ScaleOut.Request;
 
 namespace AutoPayout.Sportsbook.Services
 {
@@ -21,88 +25,148 @@ namespace AutoPayout.Sportsbook.Services
 
         private readonly MatchSettleCriteriaService matchSettleCriteriaService;
 
-        private readonly ActionResourceService actionResourceService;
+        private readonly OtherInfoService otherInfoService;
 
-        private readonly XmlConvertService xmlConvertService;
+        private readonly ScaleOutSettleService scaleOutSettleService;
+
+        private readonly AutoPayoutResultService autoPayoutResultService;
 
         private readonly IMapper mapper;
-
-        private readonly OtherInfoService otherInfoService;
 
         public MatchSettleServiceImp(
             MatchQueryService matchQueryService,
             MatchSettleCriteriaService matchSettleCriteriaService,
-            ActionResourceService actionResourceService,
-            XmlConvertService xmlConvertService,
             IMapper mapper,
-            OtherInfoService otherInfoService)
+            OtherInfoService otherInfoService,
+            ScaleOutSettleService scaleOutSettleService,
+            AutoPayoutResultService autoPayoutResultService)
         {
             this.matchQueryService = matchQueryService;
             this.matchSettleCriteriaService = matchSettleCriteriaService;
-            this.actionResourceService = actionResourceService;
-            this.xmlConvertService = xmlConvertService;
             this.mapper = mapper;
             this.otherInfoService = otherInfoService;
+            this.scaleOutSettleService = scaleOutSettleService;
+            this.autoPayoutResultService = autoPayoutResultService;
         }
 
         public async Task<Models.Result> Settle(Match match, int sourceId)
         {
-            var result = await Execute(match, sourceId);
+            var actionName = match.TypeId == SettleType.Halftime ? ActionName.CalculateHalfTime : ActionName.CalculateFullTime;
+            var resultValidation = await ValidateBeforePushing(match, actionName);
 
-            if (result.ErrCode == 0)
+            if (resultValidation.ErrCode == 0)
             {
-                return await HedgeMatch(match, sourceId);
+                var matchChecking = await matchQueryService.GetMatchInfo(match.MatchId);
+                var resourceResult = GetResourceResult(match, matchChecking);
+                await scaleOutSettleService.UpdateUnderSettlementFlag(match.MatchId, 0, actionName);
+                await autoPayoutResultService.Insert(match, sourceId, MatchStatus.Waiting);
+                await UpdateMatchInfo(match, actionName, resourceResult);
+
+                await Execute(match, matchChecking, resourceResult, sourceId);
+
+                await UpdateAutoRefundChildMatch(match, actionName);
+                await SettleHedgeMatch(match, matchChecking, resourceResult, actionName, sourceId);
             }
 
-            return result;
+            return resultValidation;
         }
 
-        private async Task<Models.Result> HedgeMatch(Match match, int sourceId)
+        private async Task SettleHedgeMatch(
+            Match match, 
+            MatchChecking matchChecking, 
+            string resourceResult,
+            string actionName,
+            int sourceId)
         {
             var hedgeMatch = await matchQueryService.GetHedgeMatchId(match.MatchId);
             if (hedgeMatch.MatchId > 0 && !hedgeMatch.IsUndecided)
             {
                 match.MatchId = hedgeMatch.MatchId;
-                return await Execute(match, sourceId);
+                await scaleOutSettleService.UpdateUnderSettlementFlag(match.MatchId, 0, actionName);
+                await autoPayoutResultService.Insert(match, sourceId, MatchStatus.Waiting);
+                await UpdateMatchInfo(match, actionName, resourceResult);
+                await Execute(match, matchChecking, resourceResult, sourceId);
+            }
+        }
+
+        private async Task UpdateMatchInfo(Match match, string actionName, string resourceResult)
+        {
+            var updateMatchInfoRequest = new UpdateMatchInfoRequest
+            {
+                MatchId = match.MatchId,
+                Action = actionName,
+                HalfTimeHome = match.HtHomeScore,
+                HalfTimeAway = match.HtAwayScore,
+                FullTimeHome = match.FinalHomeScore,
+                FullTimeAway = match.FinalAwayScore,
+                GoalRecord = match.GoalRecord,
+                BetStatus = match.BetStatus, 
+                IsAuto = true,
+                ResourceResult = resourceResult
+            };
+
+            await scaleOutSettleService.UpdateMatchInfo(updateMatchInfoRequest);
+        }
+
+        private async Task UpdateAutoRefundChildMatch(Match match, string actionName)
+        {
+            var request = new RefundChildMatchRequest
+            {
+                ParentId = match.MatchId,
+                ActionName = actionName,
+                LeagueGroupId = match.LeagueGroupId
+            };
+
+            if (match.TypeId == SettleType.Halftime)
+            {
+                request.HomeValue = match.HtHomeScore;
+                request.AwayValue = match.HtAwayScore;
+            }
+            else
+            {
+                request.HomeValue = match.FinalHomeScore;
+                request.AwayValue = match.FinalAwayScore;
             }
 
-            return new Models.Result();
+            await scaleOutSettleService.UpdateAutoRefundChildMatch(request);
         }
 
-        private async Task<Models.Result> Execute(Match match, int sourceId)
+        private async Task<Models.Result> ValidateBeforePushing(Match match, string actionName)
         {
-            var matchChecking = await matchQueryService.GetMatchInfo(match.MatchId);
-            var resourceResult = GetResource(match, matchChecking);
-            var criteria = matchSettleCriteriaService.CreateSettleCriteria(match, matchChecking);
-            criteria.SourceId = sourceId;
-            criteria.ResourceResult = resourceResult;
-            criteria.RefResult = await GetRelatedInfo(match);
-            return await matchQueryService.Execute(criteria);
+            var request = new EventTicketRequest
+            {
+                MatchId = match.MatchId,
+                Mode = match.TypeId == SettleType.Halftime ? Mode.HalfTime : Mode.FullTime,
+                Action = actionName,
+                IsAuto = true,
+                SpName = "NAP_Admin_Settlement_1_AutoPayout_Push"
+            };
+
+            var result = await scaleOutSettleService.ValidateEventAndTicket(request);
+
+            return new Models.Result
+            {
+                ErrCode = result.ErrorCode,
+                ErrMsg = result.ErrorMessage
+            };
         }
 
-        private string GetResource(Match match, MatchChecking matchChecking)
+      
+        private string GetResourceResult(Match match, MatchChecking matchChecking)
         {
             var goal = mapper.Map<MatchChecking, Goal>(matchChecking);
             goal.GoalRecord = match.GoalRecord;
 
-            var resources = match.TypeId == SettleType.Halftime
-                ? actionResourceService.HalftimeResources(goal)
-                : actionResourceService.FullTimeGoalResources(goal);
-
-            return SerializeObjectToString(resources);
+            return matchQueryService.GetResource(match.TypeId, goal);
         }
 
-        private string SerializeObjectToString(List<XmlResource> resources)
+        private async Task Execute(Match match, MatchChecking matchChecking, string resourceResult, int sourceId)
         {
-            if (resources.Count > 0)
-            {
-                var xmlResults = new XmlResults { Resources = resources };
-                return xmlConvertService.Serialize(xmlResults);
-            }
-            else
-            {
-                return string.Empty;
-            }
+            var criteria = matchSettleCriteriaService.CreateSettleCriteria(match, matchChecking);
+            criteria.SourceId = sourceId;
+            criteria.ResourceResult = resourceResult;
+            criteria.RefResult = await GetRelatedInfo(match);
+            matchQueryService.ExecuteAllSiteDb(criteria);
         }
 
         private async Task<string> GetRelatedInfo(Match match)

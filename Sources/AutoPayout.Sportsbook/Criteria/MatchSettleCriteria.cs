@@ -1,5 +1,7 @@
 ﻿using AutoPayout.Sportsbook.Models;
+using Fanex.Data;
 using Fanex.Data.Repository;
+using System;
 
 namespace AutoPayout.Sportsbook.Criteria
 {
@@ -34,14 +36,13 @@ namespace AutoPayout.Sportsbook.Criteria
 
         public string RefResult { get; set; }
 
-        public override bool IsValid()
-        {
-            return true;
-        }
+        public string BroadcastSessionId = Guid.NewGuid().ToString();
 
-        public override string GetSettingKey()
-        {
-            return "NAP_Admin_Settlement_1_AutoPayout_Push";
-        }
+        [SpParam(Ignored = true)]
+        public string DbServer { get; set; }
+
+        public override bool IsValid() => MatchId > 0;
+
+        public override string GetSettingKey() => $"NAP_Admin_Settlement_1_AutoPayout_Push_{DbServer}";
     }
 }
