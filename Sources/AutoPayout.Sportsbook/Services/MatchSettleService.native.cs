@@ -8,6 +8,7 @@ using AutoPayout.Sportsbook.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using AutoPayout.Sportsbook.Criteria;
 using Fanex.Settlement.ScaleOut.Constants;
 using Fanex.Settlement.ScaleOut.Services;
 using Fanex.Settlement.ScaleOut.Request;
@@ -60,9 +61,8 @@ namespace AutoPayout.Sportsbook.Services
                 var resourceResult = GetResourceResult(match, matchChecking);
                 await scaleOutSettleService.UpdateUnderSettlementFlag(match.MatchId, 0, actionName);
                 await autoPayoutResultService.Insert(match, sourceId, MatchStatus.Waiting);
-                await UpdateMatchInfo(match, actionName, resourceResult);
 
-                await Execute(match, matchChecking, resourceResult, sourceId);
+                await Execute(match, matchChecking, resourceResult, sourceId, actionName);
 
                 await UpdateAutoRefundChildMatch(match, actionName);
                 await SettleHedgeMatch(match, matchChecking, resourceResult, actionName, sourceId);
@@ -72,8 +72,8 @@ namespace AutoPayout.Sportsbook.Services
         }
 
         private async Task SettleHedgeMatch(
-            Match match, 
-            MatchChecking matchChecking, 
+            Match match,
+            MatchChecking matchChecking,
             string resourceResult,
             string actionName,
             int sourceId)
@@ -84,25 +84,24 @@ namespace AutoPayout.Sportsbook.Services
                 match.MatchId = hedgeMatch.MatchId;
                 await scaleOutSettleService.UpdateUnderSettlementFlag(match.MatchId, 0, actionName);
                 await autoPayoutResultService.Insert(match, sourceId, MatchStatus.Waiting);
-                await UpdateMatchInfo(match, actionName, resourceResult);
-                await Execute(match, matchChecking, resourceResult, sourceId);
+                await Execute(match, matchChecking, resourceResult, sourceId, actionName);
             }
         }
 
-        private async Task UpdateMatchInfo(Match match, string actionName, string resourceResult)
+        private async Task UpdateMatchInfo(Match match, string actionName, MatchSettleCriteria criteria)
         {
             var updateMatchInfoRequest = new UpdateMatchInfoRequest
             {
-                MatchId = match.MatchId,
+                MatchId = criteria.MatchId,
                 Action = actionName,
                 HalfTimeHome = match.HtHomeScore,
                 HalfTimeAway = match.HtAwayScore,
                 FullTimeHome = match.FinalHomeScore,
                 FullTimeAway = match.FinalAwayScore,
-                GoalRecord = match.GoalRecord,
-                BetStatus = match.BetStatus, 
+                GoalRecord = criteria.GoalRecord,
+                BetStatus = criteria.BetStatus,
                 IsAuto = true,
-                ResourceResult = resourceResult
+                ResourceResult = criteria.ResourceResult
             };
 
             await scaleOutSettleService.UpdateMatchInfo(updateMatchInfoRequest);
@@ -151,7 +150,6 @@ namespace AutoPayout.Sportsbook.Services
             };
         }
 
-      
         private string GetResourceResult(Match match, MatchChecking matchChecking)
         {
             var goal = mapper.Map<MatchChecking, Goal>(matchChecking);
@@ -160,18 +158,20 @@ namespace AutoPayout.Sportsbook.Services
             return matchQueryService.GetResource(match.TypeId, goal);
         }
 
-        private async Task Execute(Match match, MatchChecking matchChecking, string resourceResult, int sourceId)
+        private async Task Execute(Match match, MatchChecking matchChecking, string resourceResult, int sourceId, string actionName)
         {
             var criteria = matchSettleCriteriaService.CreateSettleCriteria(match, matchChecking);
             criteria.SourceId = sourceId;
             criteria.ResourceResult = resourceResult;
             criteria.RefResult = await GetRelatedInfo(match);
+            await UpdateMatchInfo(match, actionName, criteria);
             matchQueryService.ExecuteAllSiteDb(criteria);
         }
 
         private async Task<string> GetRelatedInfo(Match match)
         {
-            if (match.IsTotalCornerGoalMatch) {
+            if (match.IsTotalCornerGoalMatch)
+            {
                 var resourceId = match.TypeId == SettleType.Halftime ? ResourceId.HalfTime : ResourceId.FullTime;
                 var (_, resultDetail) = await matchQueryService.GetMatchAndResultDetail(match.MatchId);
                 var resultsChecking = resultDetail.Where(result => result.ResourceId == resourceId).ToList();

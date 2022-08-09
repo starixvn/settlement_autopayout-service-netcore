@@ -79,6 +79,8 @@ namespace AutoPayout.Sportsbook.Services
                 IsExistHtFgLg = listMatchChecking.Exists(item => item.IsExistHtFgLg),
                 IsExistFgLg = listMatchChecking.Exists(item => item.IsExistFgLg),
                 IsExistFgNg = listMatchChecking.Exists(item => item.IsExistFgNg),
+                IsEnabledGoalRecordFt = listMatchChecking.Exists(item => item.IsEnabledGoalRecordFt),
+                IsEnabledGoalRecordHt = listMatchChecking.Exists(item => item.IsEnabledGoalRecordHt)
             };
         }
 
@@ -90,7 +92,7 @@ namespace AutoPayout.Sportsbook.Services
                 repository.Execute(criteria);
             }
         }
-       
+
         public async Task<(RemarkSettingModel matchRemark, List<ResultDetail> resultDetail)> GetMatchAndResultDetail(int matchId)
         {
             var criteria = new MatchDetailCriteria { MatchId = matchId };
@@ -107,7 +109,6 @@ namespace AutoPayout.Sportsbook.Services
 
             return SerializeObjectToString(resources);
         }
-
 
         private string SerializeObjectToString(List<XmlResource> resources)
         {
