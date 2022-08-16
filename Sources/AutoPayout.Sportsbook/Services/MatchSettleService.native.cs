@@ -53,12 +53,12 @@ namespace AutoPayout.Sportsbook.Services
         public async Task<Models.Result> Settle(Match match, int sourceId)
         {
             var actionName = match.TypeId == SettleType.Halftime ? ActionName.CalculateHalfTime : ActionName.CalculateFullTime;
-            var resultValidation = await ValidateBeforePushing(match, actionName);
 
+            var matchChecking = await matchQueryService.GetMatchInfo(match.MatchId);
+            var resourceResult = GetResourceResult(match, matchChecking);
+            var resultValidation = await ValidateBeforePushing(match, actionName, resourceResult);
             if (resultValidation.ErrCode == 0)
             {
-                var matchChecking = await matchQueryService.GetMatchInfo(match.MatchId);
-                var resourceResult = GetResourceResult(match, matchChecking);
                 await scaleOutSettleService.UpdateUnderSettlementFlag(match.MatchId, 0, actionName);
                 await autoPayoutResultService.Insert(match, sourceId, MatchStatus.Waiting);
 
@@ -130,7 +130,7 @@ namespace AutoPayout.Sportsbook.Services
             await scaleOutSettleService.UpdateAutoRefundChildMatch(request);
         }
 
-        private async Task<Models.Result> ValidateBeforePushing(Match match, string actionName)
+        private async Task<Models.Result> ValidateBeforePushing(Match match, string actionName, string resourceResult)
         {
             var request = new EventTicketRequest
             {
@@ -138,7 +138,8 @@ namespace AutoPayout.Sportsbook.Services
                 Mode = match.TypeId == SettleType.Halftime ? Mode.HalfTime : Mode.FullTime,
                 Action = actionName,
                 IsAuto = true,
-                SpName = "NAP_Admin_Settlement_1_AutoPayout_Push"
+                SpName = "NAP_Admin_Settlement_1_AutoPayout_Push",
+                ResourceResult = resourceResult
             };
 
             var result = await scaleOutSettleService.ValidateEventAndTicket(request);
