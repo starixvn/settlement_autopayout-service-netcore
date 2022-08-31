@@ -41,7 +41,7 @@ namespace AutoPayout.Result.Services
                 resources.Add(CreateCalculateResource(ResourceKey.HalftimeLastGoal, lastGoal));
             }
 
-            if (goal.IsExistFgNg)
+            if (goal.IsExistFgNg && !string.IsNullOrEmpty(goal.GoalRecord))
             {
                 resources.Add(CreateCalculateResource(ResourceKey.FullTimeFirstGoal, firstGoal));
             }
