@@ -36,7 +36,7 @@ namespace AutoPayout.Sportsbook.Criteria
 
         public string RefResult { get; set; }
 
-        public string BroadcastSessionId = Guid.NewGuid().ToString();
+        public string BroadcastSessionId { get; } = Guid.NewGuid().ToString();
 
         [SpParam(Ignored = true)]
         public string DbServer { get; set; }
