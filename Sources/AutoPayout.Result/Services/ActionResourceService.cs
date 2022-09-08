@@ -30,7 +30,6 @@ namespace AutoPayout.Result.Services
         public List<XmlResource> HalftimeResources(Goal goal)
         {
             var resources = new List<XmlResource>();
-
             var halftimeGoal = goalRecordService.HalftimeGoal(goal.GoalRecord);
             var firstGoal = goalResultService.FirstGoal(halftimeGoal);
 
@@ -41,7 +40,7 @@ namespace AutoPayout.Result.Services
                 resources.Add(CreateCalculateResource(ResourceKey.HalftimeLastGoal, lastGoal));
             }
 
-            if (goal.IsExistFgNg && !string.IsNullOrEmpty(goal.GoalRecord))
+            if (goal.IsExistFgNg && !string.IsNullOrWhiteSpace(halftimeGoal))
             {
                 resources.Add(CreateCalculateResource(ResourceKey.FullTimeFirstGoal, firstGoal));
             }
