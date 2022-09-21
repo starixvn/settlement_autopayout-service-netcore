@@ -1,4 +1,6 @@
-﻿namespace AutoPayout.Sportsbook.Models
+﻿using System.Collections.Generic;
+
+namespace AutoPayout.Sportsbook.Models
 {
     public class AppSettingsKey
     {
@@ -7,5 +9,7 @@
         public int RetryInterval { get; set; }
 
         public string EnvironmentName { get; set; }
+
+        public List<string> SiteDbServer { get; set; }
     }
 }

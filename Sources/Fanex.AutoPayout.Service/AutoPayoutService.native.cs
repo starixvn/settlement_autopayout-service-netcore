@@ -60,7 +60,7 @@ namespace Fanex.AutoPayout.Service
             e.SetObserved();
             e.Exception.Handle(x =>
             {
-                Logging.LogService.Error(x.Message, x);
+                LogService.Error(x.Message, x);
                 return true;
             });
         }
@@ -102,7 +102,7 @@ namespace Fanex.AutoPayout.Service
             }
             catch (Exception exception)
             {
-                Logging.LogService.Error("Exception in main thread - Process:", exception);
+                LogService.Error("Exception in main thread - Process:", exception);
             }
         }
 
@@ -150,7 +150,7 @@ namespace Fanex.AutoPayout.Service
 
             var sentryEngineOptions = new SentryEngineOptions
             {
-                Dsn = new Dsn(configuration.GetSection("Sentrytoken").Value)
+                Dsn = new Dsn(configuration.GetSection("SentryToken").Value)
             };
 
             logEngine.Add(new SentryLogging(sentryEngineOptions));

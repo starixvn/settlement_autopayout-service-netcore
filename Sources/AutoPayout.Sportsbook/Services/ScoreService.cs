@@ -3,7 +3,6 @@ using AutoPayout.Sportsbook.Constants;
 using AutoPayout.Sportsbook.Criteria;
 using AutoPayout.Sportsbook.Models;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;

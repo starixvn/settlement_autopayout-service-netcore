@@ -6,14 +6,8 @@ namespace AutoPayout.Sportsbook.Criteria
     {
         public int MatchId { get; set; }
 
-        public override bool IsValid()
-        {
-            return true;
-        }
+        public override bool IsValid() => true;
 
-        public override string GetSettingKey()
-        {
-            return "NAP_Set_AutoPayout_ResultDetailByMatchIdSel";
-        }
+        public override string GetSettingKey() => "NAP_Set_AutoPayout_ResultDetailByMatchIdSel";
     }
 }

@@ -1,4 +1,5 @@
-﻿using Fanex.Data.Repository;
+﻿using Fanex.Data;
+using Fanex.Data.Repository;
 
 namespace AutoPayout.Sportsbook.Criteria
 {
@@ -6,14 +7,11 @@ namespace AutoPayout.Sportsbook.Criteria
     {
         public int MatchId { get; set; }
 
-        public override bool IsValid()
-        {
-            return MatchId > 0;
-        }
+        [SpParam(Ignored = true)]
+        public string DbServer { get; set; }
 
-        public override string GetSettingKey()
-        {
-            return "NAP_Set_AutoPayout_MatchChecking";
-        }
+        public override bool IsValid() => MatchId > 0;
+
+        public override string GetSettingKey() => $"NAP_Set_AutoPayout_MatchChecking_{DbServer}";
     }
 }

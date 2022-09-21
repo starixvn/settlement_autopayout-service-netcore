@@ -30,12 +30,6 @@ namespace AutoPayout.Sportsbook.Services
                 StatusId = status
             };
 
-            criteria = SetScore(match, criteria);
-            await repository.ExecuteAsync(criteria);
-        }
-
-        private static AddAutoPayoutResultCriteria SetScore(Match match, AddAutoPayoutResultCriteria criteria)
-        {
             if (match.TypeId == SettleType.Halftime)
             {
                 criteria.HomeValue = match.HtHomeScore ?? 0;
@@ -47,7 +41,7 @@ namespace AutoPayout.Sportsbook.Services
                 criteria.AwayValue = match.FinalAwayScore ?? 0;
             }
 
-            return criteria;
+            await repository.ExecuteAsync(criteria);
         }
     }
 }

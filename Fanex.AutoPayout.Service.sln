@@ -9,13 +9,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{20B4
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8368AB61-E027-4054-B1C0-EF211FD01536}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoPayout.Result", "Sources\AutoPayout.Result\AutoPayout.Result.csproj", "{EFB5383F-51C2-4655-A026-4B4245D7B07B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoPayout.Result", "Sources\AutoPayout.Result\AutoPayout.Result.csproj", "{EFB5383F-51C2-4655-A026-4B4245D7B07B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoPayout.Sportsbook", "Sources\AutoPayout.Sportsbook\AutoPayout.Sportsbook.csproj", "{1C5859B1-1701-4585-92DF-B55A562262EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoPayout.Sportsbook", "Sources\AutoPayout.Sportsbook\AutoPayout.Sportsbook.csproj", "{1C5859B1-1701-4585-92DF-B55A562262EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoPayout.Result.UnitTests", "Tests\AutoPayout.Result.UnitTests\AutoPayout.Result.UnitTests.csproj", "{D1539553-F6DF-4AFA-9987-850C61BE215B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoPayout.Result.UnitTests", "Tests\AutoPayout.Result.UnitTests\AutoPayout.Result.UnitTests.csproj", "{D1539553-F6DF-4AFA-9987-850C61BE215B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoPayout.Sportsbook.UnitTests", "Tests\AutoPayout.Sportsbook.UnitTests\AutoPayout.Sportsbook.UnitTests.csproj", "{94730707-D551-43CE-9AB8-D8B55606557F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoPayout.Sportsbook.UnitTests", "Tests\AutoPayout.Sportsbook.UnitTests\AutoPayout.Sportsbook.UnitTests.csproj", "{94730707-D551-43CE-9AB8-D8B55606557F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
