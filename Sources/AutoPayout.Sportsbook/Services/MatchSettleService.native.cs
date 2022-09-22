@@ -1,17 +1,13 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using AutoPayout.Result.Models;
-using AutoPayout.Result.Services;
-using Kaden.XmlConverter;
 using AutoPayout.Sportsbook.Constants;
-using AutoPayout.Sportsbook.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
 using AutoPayout.Sportsbook.Criteria;
+using AutoPayout.Sportsbook.Models;
 using Fanex.Settlement.ScaleOut.Constants;
-using Fanex.Settlement.ScaleOut.Services;
 using Fanex.Settlement.ScaleOut.Request;
+using Fanex.Settlement.ScaleOut.Services;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AutoPayout.Sportsbook.Services
 {
@@ -88,12 +84,12 @@ namespace AutoPayout.Sportsbook.Services
             }
         }
 
-        private async Task UpdateMatchInfo(Match match, string actionName, MatchSettleCriteria criteria)
+        private async Task UpdateMatchInfo(Match match, MatchSettleCriteria criteria)
         {
             var updateMatchInfoRequest = new UpdateMatchInfoRequest
             {
                 MatchId = criteria.MatchId,
-                Action = actionName,
+                Action = criteria.Action,
                 HalfTimeHome = match.HtHomeScore,
                 HalfTimeAway = match.HtAwayScore,
                 FullTimeHome = match.FinalHomeScore,
@@ -165,7 +161,7 @@ namespace AutoPayout.Sportsbook.Services
             criteria.SourceId = sourceId;
             criteria.ResourceResult = resourceResult;
             criteria.RefResult = await GetRelatedInfo(match);
-            await UpdateMatchInfo(match, actionName, criteria);
+            await UpdateMatchInfo(match, criteria);
             matchQueryService.ExecuteAllSiteDb(criteria);
         }
 
