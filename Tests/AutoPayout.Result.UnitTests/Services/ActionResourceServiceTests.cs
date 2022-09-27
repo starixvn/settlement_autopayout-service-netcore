@@ -119,6 +119,8 @@ namespace AutoPayout.Result.UnitTests.Services
             // Arrange
             var goal = new Goal { IsExistFgNg = true };
             firstGoalService.FirstGoal(Arg.Any<string>()).Returns("A");
+            goalRecordService.HalftimeGoal(Arg.Any<string>()).Returns("AHH");
+
             var service = new ActionResourceServiceImp(firstGoalService, goalRecordService);
 
             // Act
@@ -144,7 +146,7 @@ namespace AutoPayout.Result.UnitTests.Services
             AssertExtension.AreEqual(HalftimeGoalRecordResources(), actualResources);
         }
 
-       [Fact]
+        [Fact]
         public void HalftimeResources_IsNotExistHtFgLgAndNotEnabledGoalRecordHt_ReturnsEmpty()
         {
             // Arrange
@@ -158,7 +160,7 @@ namespace AutoPayout.Result.UnitTests.Services
             Assert.Empty(actualResources);
         }
 
-       [Fact]
+        [Fact]
         public void HalftimeResources_IsExistHtFgLgAndEnabledGoalRecordHt_ReturnsThreeResourceItem()
         {
             // Arrange
@@ -172,7 +174,7 @@ namespace AutoPayout.Result.UnitTests.Services
             Assert.True(actualResources.Count == 3);
         }
 
-       [Fact]
+        [Fact]
         public void FullTimeGoalResources_ExistFgLg_ReturnsExpectedResources()
         {
             // Arrange
@@ -191,7 +193,7 @@ namespace AutoPayout.Result.UnitTests.Services
             AssertExtension.AreEqual(expectedResources, actualResources);
         }
 
-       [Fact]
+        [Fact]
         public void FullTimeGoalResources_IsEnabledGoalRecordFt_ReturnsExpectedResources()
         {
             // Arrange
@@ -206,7 +208,7 @@ namespace AutoPayout.Result.UnitTests.Services
             AssertExtension.AreEqual(FullTimeGoalRecordResources(), actualResources);
         }
 
-       [Fact]
+        [Fact]
         public void FullTimeGoalResources_IsNotExistFgLgAndNotEnabledGoalRecordFt_ReturnsEmptyResources()
         {
             // Arrange
@@ -219,7 +221,7 @@ namespace AutoPayout.Result.UnitTests.Services
             Assert.Empty(actualResources);
         }
 
-       [Fact]
+        [Fact]
         public void FullTimeGoalResources_IsExistFgLgAndEnabledGoalRecordFt_ReturnsThreeResourceItem()
         {
             // Arrange
