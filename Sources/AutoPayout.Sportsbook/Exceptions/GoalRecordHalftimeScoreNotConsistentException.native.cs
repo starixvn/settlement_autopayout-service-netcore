@@ -1,29 +1,25 @@
-﻿using System;
-using System.Runtime.Serialization;
+﻿namespace AutoPayout.Sportsbook.Exceptions;
 
-namespace AutoPayout.Sportsbook.Exceptions
+[Serializable]
+public class GoalRecordHalftimeScoreNotConsistentException : AutoPayoutException
 {
-    [Serializable]
-    public class GoalRecordHalftimeScoreNotConsistentException : AutoPayoutException
+    public GoalRecordHalftimeScoreNotConsistentException()
     {
-        public GoalRecordHalftimeScoreNotConsistentException()
-        {
-            Description = "Failed: Goal Record of HT is not consistent with HT Scores.";
-        }
+        Description = "Failed: Goal Record of HT is not consistent with HT Scores.";
+    }
 
-        public GoalRecordHalftimeScoreNotConsistentException(string message)
-            : base(message)
-        {
-        }
+    public GoalRecordHalftimeScoreNotConsistentException(string message)
+        : base(message)
+    {
+    }
 
-        public GoalRecordHalftimeScoreNotConsistentException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
+    public GoalRecordHalftimeScoreNotConsistentException(string message, Exception innerException)
+        : base(message, innerException)
+    {
+    }
 
-        protected GoalRecordHalftimeScoreNotConsistentException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
+    protected GoalRecordHalftimeScoreNotConsistentException(SerializationInfo info, StreamingContext context)
+        : base(info, context)
+    {
     }
 }

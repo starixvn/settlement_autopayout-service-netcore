@@ -1,9 +1,8 @@
-﻿namespace AutoPayout.Sportsbook.Models
-{
-    public class MatchHedgeDetail
-    {
-        public int MatchId { get; set; }
+﻿namespace AutoPayout.Sportsbook.Models;
 
-        public bool IsUndecided { get; set; }
-    }
+public class MatchHedgeDetail
+{
+    public int MatchId { get; set; }
+
+    public bool IsUndecided { get; set; }
 }

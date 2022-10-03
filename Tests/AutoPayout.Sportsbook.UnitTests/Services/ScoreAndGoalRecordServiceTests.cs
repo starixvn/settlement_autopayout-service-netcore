@@ -1,98 +1,96 @@
 ﻿using AutoPayout.Sportsbook.Models;
 using AutoPayout.Sportsbook.Services;
-using Xunit;
 
-namespace AutoPayout.Sportsbook.UnitTests.Services
+namespace AutoPayout.Sportsbook.UnitTests.Services;
+
+public class ScoreAndGoalRecordServiceTests
 {
-    public class ScoreAndGoalRecordServiceTests
+    private readonly ScoreAndGoalRecordService service;
+
+    public ScoreAndGoalRecordServiceTests()
     {
-        private readonly ScoreAndGoalRecordService service;
+        service = new ScoreAndGoalRecordServiceImp();
+    }
 
-        public ScoreAndGoalRecordServiceTests()
+    [Theory]
+    [InlineData(null, null, ";")]
+    public void IsConsistentHalftime_ScoreAndGoalRecordValue_ReturnsFalse(
+        int? homeScore, int? awayScore, string goalRecord)
+    {
+        // Arrange
+        var match = new Match
         {
-            service = new ScoreAndGoalRecordServiceImp();
-        }
+            HtHomeScore = homeScore,
+            HtAwayScore = awayScore,
+            GoalRecord = goalRecord
+        };
 
-        [Theory]
-        [InlineData(null, null, ";")]
-        public void IsConsistentHalftime_ScoreAndGoalRecordValue_ReturnsFalse(
-            int? homeScore, int? awayScore, string goalRecord)
+        // Act
+        var isConsistent = service.IsConsistentHalftime(match);
+
+        // Assert
+        Assert.False(isConsistent);
+    }
+
+    [Theory]
+    [InlineData(0, 0, "")]
+    [InlineData(0, 0, ";")]
+    [InlineData(1, 0, "H;")]
+    [InlineData(0, 1, "a;")]
+    [InlineData(2, 1, "Hha;")]
+    [InlineData(2, 3, "HaaAh;hahaaaa")]
+    public void IsConsistentHalftime_ScoreAndGoalRecordValue_ReturnsTrue(
+        int? homeScore, int? awayScore, string goalRecord)
+    {
+        // Arrange
+        var match = new Match
         {
-            // Arrange
-            var match = new Match
-            {
-                HtHomeScore = homeScore,
-                HtAwayScore = awayScore,
-                GoalRecord = goalRecord
-            };
+            HtHomeScore = homeScore,
+            HtAwayScore = awayScore,
+            GoalRecord = goalRecord
+        };
 
-            // Act
-            var isConsistent = service.IsConsistentHalftime(match);
+        // Act
+        var isConsistent = service.IsConsistentHalftime(match);
 
-            // Assert
-            Assert.False(isConsistent);
-        }
+        // Assert
+        Assert.True(isConsistent);
+    }
 
-        [Theory]
-        [InlineData(0, 0, "")]
-        [InlineData(0, 0, ";")]
-        [InlineData(1, 0, "H;")]
-        [InlineData(0, 1, "a;")]
-        [InlineData(2, 1, "Hha;")]
-        [InlineData(2, 3, "HaaAh;hahaaaa")]
-        public void IsConsistentHalftime_ScoreAndGoalRecordValue_ReturnsTrue(
-            int? homeScore, int? awayScore, string goalRecord)
+    [Theory]
+    [InlineData(0, 0, "")]
+    [InlineData(0, 0, ";")]
+    [InlineData(1, 0, ";H")]
+    [InlineData(0, 1, ";a")]
+    [InlineData(2, 1, ";Hha")]
+    [InlineData(2, 3, "haHAA")]
+    public void IsConsistentFullTime_ScoreAndGoalRecordValue_ReturnsTrue(
+       int? homeScore, int? awayScore, string goalRecord)
+    {
+        // Arrange
+        var match = new Match
         {
-            // Arrange
-            var match = new Match
-            {
-                HtHomeScore = homeScore,
-                HtAwayScore = awayScore,
-                GoalRecord = goalRecord
-            };
+            FinalHomeScore = homeScore,
+            FinalAwayScore = awayScore,
+            GoalRecord = goalRecord
+        };
 
-            // Act
-            var isConsistent = service.IsConsistentHalftime(match);
+        // Act
+        var isConsistent = service.IsConsistentFullTime(match);
 
-            // Assert
-            Assert.True(isConsistent);
-        }
+        // Assert
+        Assert.True(isConsistent);
+    }
 
-        [Theory]
-        [InlineData(0, 0, "")]
-        [InlineData(0, 0, ";")]
-        [InlineData(1, 0, ";H")]
-        [InlineData(0, 1, ";a")]
-        [InlineData(2, 1, ";Hha")]
-        [InlineData(2, 3, "haHAA")]
-        public void IsConsistentFullTime_ScoreAndGoalRecordValue_ReturnsTrue(
-           int? homeScore, int? awayScore, string goalRecord)
-        {
-            // Arrange
-            var match = new Match
-            {
-                FinalHomeScore = homeScore,
-                FinalAwayScore = awayScore,
-                GoalRecord = goalRecord
-            };
+    [Theory]
+    [InlineData(";Hha")]
+    [InlineData(";")]
+    public void IsExistedSemiColon_GoalRecordValue_ReturnsTrue(string goalRecord)
+    {
+        // Act
+        var IsExistedSemiColon = service.IsExistedSemiColon(goalRecord);
 
-            // Act
-            var isConsistent = service.IsConsistentFullTime(match);
-
-            // Assert
-            Assert.True(isConsistent);
-        }
-
-        [Theory]
-        [InlineData(";Hha")]
-        [InlineData(";")]
-        public void IsExistedSemiColon_GoalRecordValue_ReturnsTrue(string goalRecord)
-        {
-            // Act
-            var IsExistedSemiColon = service.IsExistedSemiColon(goalRecord);
-
-            // Assert
-            Assert.True(IsExistedSemiColon);
-        }
+        // Assert
+        Assert.True(IsExistedSemiColon);
     }
 }

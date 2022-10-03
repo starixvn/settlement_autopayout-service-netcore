@@ -1,51 +1,50 @@
 ﻿using Kaden.Extensions;
 
-namespace AutoPayout.Sportsbook.Services
+namespace AutoPayout.Sportsbook.Services;
+
+public interface BetStatusService
 {
-    public interface BetStatusService
+    string GenerateBetStatus(string goalRecord);
+    string GenerateBetStatus(string prefix, string goalRecord);
+}
+
+public class BetStatusServiceImp : BetStatusService
+{
+    private const string HomeGoal = "1";
+
+    private const string AwayGoal = "2";
+
+    public string GenerateBetStatus(string goalRecord)
     {
-        string GenerateBetStatus(string goalRecord);
-        string GenerateBetStatus(string prefix, string goalRecord);
+        if (string.IsNullOrWhiteSpace(goalRecord))
+        {
+            return string.Empty;
+        }
+        else
+        {
+            var firstGoal = goalRecord.IgnoreCaseStartsWith("h") ? HomeGoal : AwayGoal;
+
+            return BetStatus("FL", firstGoal, "0");
+        }
     }
 
-    public class BetStatusServiceImp : BetStatusService
+    public string GenerateBetStatus(string prefix, string goalRecord)
     {
-        private const string HomeGoal = "1";
-
-        private const string AwayGoal = "2";
-
-        public string GenerateBetStatus(string goalRecord)
+        if (string.IsNullOrWhiteSpace(goalRecord))
         {
-            if (string.IsNullOrWhiteSpace(goalRecord))
-            {
-                return string.Empty;
-            }
-            else
-            {
-                var firstGoal = goalRecord.IgnoreCaseStartsWith("h") ? HomeGoal : AwayGoal;
-
-                return BetStatus("FL", firstGoal, "0");
-            }
+            return BetStatus(prefix, "0", "0");
         }
-
-        public string GenerateBetStatus(string prefix, string goalRecord)
+        else
         {
-            if (string.IsNullOrWhiteSpace(goalRecord))
-            {
-                return BetStatus(prefix, "0", "0");
-            }
-            else
-            {
-                var firstGoal = goalRecord.IgnoreCaseStartsWith("h") ? HomeGoal : AwayGoal;
-                var lastGoal = goalRecord.IgnoreCaseEndsWith("h") ? HomeGoal : AwayGoal;
+            var firstGoal = goalRecord.IgnoreCaseStartsWith("h") ? HomeGoal : AwayGoal;
+            var lastGoal = goalRecord.IgnoreCaseEndsWith("h") ? HomeGoal : AwayGoal;
 
-                return BetStatus(prefix, firstGoal, lastGoal);
-            }
+            return BetStatus(prefix, firstGoal, lastGoal);
         }
+    }
 
-        private static string BetStatus(string prefix, string firstGoal, string lastGoal)
-        {
-            return $"{prefix}:{firstGoal}-{lastGoal};";
-        }
+    private static string BetStatus(string prefix, string firstGoal, string lastGoal)
+    {
+        return $"{prefix}:{firstGoal}-{lastGoal};";
     }
 }

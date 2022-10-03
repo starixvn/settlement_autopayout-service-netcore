@@ -1,13 +1,12 @@
-﻿namespace AutoPayout.Sportsbook.Constants
+﻿namespace AutoPayout.Sportsbook.Constants;
+
+public static class SettleActionId
 {
-    public static class SettleActionId
-    {
-        public const int HalfType = 157;
+    public const int HalfType = 157;
 
-        public const int FullType = 158;
+    public const int FullType = 158;
 
-        public const int HalfTypeAfterSettleFail = 185;
+    public const int HalfTypeAfterSettleFail = 185;
 
-        public const int FullTypeAfterSettleFail = 186;
-    }
+    public const int FullTypeAfterSettleFail = 186;
 }

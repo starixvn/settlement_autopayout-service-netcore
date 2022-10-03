@@ -1,12 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Xml.Serialization;
+﻿namespace AutoPayout.Result.Models;
 
-namespace AutoPayout.Result.Models
+[XmlRoot("Results")]
+public class XmlResults
 {
-    [XmlRoot("Results")]
-    public class XmlResults
-    {
-        [XmlElement("Resource")]
-        public List<XmlResource> Resources { get; set; }
-    }
+    [XmlElement("Resource")]
+    public List<XmlResource> Resources { get; set; }
 }

@@ -1,37 +1,34 @@
-﻿using System.Threading.Tasks;
-using Fanex.Data.Repository;
-using AutoPayout.Sportsbook.Criteria;
-using AutoPayout.Sportsbook.Models;
+﻿using AutoPayout.Sportsbook.Criteria;
 using AutoPayout.Sportsbook.Exceptions;
+using AutoPayout.Sportsbook.Models;
 
-namespace AutoPayout.Sportsbook.Services
+namespace AutoPayout.Sportsbook.Services;
+
+public interface SettleLogService
 {
-    public interface SettleLogService
-    {
-        Task Log(Match match, string errorMessage);
+    Task Log(Match match, string errorMessage);
 
-        Task Log(Match match, AutoPayoutException exception);
+    Task Log(Match match, AutoPayoutException exception);
+}
+
+public class SettleLogServiceImp : SettleLogService
+{
+    private readonly IDynamicRepository repository;
+
+    public SettleLogServiceImp(IDynamicRepository repository)
+    {
+        this.repository = repository;
     }
 
-    public class SettleLogServiceImp : SettleLogService
+    public async Task Log(Match match, string errorMessage)
     {
-        private readonly IDynamicRepository repository;
+        var criteria = new SettleLogCriteria(match, errorMessage);
+        await repository.ExecuteAsync(criteria);
+    }
 
-        public SettleLogServiceImp(IDynamicRepository repository)
-        {
-            this.repository = repository;
-        }
-
-        public async Task Log(Match match, string errorMessage)
-        {
-            var criteria = new SettleLogCriteria(match, errorMessage);
-            await repository.ExecuteAsync(criteria);
-        }
-
-        public async Task Log(Match match, AutoPayoutException exception)
-        {
-            var criteria = new SettleLogCriteria(match, exception);
-            await repository.ExecuteAsync(criteria);
-        }
+    public async Task Log(Match match, AutoPayoutException exception)
+    {
+        var criteria = new SettleLogCriteria(match, exception);
+        await repository.ExecuteAsync(criteria);
     }
 }

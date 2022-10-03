@@ -1,12 +1,10 @@
 ﻿using Newtonsoft.Json;
-using Xunit;
-namespace AutoPayout.Result.UnitTests
+namespace AutoPayout.Result.UnitTests;
+
+public static class AssertExtension
 {
-    public static class AssertExtension
+    public static void AreEqual<T>(T expected, T actual)
     {
-        public static void AreEqual<T>(T expected, T actual)
-        {
-            Assert.Equal(JsonConvert.SerializeObject(expected), JsonConvert.SerializeObject(actual));
-        }
+        Assert.Equal(JsonConvert.SerializeObject(expected), JsonConvert.SerializeObject(actual));
     }
 }

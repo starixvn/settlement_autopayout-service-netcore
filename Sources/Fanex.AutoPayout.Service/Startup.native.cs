@@ -1,26 +1,25 @@
-using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 
-namespace Fanex.AutoPayout.Service
+namespace Fanex.AutoPayout.Service;
+
+public class Startup
 {
-    public class Startup
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        if (env.IsDevelopment())
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.UseRouting();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapGet("/",
-                    async context => { await context.Response.WriteAsync("Fanex.AutoPayout.Service"); });
-            });
+            app.UseDeveloperExceptionPage();
         }
+
+        app.UseRouting();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapGet("/",
+                async context => { await context.Response.WriteAsync("Fanex.AutoPayout.Service"); });
+        });
     }
 }

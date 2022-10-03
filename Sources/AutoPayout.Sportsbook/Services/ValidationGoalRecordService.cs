@@ -2,47 +2,46 @@
 using AutoPayout.Sportsbook.Exceptions;
 using AutoPayout.Sportsbook.Models;
 
-namespace AutoPayout.Sportsbook.Services
+namespace AutoPayout.Sportsbook.Services;
+
+public interface ValidationGoalRecordService
 {
-    public interface ValidationGoalRecordService
+    void VerifyGoalRecord(Match match);
+}
+
+public class ValidationGoalRecordServiceImp : ValidationGoalRecordService
+{
+    private readonly ScoreAndGoalRecordService scoreAndGoalRecordService;
+
+    public ValidationGoalRecordServiceImp(ScoreAndGoalRecordService scoreAndGoalRecordService)
     {
-        void VerifyGoalRecord(Match match);
+        this.scoreAndGoalRecordService = scoreAndGoalRecordService;
     }
 
-    public class ValidationGoalRecordServiceImp : ValidationGoalRecordService
+    public void VerifyGoalRecord(Match match)
     {
-        private readonly ScoreAndGoalRecordService scoreAndGoalRecordService;
-
-        public ValidationGoalRecordServiceImp(ScoreAndGoalRecordService scoreAndGoalRecordService)
+        if (match.TypeId == SettleType.Halftime)
         {
-            this.scoreAndGoalRecordService = scoreAndGoalRecordService;
-        }
-
-        public void VerifyGoalRecord(Match match)
-        {
-            if (match.TypeId == SettleType.Halftime)
+            if (!scoreAndGoalRecordService.IsExistedSemiColon(match.GoalRecord))
             {
-                if (!scoreAndGoalRecordService.IsExistedSemiColon(match.GoalRecord))
-                {
-                    throw new GoalRecordNotSemiColonException();
-                }
-
-                if (!scoreAndGoalRecordService.IsConsistentHalftime(match))
-                {
-                    throw new GoalRecordHalftimeScoreNotConsistentException();
-                }
+                throw new GoalRecordNotSemiColonException();
             }
-            else
-            {
-                if (!match.IsSabaPenaltyShootout && !scoreAndGoalRecordService.IsConsistentHalftime(match))
-                {
-                    throw new GoalRecordHalftimeScoreNotConsistentException();
-                }
 
-                if (!match.IsSabaPenaltyShootout && !scoreAndGoalRecordService.IsConsistentFullTime(match))
-                {
-                    throw new GoalRecordFinalScoreNotConsistentException();
-                }
+            if (!scoreAndGoalRecordService.IsConsistentHalftime(match))
+            {
+                throw new GoalRecordHalftimeScoreNotConsistentException();
+            }
+        }
+        else
+        {
+            if (!match.IsSabaPenaltyShootout && !scoreAndGoalRecordService.IsConsistentHalftime(match))
+            {
+                throw new GoalRecordHalftimeScoreNotConsistentException();
+            }
+
+            if (!match.IsSabaPenaltyShootout && !scoreAndGoalRecordService.IsConsistentFullTime(match))
+            {
+                throw new GoalRecordFinalScoreNotConsistentException();
             }
         }
     }

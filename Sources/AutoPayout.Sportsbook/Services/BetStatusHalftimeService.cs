@@ -1,96 +1,94 @@
 ﻿using Kaden.Extensions;
-using System.Collections.Generic;
 
-namespace AutoPayout.Sportsbook.Services
+namespace AutoPayout.Sportsbook.Services;
+
+public interface BetStatusHalftimeService
 {
-    public interface BetStatusHalftimeService
+    string BetStatus(string currentBetStatus, string goalRecord);
+
+    string FullTimeBetStatus(string goalRecord);
+
+    string AppendFullTimeBetStatus(string betStatus, string fullTimeBetStatus);
+}
+
+public class BetStatusHalftimeServiceImp : BetStatusHalftimeService
+{
+    private const string HtFirstLastGoalSymbol = "1FL";
+
+    private readonly BetStatusService betStatusService;
+
+    public BetStatusHalftimeServiceImp(BetStatusService betStatusService)
     {
-        string BetStatus(string currentBetStatus, string goalRecord);
-
-        string FullTimeBetStatus(string goalRecord);
-
-        string AppendFullTimeBetStatus(string betStatus, string fullTimeBetStatus);
+        this.betStatusService = betStatusService;
     }
 
-    public class BetStatusHalftimeServiceImp : BetStatusHalftimeService
+    public string BetStatus(string currentBetStatus, string goalRecord)
     {
-        private const string HtFirstLastGoalSymbol = "1FL";
+        var halftimeGoalRecord = GetHalftimeGoalRecordOnly(goalRecord);
+        var halftimeBetStatus = betStatusService.GenerateBetStatus(HtFirstLastGoalSymbol, halftimeGoalRecord);
 
-        private readonly BetStatusService betStatusService;
+        return currentBetStatus.IgnoreCaseContains(HtFirstLastGoalSymbol)
+            ? ReplaceHalftimeBetStatus(currentBetStatus, halftimeBetStatus)
+            : $"{halftimeBetStatus}{currentBetStatus}";
+    }
 
-        public BetStatusHalftimeServiceImp(BetStatusService betStatusService)
+    private static string GetHalftimeGoalRecordOnly(string goalRecord)
+    {
+        return goalRecord.Contains(";") ? goalRecord.Split(';')[0] : goalRecord;
+    }
+
+    private static string ReplaceHalftimeBetStatus(string currentBetStatus, string halfTimeBetStatus)
+    {
+        const int maxLengthHalfTime = 8;
+        var betStatus = currentBetStatus.Substring(currentBetStatus.IgnoreCaseIndexOf(HtFirstLastGoalSymbol), maxLengthHalfTime);
+
+        return $"{halfTimeBetStatus}{currentBetStatus.Replace(betStatus, string.Empty)}";
+    }
+
+    public string FullTimeBetStatus(string goalRecord)
+    {
+        var halftimeGoalRecord = GetHalftimeGoalRecordOnly(goalRecord);
+        return betStatusService.GenerateBetStatus(halftimeGoalRecord);
+    }
+
+    public string AppendFullTimeBetStatus(string betStatus, string fullTimeBetStatus)
+    {
+        var newBetStatus = new List<string>();
+
+        if (IsModifyFirstGoalLastGoal(betStatus, fullTimeBetStatus))
         {
-            this.betStatusService = betStatusService;
+            return fullTimeBetStatus;
         }
 
-        public string BetStatus(string currentBetStatus, string goalRecord)
+        if (!string.IsNullOrWhiteSpace(betStatus))
         {
-            var halftimeGoalRecord = GetHalftimeGoalRecordOnly(goalRecord);
-            var halftimeBetStatus = betStatusService.GenerateBetStatus(HtFirstLastGoalSymbol, halftimeGoalRecord);
+            var arr = betStatus.Split(';');
+            var flag = false;
 
-            return currentBetStatus.IgnoreCaseContains(HtFirstLastGoalSymbol)
-                ? ReplaceHalftimeBetStatus(currentBetStatus, halftimeBetStatus)
-                : $"{halftimeBetStatus}{currentBetStatus}";
-        }
-
-        private static string GetHalftimeGoalRecordOnly(string goalRecord)
-        {
-            return goalRecord.Contains(";") ? goalRecord.Split(';')[0] : goalRecord;
-        }
-
-        private static string ReplaceHalftimeBetStatus(string currentBetStatus, string halfTimeBetStatus)
-        {
-            const int maxLengthHalfTime = 8;
-            var betStatus = currentBetStatus.Substring(currentBetStatus.IgnoreCaseIndexOf(HtFirstLastGoalSymbol), maxLengthHalfTime);
-
-            return $"{halfTimeBetStatus}{currentBetStatus.Replace(betStatus, string.Empty)}";
-        }
-
-        public string FullTimeBetStatus(string goalRecord)
-        {
-            var halftimeGoalRecord = GetHalftimeGoalRecordOnly(goalRecord);
-            return betStatusService.GenerateBetStatus(halftimeGoalRecord);
-        }
-
-        public string AppendFullTimeBetStatus(string betStatus, string fullTimeBetStatus)
-        {
-            var newBetStatus = new List<string>();
-
-            if (IsModifyFirstGoalLastGoal(betStatus, fullTimeBetStatus))
+            foreach (var item in arr)
             {
-                return fullTimeBetStatus;
-            } 
-            
-            if (!string.IsNullOrWhiteSpace(betStatus))
-            {
-                var arr = betStatus.Split(';');
-                var flag = false;
-
-                foreach (var item in arr)
+                switch (flag)
                 {
-                    switch (flag)
-                    {
-                        case false when item.IgnoreCaseContains("FL") && !item.IgnoreCaseContains("1FL"):
-                            flag = true;
-                            newBetStatus.Add(fullTimeBetStatus.Replace(";", string.Empty));
-                            break;
-                        case false when IsModifyFirstGoalLastGoal(item, fullTimeBetStatus):
-                            flag = true;
-                            newBetStatus.Add(fullTimeBetStatus);
-                            break;
-                        default:
-                            newBetStatus.Add(item);
-                            break;
-                    }
+                    case false when item.IgnoreCaseContains("FL") && !item.IgnoreCaseContains("1FL"):
+                        flag = true;
+                        newBetStatus.Add(fullTimeBetStatus.Replace(";", string.Empty));
+                        break;
+                    case false when IsModifyFirstGoalLastGoal(item, fullTimeBetStatus):
+                        flag = true;
+                        newBetStatus.Add(fullTimeBetStatus);
+                        break;
+                    default:
+                        newBetStatus.Add(item);
+                        break;
                 }
             }
-
-            return string.Join(";", newBetStatus);
         }
 
-        private static bool IsModifyFirstGoalLastGoal(string item, string fullTimeBetStatus)
-        {
-            return string.IsNullOrWhiteSpace(item) && !string.IsNullOrWhiteSpace(fullTimeBetStatus);
-        }
+        return string.Join(";", newBetStatus);
+    }
+
+    private static bool IsModifyFirstGoalLastGoal(string item, string fullTimeBetStatus)
+    {
+        return string.IsNullOrWhiteSpace(item) && !string.IsNullOrWhiteSpace(fullTimeBetStatus);
     }
 }

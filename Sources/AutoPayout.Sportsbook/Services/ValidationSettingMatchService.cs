@@ -1,24 +1,22 @@
 ﻿using AutoPayout.Sportsbook.Exceptions;
 using AutoPayout.Sportsbook.Models;
-using System.Linq;
 
-namespace AutoPayout.Sportsbook.Services
+namespace AutoPayout.Sportsbook.Services;
+
+public interface ValidationSettingMatchService
 {
-    public interface ValidationSettingMatchService
-    {
-        void VerifySettingMatch(RemarkSettingModel remark);
-    }
+    void VerifySettingMatch(RemarkSettingModel remark);
+}
 
-    public class ValidationSettingMatchServiceImp : ValidationSettingMatchService
+public class ValidationSettingMatchServiceImp : ValidationSettingMatchService
+{
+    public void VerifySettingMatch(RemarkSettingModel remark)
     {
-        public void VerifySettingMatch(RemarkSettingModel remark)
+        bool[] conditionsToCheck = { remark.IsMtdHold, remark.IsUndecided, remark.IsPending, remark.IsUnderSettle, remark.IsHoldKey };
+
+        if (conditionsToCheck.Any(item => item))
         {
-            bool[] conditionsToCheck = { remark.IsMtdHold, remark.IsUndecided, remark.IsPending, remark.IsUnderSettle, remark.IsHoldKey };
-
-            if (conditionsToCheck.Any(item => item))
-            {
-                throw new RemarkException();
-            }
+            throw new RemarkException();
         }
     }
 }

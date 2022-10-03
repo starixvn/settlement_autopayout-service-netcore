@@ -1,9 +1,8 @@
-﻿namespace AutoPayout.Sportsbook.Constants
-{
-    public static class SettleType
-    {
-        public const int Halftime = 1;
+﻿namespace AutoPayout.Sportsbook.Constants;
 
-        public const int FullTime = 2;
-    }
+public static class SettleType
+{
+    public const int Halftime = 1;
+
+    public const int FullTime = 2;
 }
