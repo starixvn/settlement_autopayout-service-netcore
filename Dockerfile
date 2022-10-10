@@ -11,7 +11,7 @@ RUN dotnet restore -v n
 
 COPY ./Sources/Fanex.AutoPayout.Service .
 
-RUN dotnet publish -r linux-x64 --self-contained false -o /app 
+RUN dotnet publish -r linux-x64 --self-contained false -c Release -o /app
 
 FROM hub.nexdev.net/base/dotnet/core/aspnet:6.0 AS base
 

@@ -26,5 +26,8 @@ app.UseEndpoints(endpoints =>
     endpoints.MapGet("/",
         async context => { await context.Response.WriteAsync("Fanex.AutoPayout.Service"); });
 });
-
+#if DEBUG
+app.Run();
+#else
 await app.RunAsync("http://0.0.0.0:5000");
+#endif
