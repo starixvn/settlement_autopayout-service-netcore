@@ -9,9 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<AppSettingsKey>(builder.Configuration);
 
-builder.Services.AddHostedService<AutoPayoutService>();
-
 builder.Services.InitializeServices(builder.Configuration);
+
+builder.Services.AddHostedService<AutoPayoutService>();
 
 var app = builder.Build();
 

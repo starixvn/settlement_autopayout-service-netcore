@@ -97,7 +97,7 @@ public class AutoPayoutService : IHostedService
         }
         catch (Exception exception)
         {
-            LogService.Error("Exception in main thread - Process:", exception);
+            LogService.Error("Fanex.AutoPayout.Service: ", exception);
         }
     }
 
