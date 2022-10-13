@@ -1,32 +1,29 @@
-﻿using System.Threading.Tasks;
+﻿namespace AutoPayout.Sportsbook.Services;
 
-namespace AutoPayout.Sportsbook.Services
+public interface AutoPayoutController
 {
-    public interface AutoPayoutController
+    Task ProcessAsync();
+}
+
+public class AutoPayoutControllerImp : AutoPayoutController
+{
+    private readonly MatchSettlingPoolService matchSettlingPoolService;
+
+    private readonly MatchSettleController matchSettleController;
+
+    public AutoPayoutControllerImp(MatchSettlingPoolService matchSettlingPoolService, MatchSettleController matchSettleController)
     {
-        Task ProcessAsync();
+        this.matchSettlingPoolService = matchSettlingPoolService;
+        this.matchSettleController = matchSettleController;
     }
 
-    public class AutoPayoutControllerImp : AutoPayoutController
+    public async Task ProcessAsync()
     {
-        private readonly MatchSettlingPoolService matchSettlingPoolService;
-
-        private readonly MatchSettleController matchSettleController;
-
-        public AutoPayoutControllerImp(MatchSettlingPoolService matchSettlingPoolService, MatchSettleController matchSettleController)
+        var newMatches = await matchSettlingPoolService.PeekNewMatch();
+        newMatches.ForEach(m =>
         {
-            this.matchSettlingPoolService = matchSettlingPoolService;
-            this.matchSettleController = matchSettleController;
-        }
-
-        public async Task ProcessAsync()
-        {
-            var newMatches = await matchSettlingPoolService.PeekNewMatch();
-            newMatches.ForEach(m =>
-            {
-                Task.Run(() => matchSettleController.Process(m))
-                    .ConfigureAwait(false);
-            });
-        }
+            Task.Run(() => matchSettleController.Process(m))
+                .ConfigureAwait(false);
+        });
     }
 }

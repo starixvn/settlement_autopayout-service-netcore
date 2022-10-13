@@ -1,29 +1,25 @@
-﻿using System;
-using System.Runtime.Serialization;
+﻿namespace AutoPayout.Sportsbook.Exceptions;
 
-namespace AutoPayout.Sportsbook.Exceptions
+[Serializable]
+public class GoalRecordFinalScoreNotConsistentException : AutoPayoutException
 {
-    [Serializable]
-    public class GoalRecordFinalScoreNotConsistentException : AutoPayoutException
+    public GoalRecordFinalScoreNotConsistentException()
     {
-        public GoalRecordFinalScoreNotConsistentException()
-        {
-            Description = "Failed: Goal Record of FT is not consistent with FT Scores.";
-        }
+        Description = "Failed: Goal Record of FT is not consistent with FT Scores.";
+    }
 
-        public GoalRecordFinalScoreNotConsistentException(string message)
-            : base(message)
-        {
-        }
+    public GoalRecordFinalScoreNotConsistentException(string message)
+        : base(message)
+    {
+    }
 
-        public GoalRecordFinalScoreNotConsistentException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
+    public GoalRecordFinalScoreNotConsistentException(string message, Exception innerException)
+        : base(message, innerException)
+    {
+    }
 
-        protected GoalRecordFinalScoreNotConsistentException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
+    protected GoalRecordFinalScoreNotConsistentException(SerializationInfo info, StreamingContext context)
+        : base(info, context)
+    {
     }
 }

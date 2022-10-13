@@ -1,100 +1,95 @@
 ﻿using AutoPayout.Sportsbook.Constants;
 using AutoPayout.Sportsbook.Models;
-using NSubstitute;
 using AutoPayout.Sportsbook.Services;
-using Xunit;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace AutoPayout.Sportsbook.UnitTests.Services
+namespace AutoPayout.Sportsbook.UnitTests.Services;
+
+public class ScoreMatcherControllerTests
 {
-    public class ScoreMatcherControllerTests
+    [Fact]
+    public void Verify_IsDirectSettlementMatch_ReturnsSourceIdIsAdminSite()
     {
-        [Fact]
-        public void Verify_IsDirectSettlementMatch_ReturnsSourceIdIsAdminSite()
-        {
-            // Arrange
-            var validationStatusMatchService = Substitute.For<ValidationStatusMatchService>();
-            var validationScoreService = Substitute.For<ValidationScoreService>();
-            var validationSettingMatchService = Substitute.For<ValidationSettingMatchService>();
-            var scoreService = Substitute.For<ScoreService>();
-            var validationGoalRecordService = Substitute.For<ValidationGoalRecordService>();
-            var matchQueryService = Substitute.For<MatchQueryService>();
-            var controller = new ScoreMatcherControllerImp(
-                validationSettingMatchService,
-                validationStatusMatchService,
-                validationScoreService,
-                scoreService,
-                validationGoalRecordService,
-                matchQueryService);
+        // Arrange
+        var validationStatusMatchService = Substitute.For<ValidationStatusMatchService>();
+        var validationScoreService = Substitute.For<ValidationScoreService>();
+        var validationSettingMatchService = Substitute.For<ValidationSettingMatchService>();
+        var scoreService = Substitute.For<ScoreService>();
+        var validationGoalRecordService = Substitute.For<ValidationGoalRecordService>();
+        var matchQueryService = Substitute.For<MatchQueryService>();
+        var controller = new ScoreMatcherControllerImp(
+            validationSettingMatchService,
+            validationStatusMatchService,
+            validationScoreService,
+            scoreService,
+            validationGoalRecordService,
+            matchQueryService);
 
-            var match = new Match { AutoSetting = 16 };
+        var match = new Match { AutoSetting = 16 };
 
-            // Act
-            var actualSourceId =  controller.Verify(match);
+        // Act
+        var actualSourceId = controller.Verify(match);
 
-            // Assert
-            const int expectedSourceId = Source.AdminSite;
-            Assert.Equal(expectedSourceId, actualSourceId.Result);
-        }
+        // Assert
+        const int expectedSourceId = Source.AdminSite;
+        Assert.Equal(expectedSourceId, actualSourceId.Result);
+    }
 
-        [Fact]
-        public void Verify_ValidMatch_ReturnsSourceIdIsSbo()
-        {
-            // Arrange
-            var validationStatusMatchService = Substitute.For<ValidationStatusMatchService>();
-            var validationScoreService = Substitute.For<ValidationScoreService>();
-            var validationSettingMatchService = Substitute.For<ValidationSettingMatchService>();
-            var scoreService = Substitute.For<ScoreService>();
-            var validationGoalRecordService = Substitute.For<ValidationGoalRecordService>();
-            var matchQueryService = Substitute.For<MatchQueryService>();
-            var controller = new ScoreMatcherControllerImp(
-                validationSettingMatchService,
-                validationStatusMatchService,
-                validationScoreService,
-                scoreService,
-                validationGoalRecordService,
-                matchQueryService);
-            var match = new Match();
+    [Fact]
+    public void Verify_ValidMatch_ReturnsSourceIdIsSbo()
+    {
+        // Arrange
+        var validationStatusMatchService = Substitute.For<ValidationStatusMatchService>();
+        var validationScoreService = Substitute.For<ValidationScoreService>();
+        var validationSettingMatchService = Substitute.For<ValidationSettingMatchService>();
+        var scoreService = Substitute.For<ScoreService>();
+        var validationGoalRecordService = Substitute.For<ValidationGoalRecordService>();
+        var matchQueryService = Substitute.For<MatchQueryService>();
+        var controller = new ScoreMatcherControllerImp(
+            validationSettingMatchService,
+            validationStatusMatchService,
+            validationScoreService,
+            scoreService,
+            validationGoalRecordService,
+            matchQueryService);
+        var match = new Match();
 
-            matchQueryService.GetMatchAndResultDetail(Arg.Any<int>()).Returns((new RemarkSettingModel(), new List<ResultDetail>()));
-            scoreService.TryGetScore(Arg.Any<Match>()).Returns(new Score { SourceId = Source.Sbo });
+        matchQueryService.GetMatchAndResultDetail(Arg.Any<int>()).Returns((new RemarkSettingModel(), new List<ResultDetail>()));
+        scoreService.TryGetScore(Arg.Any<Match>()).Returns(new Score { SourceId = Source.Sbo });
 
-            // Act
-            var actualSourceId = controller.Verify(match);
+        // Act
+        var actualSourceId = controller.Verify(match);
 
-            // Assert
-            const int expectedSourceId = Source.Sbo;
-            Assert.Equal(expectedSourceId, actualSourceId.Result);
-        }
+        // Assert
+        const int expectedSourceId = Source.Sbo;
+        Assert.Equal(expectedSourceId, actualSourceId.Result);
+    }
 
-        [Fact]
-        public async Task Verify_TotalCornerGoalMatch_ReturnAdminSiteId()
-        {
-            var validationStatusMatchService = Substitute.For<ValidationStatusMatchService>();
-            var validationScoreService = Substitute.For<ValidationScoreService>();
-            var validationSettingMatchService = Substitute.For<ValidationSettingMatchService>();
-            var scoreService = Substitute.For<ScoreService>();
-            var validationGoalRecordService = Substitute.For<ValidationGoalRecordService>();
-            var matchQueryService = Substitute.For<MatchQueryService>();
-            var controller = new ScoreMatcherControllerImp(
-                validationSettingMatchService,
-                validationStatusMatchService,
-                validationScoreService,
-                scoreService,
-                validationGoalRecordService,
-                matchQueryService);
-            var match = new Match { MainType = 33, ChildLeagueType = 1029 };
+    [Fact]
+    public async Task Verify_TotalCornerGoalMatch_ReturnAdminSiteId()
+    {
+        var validationStatusMatchService = Substitute.For<ValidationStatusMatchService>();
+        var validationScoreService = Substitute.For<ValidationScoreService>();
+        var validationSettingMatchService = Substitute.For<ValidationSettingMatchService>();
+        var scoreService = Substitute.For<ScoreService>();
+        var validationGoalRecordService = Substitute.For<ValidationGoalRecordService>();
+        var matchQueryService = Substitute.For<MatchQueryService>();
+        var controller = new ScoreMatcherControllerImp(
+            validationSettingMatchService,
+            validationStatusMatchService,
+            validationScoreService,
+            scoreService,
+            validationGoalRecordService,
+            matchQueryService);
+        var match = new Match { MainType = 33, ChildLeagueType = 1029 };
 
-            matchQueryService.GetMatchAndResultDetail(Arg.Any<int>()).Returns((new RemarkSettingModel(), new List<ResultDetail>()));
-            scoreService.TryGetRelatedResults(Arg.Any<Match>()).Returns(new List<ResultDetail>());
+        matchQueryService.GetMatchAndResultDetail(Arg.Any<int>()).Returns((new RemarkSettingModel(), new List<ResultDetail>()));
+        scoreService.TryGetRelatedResults(Arg.Any<Match>()).Returns(new List<ResultDetail>());
 
-            // Act
-            var actualSourceId = await controller.Verify(match);
+        // Act
+        var actualSourceId = await controller.Verify(match);
 
-            // Assert
-            const int expectedSourceId = Source.AdminSite;
-            Assert.Equal(expectedSourceId, actualSourceId);
-        }
+        // Assert
+        const int expectedSourceId = Source.AdminSite;
+        Assert.Equal(expectedSourceId, actualSourceId);
     }
 }

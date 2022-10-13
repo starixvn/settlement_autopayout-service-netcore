@@ -1,26 +1,23 @@
-﻿using System;
-using System.Runtime.Serialization;
-using AutoPayout.Sportsbook.Constants;
+﻿using AutoPayout.Sportsbook.Constants;
 
-namespace AutoPayout.Sportsbook.Exceptions
+namespace AutoPayout.Sportsbook.Exceptions;
+
+[Serializable]
+public class RelatedMatchesInconsistentException : AutoPayoutException
 {
-    [Serializable]
-    public class RelatedMatchesInconsistentException : AutoPayoutException
+    public RelatedMatchesInconsistentException(int typeId, string mainScore, string cornerScore)
     {
-        public RelatedMatchesInconsistentException(int typeId, string mainScore, string cornerScore)
-        {
-            var type = typeId == SettleType.Halftime ? "HT" : "FT";
-            Description = $"Failed: Cannot proceed due to {type} value from current, {mainScore}, and {cornerScore} are inconsistent.";
-        }
+        var type = typeId == SettleType.Halftime ? "HT" : "FT";
+        Description = $"Failed: Cannot proceed due to {type} value from current, {mainScore}, and {cornerScore} are inconsistent.";
+    }
 
-        public RelatedMatchesInconsistentException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
+    public RelatedMatchesInconsistentException(string message, Exception innerException)
+        : base(message, innerException)
+    {
+    }
 
-        protected RelatedMatchesInconsistentException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
+    protected RelatedMatchesInconsistentException(SerializationInfo info, StreamingContext context)
+        : base(info, context)
+    {
     }
 }

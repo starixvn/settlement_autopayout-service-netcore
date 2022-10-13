@@ -1,11 +1,10 @@
-﻿namespace AutoPayout.Sportsbook.Constants
+﻿namespace AutoPayout.Sportsbook.Constants;
+
+public static class Source
 {
-    public static class Source
-    {
-        public const int Sbo = 1;
+    public const int Sbo = 1;
 
-        public const int SoccerWay = 5;
+    public const int SoccerWay = 5;
 
-        public const int AdminSite = 101;
-    }
+    public const int AdminSite = 101;
 }

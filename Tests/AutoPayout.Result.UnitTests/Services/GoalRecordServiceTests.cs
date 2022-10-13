@@ -1,45 +1,43 @@
 ﻿using AutoPayout.Result.Services;
-using Xunit;
 
-namespace AutoPayout.Result.UnitTests.Services
+namespace AutoPayout.Result.UnitTests.Services;
+
+public class GoalRecordServiceTests
 {
-    public class GoalRecordServiceTests
+    private readonly GoalRecordService service;
+
+    public GoalRecordServiceTests()
     {
-        private readonly GoalRecordService service;
+        service = new GoalRecordServiceImp();
+    }
 
-        public GoalRecordServiceTests()
-        {
-            service = new GoalRecordServiceImp();
-        }
+    [Theory]
+    [InlineData(";AHA", "")]
+    [InlineData("", "")]
+    [InlineData(";", "")]
+    [InlineData("AHAAH;AHA", "AHAAH")]
+    [InlineData("HAA", "HAA")]
+    public void HalftimeGoal_Always_ReturnsExpectedGoal(string goalRecord, string expectedGoal)
+    {
+        // Act
+        var actual = service.HalftimeGoal(goalRecord);
 
-        [Theory]
-        [InlineData(";AHA", "")]
-        [InlineData("", "")]
-        [InlineData(";", "")]
-        [InlineData("AHAAH;AHA", "AHAAH")]
-        [InlineData("HAA", "HAA")]
-        public void HalftimeGoal_Always_ReturnsExpectedGoal(string goalRecord, string expectedGoal)
-        {
-            // Act
-            var actual = service.HalftimeGoal(goalRecord);
+        // Assert
+        Assert.Equal(expectedGoal, actual);
+    }
 
-            // Assert
-            Assert.Equal(expectedGoal, actual);
-        }
+    [Theory]
+    [InlineData("HAAHA", "HAAHA")]
+    [InlineData("", "")]
+    [InlineData(";", "")]
+    [InlineData(";AHA", "AHA")]
+    [InlineData("AH;AHAH", "AHAHAH")]
+    public void FullTimeGoal_Always_ReturnsExpectedGoal(string goalRecord, string expectedGoal)
+    {
+        // Act
+        var actual = service.FullTimeGoal(goalRecord);
 
-        [Theory]
-        [InlineData("HAAHA", "HAAHA")]
-        [InlineData("", "")]
-        [InlineData(";", "")]
-        [InlineData(";AHA", "AHA")]
-        [InlineData("AH;AHAH", "AHAHAH")]
-        public void FullTimeGoal_Always_ReturnsExpectedGoal(string goalRecord, string expectedGoal)
-        {
-            // Act
-            var actual = service.FullTimeGoal(goalRecord);
-
-            // Assert
-            Assert.Equal(expectedGoal, actual);
-        }
+        // Assert
+        Assert.Equal(expectedGoal, actual);
     }
 }

@@ -1,13 +1,12 @@
 ﻿using AutoMapper;
 using AutoPayout.Result.Models;
 using AutoPayout.Sportsbook.Models;
-namespace AutoPayout.Sportsbook
+namespace AutoPayout.Sportsbook;
+
+public class AutoMapperProfile : Profile
 {
-    public class AutoMapperProfile : Profile
+    public AutoMapperProfile()
     {
-        public AutoMapperProfile()
-        {
-            CreateMap<MatchChecking, Goal>();
-        }
+        CreateMap<MatchChecking, Goal>();
     }
 }

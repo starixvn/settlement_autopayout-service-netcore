@@ -1,32 +1,33 @@
-using AutoPayout.Sportsbook.Models;
-using Microsoft.AspNetCore.Hosting;
+﻿using AutoPayout.Sportsbook.Models;
+using Fanex.AutoPayout.Service;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 
-namespace Fanex.AutoPayout.Service
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<AppSettingsKey>(builder.Configuration);
+
+builder.Services.InitializeServices(builder.Configuration);
+
+builder.Services.AddHostedService<AutoPayoutService>();
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
 {
-    public static class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
-
-        private static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseUrls($"http://0.0.0.0:5000");
-                    webBuilder.UseStartup<Startup>();
-                })
-                .ConfigureServices((hostContext, services) =>
-                {
-                    services
-                        .Configure<AppSettingsKey>(hostContext.Configuration)
-                        .AddSingleton(sp => sp.GetRequiredService<IOptions<AppSettingsKey>>().Value);
-                    services.AddHostedService<AutoPayoutService>();
-                    services.InitializeServices(hostContext.Configuration);
-                });
-    }
+    app.UseDeveloperExceptionPage();
 }
+app.UseRouting();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapGet("/",
+        async context => { await context.Response.WriteAsync("Fanex.AutoPayout.Service"); });
+});
+#if DEBUG
+app.Run();
+#else
+await app.RunAsync("http://0.0.0.0:5000");
+#endif

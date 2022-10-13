@@ -1,13 +1,10 @@
-﻿using Fanex.Data.Repository;
+﻿namespace AutoPayout.Sportsbook.Criteria;
 
-namespace AutoPayout.Sportsbook.Criteria
+public class MatchScoreCriteria : CriteriaBase
 {
-    public class MatchScoreCriteria : CriteriaBase
-    {
-        public int MatchId { get; set; }
+    public int MatchId { get; set; }
 
-        public override bool IsValid() => true;
+    public override bool IsValid() => true;
 
-        public override string GetSettingKey() => "NAP_Set_AutoPayout_ResultDetailByMatchIdSel";
-    }
+    public override string GetSettingKey() => "NAP_Set_AutoPayout_ResultDetailByMatchIdSel";
 }
