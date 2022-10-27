@@ -1,6 +1,4 @@
-﻿using Kaden.Extensions;
-
-namespace AutoPayout.Sportsbook.Models;
+﻿namespace AutoPayout.Sportsbook.Models;
 
 public class MatchRemark
 {

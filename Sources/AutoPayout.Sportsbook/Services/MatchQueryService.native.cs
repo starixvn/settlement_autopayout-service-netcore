@@ -3,7 +3,6 @@ using AutoPayout.Result.Services;
 using AutoPayout.Sportsbook.Constants;
 using AutoPayout.Sportsbook.Criteria;
 using AutoPayout.Sportsbook.Models;
-using Kaden.XmlConverter;
 using Microsoft.Extensions.Options;
 
 namespace AutoPayout.Sportsbook.Services;

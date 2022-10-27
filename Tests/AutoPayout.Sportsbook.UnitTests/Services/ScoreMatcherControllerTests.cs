@@ -81,8 +81,9 @@ public class ScoreMatcherControllerTests
             validationGoalRecordService,
             matchQueryService);
         var match = new Match { MainType = 33, ChildLeagueType = 1029 };
+        const int matchId = 1;
 
-        matchQueryService.GetMatchAndResultDetail(Arg.Any<int>()).Returns((new RemarkSettingModel(), new List<ResultDetail>()));
+        matchQueryService.GetMatchAndResultDetail(matchId).Returns((new RemarkSettingModel(), new List<ResultDetail>()));
         scoreService.TryGetRelatedResults(Arg.Any<Match>()).Returns(new List<ResultDetail>());
 
         // Act

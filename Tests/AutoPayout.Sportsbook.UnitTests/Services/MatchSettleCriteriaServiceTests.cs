@@ -18,7 +18,7 @@ public class MatchSettleCriteriaServiceTests
         var actual = matchSettleCriteriaService.CreateSettleCriteria(match, matchChecking);
 
         // Assert
-        var expectedAction = "CAL-HT";
+        const string expectedAction = "CAL-HT";
         Assert.Equal(expectedAction, actual.Action);
     }
 

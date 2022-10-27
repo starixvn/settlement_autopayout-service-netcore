@@ -1,10 +1,9 @@
-﻿using Kaden.Extensions;
-
-namespace AutoPayout.Sportsbook.Services;
+﻿namespace AutoPayout.Sportsbook.Services;
 
 public interface BetStatusService
 {
     string GenerateBetStatus(string goalRecord);
+
     string GenerateBetStatus(string prefix, string goalRecord);
 }
 

@@ -1,6 +1,4 @@
-﻿using Kaden.Extensions;
-
-namespace AutoPayout.Sportsbook.Services;
+﻿namespace AutoPayout.Sportsbook.Services;
 
 public interface BetStatusHalftimeService
 {
@@ -73,10 +71,12 @@ public class BetStatusHalftimeServiceImp : BetStatusHalftimeService
                         flag = true;
                         newBetStatus.Add(fullTimeBetStatus.Replace(";", string.Empty));
                         break;
+
                     case false when IsModifyFirstGoalLastGoal(item, fullTimeBetStatus):
                         flag = true;
                         newBetStatus.Add(fullTimeBetStatus);
                         break;
+
                     default:
                         newBetStatus.Add(item);
                         break;

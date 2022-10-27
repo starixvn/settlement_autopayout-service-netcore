@@ -1,5 +1,4 @@
 ﻿using AutoPayout.Sportsbook.Constants;
-using Kaden.Extensions;
 
 namespace AutoPayout.Sportsbook.Models;
 

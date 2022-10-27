@@ -8,19 +8,17 @@ namespace AutoPayout.Sportsbook.UnitTests.Services;
 
 public class MatchByLeagueServiceTest
 {
-
     private readonly ICache cache;
 
     private readonly MatchQueryService matchQueryService;
 
     private MatchByLeagueService matchByLeagueService;
 
-
     public MatchByLeagueServiceTest()
     {
         cache = new RedisCache(new RedisCacheOptions
         {
-            ConnectionString = $"ha.nexdev.net:16379,password=foo1@bared,defaultDatabase=11",
+            ConnectionString = "10.18.200.131:16379,password=foo1@bared,defaultDatabase=11",
             ApplicationName = "Settlement-LOCAL"
         });
 
@@ -112,6 +110,7 @@ public class MatchByLeagueServiceTest
         matchQueryService.GetWaitingMatches().Returns(CreateMatches);
 
         // Act
+        await Task.Delay(2000);
         var matches = await matchByLeagueService.GetMatches();
 
         // Assert
@@ -137,6 +136,7 @@ public class MatchByLeagueServiceTest
         matchQueryService.GetWaitingMatches().Returns(CreateMatches);
 
         // Act
+        await Task.Delay(3000);
         var matches = await matchByLeagueService.GetMatches();
 
         // Assert
