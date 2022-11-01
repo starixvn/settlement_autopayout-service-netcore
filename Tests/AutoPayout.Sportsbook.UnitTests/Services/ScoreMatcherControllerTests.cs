@@ -53,7 +53,7 @@ public class ScoreMatcherControllerTests
             matchQueryService);
         var match = new Match();
 
-        matchQueryService.GetMatchAndResultDetail(Arg.Any<int>()).Returns((new RemarkSettingModel(), new List<ResultDetail>()));
+        matchQueryService.GetMatchAndResultDetail(Arg.Is<int>(1)).Returns((new RemarkSettingModel(), new List<ResultDetail>()));
         scoreService.TryGetScore(Arg.Any<Match>()).Returns(new Score { SourceId = Source.Sbo });
 
         // Act
@@ -67,6 +67,7 @@ public class ScoreMatcherControllerTests
     [Fact]
     public async Task Verify_TotalCornerGoalMatch_ReturnAdminSiteId()
     {
+        var match = new Match { MainType = 33, ChildLeagueType = 1029 };
         var validationStatusMatchService = Substitute.For<ValidationStatusMatchService>();
         var validationScoreService = Substitute.For<ValidationScoreService>();
         var validationSettingMatchService = Substitute.For<ValidationSettingMatchService>();
@@ -80,10 +81,9 @@ public class ScoreMatcherControllerTests
             scoreService,
             validationGoalRecordService,
             matchQueryService);
-        var match = new Match { MainType = 33, ChildLeagueType = 1029 };
-        const int matchId = 1;
 
-        matchQueryService.GetMatchAndResultDetail(matchId).Returns((new RemarkSettingModel(), new List<ResultDetail>()));
+
+        matchQueryService.GetMatchAndResultDetail(Arg.Any<int>()).Returns((new RemarkSettingModel(), new List<ResultDetail>()));
         scoreService.TryGetRelatedResults(Arg.Any<Match>()).Returns(new List<ResultDetail>());
 
         // Act

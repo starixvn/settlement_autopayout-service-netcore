@@ -47,6 +47,7 @@ public class MatchSettleCriteriaServiceTests
         // Arrange
         var betStatusHalftimeService = Substitute.For<BetStatusHalftimeService>();
         var betStatusFullTimeService = Substitute.For<BetStatusFullTimeService>();
+
         const string expectedBetStatus = "1FL:1-1;";
         var match = new Models.Match { TypeId = 1, BetStatus = "TestBetStatus", GoalRecord = "TestGoalRecord" };
         var matchChecking = new Models.MatchChecking { IsExistHtFgLg = true };

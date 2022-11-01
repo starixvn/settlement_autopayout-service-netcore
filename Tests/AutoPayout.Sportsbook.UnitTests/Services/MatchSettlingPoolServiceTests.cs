@@ -13,13 +13,11 @@ public class MatchSettlingPoolServiceTests
         var matchListingService = new MatchSettlingPoolServiceImp(matchByLeagueService);
 
         // Act1
-        var expected1 = CreateMatches(1, 2);
-        matchByLeagueService.GetMatches().Returns(expected1);
+        matchByLeagueService.GetMatches().Returns(new List<Match> { new Match { MatchId = 1, TypeId = 1 }, new Match { MatchId = 2, TypeId = 1 } });
         await matchListingService.PeekNewMatch();
 
         // Act2
-        var expected2 = CreateMatches(2, 3);
-        matchByLeagueService.GetMatches().Returns(expected2);
+        matchByLeagueService.GetMatches().Returns(new List<Match> { new Match { MatchId = 2, TypeId = 1 }, new Match { MatchId = 3, TypeId = 1 } });
         await matchListingService.PeekNewMatch();
 
         // Assert

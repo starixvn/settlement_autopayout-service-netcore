@@ -7,12 +7,15 @@ namespace AutoPayout.Sportsbook.UnitTests.Services;
 
 public class ValidationGoalRecordServiceTests
 {
+    private readonly ScoreAndGoalRecordService scoreAndGoalRecordService;
+    public ValidationGoalRecordServiceTests()
+    {
+        scoreAndGoalRecordService = Substitute.For<ScoreAndGoalRecordService>();
+    }
     [Fact]
     public void VerifyGoalRecord_SettleHalftimeAndIsNotExistedSemiColon_ThrowsGoalRecordNotSemiColonException()
     {
         // Arrange
-        var scoreAndGoalRecordService = Substitute.For<ScoreAndGoalRecordService>();
-
         var match = new Match
         {
             GoalRecord = "AH;",
@@ -32,7 +35,6 @@ public class ValidationGoalRecordServiceTests
     public void VerifyGoalRecord_SettleHalftimeAndNotConsistentHalftime_ThrowsGoalRecordHalftimeScoreNotConsistentException()
     {
         // Arrange
-        var scoreAndGoalRecordService = Substitute.For<ScoreAndGoalRecordService>();
         var match = new Match
         {
             GoalRecord = "AH;",
@@ -53,7 +55,6 @@ public class ValidationGoalRecordServiceTests
     public void VerifyGoalRecord_SettleHalftimeAndIsConsistentHalftime_DoesNotThrowException()
     {
         // Arrange
-        var scoreAndGoalRecordService = Substitute.For<ScoreAndGoalRecordService>();
         var match = new Match
         {
             GoalRecord = "AH;",
@@ -75,7 +76,6 @@ public class ValidationGoalRecordServiceTests
     public void VerifyGoalRecord_SettleFullTimeAndNotConsistentHalftime_ThrowsGoalRecordHalftimeScoreNotConsistentException()
     {
         // Arrange
-        var scoreAndGoalRecordService = Substitute.For<ScoreAndGoalRecordService>();
         var match = new Match
         {
             GoalRecord = "AH;",
@@ -95,7 +95,6 @@ public class ValidationGoalRecordServiceTests
     public void VerifyGoalRecord_SettleFullTimeAndNotConsistentFullTime_ThrowsGoalRecordHalftimeScoreNotConsistentException()
     {
         // Arrange
-        var scoreAndGoalRecordService = Substitute.For<ScoreAndGoalRecordService>();
         var match = new Match
         {
             GoalRecord = "AH;",
@@ -116,17 +115,17 @@ public class ValidationGoalRecordServiceTests
     public void VerifyGoalRecord_SettleFullTimeAndIsConsistent_DoesNotThrowException()
     {
         // Arrange
-        var scoreAndGoalRecordService = Substitute.For<ScoreAndGoalRecordService>();
         var match = new Match
         {
-            GoalRecord = "AH;",
+            GoalRecord = "AH",
             HtHomeScore = 1,
             HtAwayScore = 1,
-            TypeId = SettleType.FullTime
+            TypeId = SettleType.FullTime,
+
         };
 
-        scoreAndGoalRecordService.IsConsistentHalftime(Arg.Is<Match>(match)).Returns(true);
-        scoreAndGoalRecordService.IsConsistentFullTime(Arg.Is<Match>(match)).Returns(true);
+        scoreAndGoalRecordService.IsConsistentHalftime(Arg.Any<Match>()).Returns(true);
+        scoreAndGoalRecordService.IsConsistentFullTime(Arg.Any<Match>()).Returns(true);
         var service = new ValidationGoalRecordServiceImp(scoreAndGoalRecordService);
 
         // Assert

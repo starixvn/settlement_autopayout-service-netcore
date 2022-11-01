@@ -129,11 +129,12 @@ public class MatchByLeagueServiceTest
             RetryCount = 1,
             EnvironmentName = "PRO"
         };
+        var createMatches = CreateMatches;
         var appSettingsOptions = Options.Create(settings);
 
         matchByLeagueService = new MatchByLeagueServiceImp(matchQueryService, cache, appSettingsOptions);
 
-        matchQueryService.GetWaitingMatches().Returns(CreateMatches);
+        matchQueryService.GetWaitingMatches().Returns(createMatches);
 
         // Act
         await Task.Delay(3000);

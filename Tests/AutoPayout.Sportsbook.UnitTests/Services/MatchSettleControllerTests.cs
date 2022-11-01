@@ -11,13 +11,16 @@ public class MatchSettleControllerUnitTests
     {
         // Arrange
         var anyMatch = new Match { MatchId = 1 };
+
         var scoreMatcherController = Substitute.For<ScoreMatcherController>();
-        scoreMatcherController.Verify(Arg.Any<Match>()).Returns(1);
-        var matchSettleService = Substitute.For<MatchSettleService>();
-        matchSettleService.Settle(Arg.Any<Match>(), Arg.Any<int>()).Returns(new Models.Result());
         var settleLogService = Substitute.For<SettleLogService>();
         var matchListingService = Substitute.For<MatchSettlingPoolService>();
         var autoPayoutResultService = Substitute.For<AutoPayoutResultService>();
+        var matchSettleService = Substitute.For<MatchSettleService>();
+
+        matchSettleService.Settle(Arg.Any<Match>(), Arg.Any<int>()).Returns(new Models.Result());
+
+
         var controller = new MatchSettleControllerImp(
             matchSettleService,
             scoreMatcherController,

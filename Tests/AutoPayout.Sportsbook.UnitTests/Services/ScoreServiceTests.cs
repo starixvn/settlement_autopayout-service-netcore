@@ -76,7 +76,7 @@ public class ScoreServiceTests
         // Arrange
         var match = new Match { MatchId = 1, TypeId = 2 };
         var dynamicRepository = Substitute.For<IDynamicRepository>();
-        dynamicRepository.FetchAsync<Score>(Arg.Any<ICriteria>()).Returns(new List<Score>());
+        //  dynamicRepository.FetchAsync<Score>(Arg.Any<MatchScoreCriteria>()).Returns(new List<Score>());
         var matchQueryService = Substitute.For<MatchQueryService>();
         var service = new ScoreServiceImp(dynamicRepository, appSettingsKey, matchQueryService);
 
