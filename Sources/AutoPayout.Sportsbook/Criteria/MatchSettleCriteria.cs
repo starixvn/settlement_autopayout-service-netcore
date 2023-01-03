@@ -33,6 +33,14 @@ public class MatchSettleCriteria : NonQueryCommand
 
     public string RefResult { get; set; }
 
+    public int? HalfTimeHome { get; set; }
+
+    public int? HalfTimeAway { get; set; }
+
+    public int? FullTimeHome { get; set; }
+
+    public int? FullTimeAway { get; set; }
+
     public string BroadcastSessionId { get; } = Guid.NewGuid().ToString();
 
     [SpParam(Ignored = true)]

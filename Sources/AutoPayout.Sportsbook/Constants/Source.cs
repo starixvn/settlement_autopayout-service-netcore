@@ -4,7 +4,5 @@ public static class Source
 {
     public const int Sbo = 1;
 
-    public const int SoccerWay = 5;
-
     public const int AdminSite = 101;
 }
