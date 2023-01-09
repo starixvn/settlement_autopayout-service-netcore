@@ -56,7 +56,7 @@ public class MatchSettleServiceImp : MatchSettleService
             await scaleOutSettleService.UpdateUnderSettlementFlag(match.MatchId, 0, actionName);
             await autoPayoutResultService.Insert(match, sourceId, MatchStatus.Waiting);
 
-            await Execute(match, matchChecking, resourceResult, sourceId, actionName);
+            await Execute(match, matchChecking, resourceResult, sourceId);
 
             await UpdateAutoRefundChildMatch(match, actionName);
             await SettleHedgeMatch(match, matchChecking, resourceResult, actionName, sourceId);
@@ -78,25 +78,14 @@ public class MatchSettleServiceImp : MatchSettleService
             match.MatchId = hedgeMatch.MatchId;
             await scaleOutSettleService.UpdateUnderSettlementFlag(match.MatchId, 0, actionName);
             await autoPayoutResultService.Insert(match, sourceId, MatchStatus.Waiting);
-            await Execute(match, matchChecking, resourceResult, sourceId, actionName);
+            await Execute(match, matchChecking, resourceResult, sourceId);
         }
     }
 
-    private async Task UpdateMatchInfo(Match match, MatchSettleCriteria criteria)
+    private async Task UpdateMatchInfo(MatchSettleCriteria criteria)
     {
-        var updateMatchInfoRequest = new UpdateMatchInfoRequest
-        {
-            MatchId = criteria.MatchId,
-            Action = criteria.Action,
-            HalfTimeHome = match.HtHomeScore,
-            HalfTimeAway = match.HtAwayScore,
-            FullTimeHome = match.FinalHomeScore,
-            FullTimeAway = match.FinalAwayScore,
-            GoalRecord = criteria.GoalRecord,
-            BetStatus = criteria.BetStatus,
-            IsAuto = true,
-            ResourceResult = criteria.ResourceResult
-        };
+        var updateMatchInfoRequest = mapper.Map<MatchSettleCriteria, UpdateMatchInfoRequest>(criteria);
+        updateMatchInfoRequest.IsAuto = true;
 
         await scaleOutSettleService.UpdateMatchInfo(updateMatchInfoRequest);
     }
@@ -153,13 +142,14 @@ public class MatchSettleServiceImp : MatchSettleService
         return matchQueryService.GetResource(match.TypeId, goal);
     }
 
-    private async Task Execute(Match match, MatchChecking matchChecking, string resourceResult, int sourceId, string actionName)
+    private async Task Execute(Match match, MatchChecking matchChecking, string resourceResult, int sourceId)
     {
         var criteria = matchSettleCriteriaService.CreateSettleCriteria(match, matchChecking);
         criteria.SourceId = sourceId;
         criteria.ResourceResult = resourceResult;
         criteria.RefResult = await GetRelatedInfo(match);
-        await UpdateMatchInfo(match, criteria);
+
+        await UpdateMatchInfo(criteria);
         matchQueryService.ExecuteAllSiteDb(criteria);
     }
 
@@ -175,6 +165,6 @@ public class MatchSettleServiceImp : MatchSettleService
             return $"{mainScore}; {cornerScore}";
         }
 
-        return null;
+        return string.Empty;
     }
 }

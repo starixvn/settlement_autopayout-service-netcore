@@ -11,8 +11,4 @@ public class MatchSettleHalfTimeCriteria : MatchSettleCriteria
         HalfTimeAway = match.HtAwayScore;
         BetStatus = betStatus;
     }
-
-    public int? HalfTimeHome { get; set; }
-
-    public int? HalfTimeAway { get; set; }
 }
