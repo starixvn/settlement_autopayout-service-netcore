@@ -39,12 +39,10 @@ public class Match
 
     public string GoalRecord
     {
-        get
-        {
-            return string.IsNullOrWhiteSpace(goalRecord)
+        get =>
+            string.IsNullOrWhiteSpace(goalRecord)
                 ? string.Empty
                 : goalRecord.ToUpperInvariant();
-        }
         set
         {
             goalRecord = value;

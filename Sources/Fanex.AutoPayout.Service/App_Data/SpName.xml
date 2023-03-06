@@ -11,6 +11,8 @@
     <Setting Key="NAP_Set_SettlementStatusUpd" SpName="NAP_Set_SettlementStatusUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Admin_MatchInfoUpd" SpName="NAP_Admin_MatchInfoUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_AutoRefund_ResultIns" SpName="NAP_Set_AutoRefund_ResultIns" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="Logfile_V2" SpName="Logfile_V2" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" TimeOut="20" />
+
   </Function>
 
   <Function Name="Scale Out TransDb">
