@@ -56,7 +56,6 @@ public class MatchSettleServiceImp : MatchSettleService
         var resultValidation = await ValidateBeforePushing(match, actionName, resourceResult);
         if (resultValidation.ErrCode == 0)
         {
-            // TO DO
             logDirectlyService.WriteLog(match, actionName);
             await scaleOutSettleService.UpdateUnderSettlementFlag(match.MatchId, 0, actionName);
             await autoPayoutResultService.Insert(match, sourceId, MatchStatus.Waiting);

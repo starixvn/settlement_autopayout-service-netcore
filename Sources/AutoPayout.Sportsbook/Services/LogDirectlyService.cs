@@ -38,7 +38,7 @@ public class LogDirectlyServiceImp : LogDirectlyService
 
     private string GenerateLogData(Match match, string actionName)
     {
-        var message = $"NAP:Calculate({actionName}) for matchid: {match.MatchId} score: ${match.HtHomeScore}-{match.HtAwayScore} HT: ${match.FinalHomeScore}-{match.FinalAwayScore} GoalRecord: {match.GoalRecord}(Old: ) Remark({match.BetStatus})";
+        var message = $"NAP:Calculate({actionName}) for matchid: {match.MatchId} score: {match.FinalHomeScore}-{match.FinalAwayScore} HT: {match.HtHomeScore ?? 0}-{match.HtAwayScore ?? 0} GoalRecord: {match.GoalRecord} Remark({match.BetStatus})";
 
         return message;
     }
