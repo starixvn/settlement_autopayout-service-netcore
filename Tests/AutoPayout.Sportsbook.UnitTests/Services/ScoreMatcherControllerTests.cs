@@ -53,7 +53,7 @@ public class ScoreMatcherControllerTests
             matchQueryService);
         var match = new Match();
 
-        matchQueryService.GetMatchAndResultDetail(Arg.Is<int>(1)).Returns((new RemarkSettingModel(), new List<ResultDetail>()));
+        matchQueryService.GetMatchAndResultDetail(Arg.Is(1)).Returns((new RemarkSettingModel(), new List<ResultDetail>()));
         scoreService.TryGetScore(Arg.Any<Match>()).Returns(new Score { SourceId = Source.Sbo });
 
         // Act
@@ -81,7 +81,6 @@ public class ScoreMatcherControllerTests
             scoreService,
             validationGoalRecordService,
             matchQueryService);
-
 
         matchQueryService.GetMatchAndResultDetail(Arg.Any<int>()).Returns((new RemarkSettingModel(), new List<ResultDetail>()));
         scoreService.TryGetRelatedResults(Arg.Any<Match>()).Returns(new List<ResultDetail>());

@@ -36,7 +36,8 @@ public class MatchSettleServiceImp : MatchSettleService
         IMapper mapper,
         OtherInfoService otherInfoService,
         ScaleOutSettleService scaleOutSettleService,
-        AutoPayoutResultService autoPayoutResultService, LogDirectlyService logDirectlyService)
+        AutoPayoutResultService autoPayoutResultService,
+        LogDirectlyService logDirectlyService)
     {
         this.matchQueryService = matchQueryService;
         this.matchSettleCriteriaService = matchSettleCriteriaService;

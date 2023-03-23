@@ -83,7 +83,11 @@ public class AutoPayoutService : IHostedService
             if (!maintenanceService.IsMaintenance)
             {
                 MainProcess();
-                Thread.Sleep(int.Parse(configuration.GetSection("ServiceInterval").Value));
+                var value = configuration.GetSection("ServiceInterval").Value;
+                if (value != null)
+                {
+                    Thread.Sleep(int.Parse(value));
+                }
             }
         }
     }
@@ -103,13 +107,18 @@ public class AutoPayoutService : IHostedService
 
     private void HandleGarbageCollector()
     {
-        if (counter >= int.Parse(configuration.GetSection("GarbageCollectorInterval").Value))
+        var value = configuration.GetSection("GarbageCollectorInterval").Value;
+        if (value != null && counter >= int.Parse(value))
         {
             counter = 0;
             GC.WaitForPendingFinalizers();
         }
 
-        counter += int.Parse(configuration.GetSection("ServiceInterval").Value);
+        var interval = configuration.GetSection("ServiceInterval").Value;
+        if (interval != null)
+        {
+            counter += int.Parse(interval);
+        }
     }
 
     private void StartUmSetting()

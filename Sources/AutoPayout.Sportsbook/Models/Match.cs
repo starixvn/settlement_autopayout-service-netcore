@@ -71,20 +71,16 @@ public class Match
     public int ChildLeagueType { get; set; }
 
     public bool IsSabaPenaltyShootout => SabaSoccer.LeagueGroupIds.Contains(LeagueGroupId) && SabaSoccer.LeagueIds.Contains(LeagueId)
-        && (ChildMatchType == SoccerChildMatchType.PenaltyShootoutHDP || ChildMatchType == SoccerChildMatchType.PenaltyShootoutOU);
+        && (ChildMatchType == SoccerChildMatchType.PenaltyShootoutHdp || ChildMatchType == SoccerChildMatchType.PenaltyShootoutOu);
 
     public bool IsTotalCornerGoalMatch => MainType == TotalCornerTotalGoalMatch.MainType && ChildLeagueType == TotalCornerTotalGoalMatch.ChildLeagueType;
 
     public override bool Equals(object obj)
     {
-        return obj != null
-            && (obj is Match)
-            && (obj as Match).MatchId == MatchId
-            && (obj as Match).TypeId == TypeId;
+        return obj is Match match
+               && match.MatchId == MatchId
+               && match.TypeId == TypeId;
     }
 
-    public override int GetHashCode()
-    {
-        return MatchId * TypeId;
-    }
+    public override int GetHashCode() => MatchId * TypeId;
 }

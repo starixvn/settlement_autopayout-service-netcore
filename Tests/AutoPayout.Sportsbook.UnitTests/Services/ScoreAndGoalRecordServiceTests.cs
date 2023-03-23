@@ -88,9 +88,9 @@ public class ScoreAndGoalRecordServiceTests
     public void IsExistedSemiColon_GoalRecordValue_ReturnsTrue(string goalRecord)
     {
         // Act
-        var IsExistedSemiColon = service.IsExistedSemiColon(goalRecord);
+        var isExistedSemiColon = service.IsExistedSemiColon(goalRecord);
 
         // Assert
-        Assert.True(IsExistedSemiColon);
+        Assert.True(isExistedSemiColon);
     }
 }
