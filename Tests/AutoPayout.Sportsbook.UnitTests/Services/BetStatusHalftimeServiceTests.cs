@@ -14,7 +14,7 @@ public class BetStatusHalftimeServiceTests
         // Arrange
         var betStatusService = Substitute.For<BetStatusService>();
         var service = new BetStatusHalftimeServiceImp(betStatusService);
-        betStatusService.GenerateBetStatus(Arg.Any<string>(), Arg.Any<string>()).Returns("1FL:1-2;");
+        betStatusService.GenerateBetStatus("1FL", string.Empty).Returns("1FL:1-2;");
 
         // Act
         var actual = service.BetStatus(currentBetStatus, string.Empty);
@@ -30,7 +30,6 @@ public class BetStatusHalftimeServiceTests
     [InlineData("1FL:1-0;", "FL:2-0;", "1FL:1-0;FL:2-0;")]
     [InlineData("FL:1-0;", "FL:2-0;", "FL:2-0;")]
     [InlineData(null, "", "")]
-
     public void AppendFullTimeBetStatus_BetStatus_ReturnsExpectedNewBetStatus(string betStatus, string fullTimeBetStatus, string expectedNewBetStatus)
     {
         // Act

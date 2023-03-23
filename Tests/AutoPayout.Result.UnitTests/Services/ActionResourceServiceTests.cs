@@ -12,16 +12,16 @@ public class ActionResourceServiceTests
     private static List<XmlResource> ExpectedHalftimeResourceWithExistHtFgLg()
     {
         return new List<XmlResource> {
-           new XmlResource
-            {
+           new()
+           {
                 ResourceId = "127F",
                 ResultStatusId = 5,
                 SettlementStatusId = 4,
                 HomeValue = "A"
             },
 
-          new XmlResource
-            {
+          new()
+          {
                 ResourceId = "127L",
                 ResultStatusId = 5,
                 SettlementStatusId = 4,
@@ -33,7 +33,7 @@ public class ActionResourceServiceTests
     private static List<XmlResource> ExpectedHalftimeResourceWithExistFgNg()
     {
         return new List<XmlResource> {
-            new XmlResource
+            new()
             {
                 ResourceId = "14F",
                 ResultStatusId = 5,
@@ -46,7 +46,7 @@ public class ActionResourceServiceTests
     private static List<XmlResource> ExpectedFullTimeResource()
     {
         return new List<XmlResource> {
-        new XmlResource
+        new()
         {
             ResourceId = "14F",
             ResultStatusId = 5,
@@ -54,8 +54,8 @@ public class ActionResourceServiceTests
             HomeValue = "A"
         },
 
-          new XmlResource
-        {
+          new()
+          {
             ResourceId = "14L",
             ResultStatusId = 5,
             SettlementStatusId = 4,
@@ -67,7 +67,7 @@ public class ActionResourceServiceTests
     private static List<XmlResource> FullTimeGoalRecordResources()
     {
         return new List<XmlResource>{
-                new XmlResource
+                new()
                 {
                     ResourceId = "08",
                     ResultStatusId = 5,
@@ -79,7 +79,8 @@ public class ActionResourceServiceTests
     private List<XmlResource> HalftimeGoalRecordResources()
     {
         return new List<XmlResource>{
-            new XmlResource{
+            new()
+            {
             ResourceId = "09",
             ResultStatusId = 5,
             SettlementStatusId = 4,

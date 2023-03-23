@@ -21,11 +21,9 @@ if (app.Environment.IsDevelopment())
 }
 app.UseRouting();
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapGet("/",
-        async context => { await context.Response.WriteAsync("Fanex.AutoPayout.Service"); });
-});
+app.MapGet("/",
+    async context => { await context.Response.WriteAsync("Fanex.AutoPayout.Service"); });
+
 #if DEBUG
 app.Run();
 #else

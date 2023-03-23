@@ -53,6 +53,7 @@ public static class AutoPayoutInjector
         service.AddSingleton<MatchByLeagueService, MatchByLeagueServiceImp>();
         service.AddSingleton<OtherInfoService, OtherInfoServiceImp>();
         service.AddTransient<ScaleOutSettleService, ScaleOutSettleServiceImp>();
+        service.AddTransient<LogDirectlyService, LogDirectlyServiceImp>();
 
         service.AddSingleton(new UMClientConfiguration().Initialize(configuration));
         service.AddSingleton<IUMCacheService, UMCacheService>();

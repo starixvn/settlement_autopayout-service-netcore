@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Functions>
   <Function Name="AutoPayout">
-    <Setting Key="WriteLog_UserLog_Settle" SpName="WriteLog_UserLog_Settle" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" TimeOut="20" />
     <Setting Key="NAP_Set_AutoPayout_MatchSelDetail" SpName="NAP_Set_AutoPayout_MatchSelDetail" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_MatchSelHedge" SpName="NAP_Set_MatchSelHedge" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_AutoPayout_ScheduleSel" SpName="NAP_Set_AutoPayout_ScheduleSel" DbName="DBPRO.bodb02.bodbAdminNet" />
@@ -11,6 +10,8 @@
     <Setting Key="NAP_Set_SettlementStatusUpd" SpName="NAP_Set_SettlementStatusUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Admin_MatchInfoUpd" SpName="NAP_Admin_MatchInfoUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_AutoRefund_ResultIns" SpName="NAP_Set_AutoRefund_ResultIns" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_UserLog_WriteLogPreSettlement" SpName="NAP_UserLog_WriteLogPreSettlement" DbName="DBUserLog.LogTDB.bodbAdminNet" />
+    <Setting Key="WriteLog_UserLog_Settle" SpName="WriteLog_UserLog_Settle" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" TimeOut="20" />
   </Function>
 
   <Function Name="Scale Out TransDb">

@@ -1,6 +1,4 @@
-﻿using Fanex.Data.Repository;
-
-namespace AutoPayout.Sportsbook.Criteria;
+﻿namespace AutoPayout.Sportsbook.Criteria;
 
 public class AddAutoPayoutResultCriteria : NonQueryCommand
 {

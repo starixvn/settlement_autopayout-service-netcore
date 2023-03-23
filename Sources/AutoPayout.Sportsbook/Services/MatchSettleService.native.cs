@@ -26,6 +26,8 @@ public class MatchSettleServiceImp : MatchSettleService
 
     private readonly AutoPayoutResultService autoPayoutResultService;
 
+    private readonly LogDirectlyService logDirectlyService;
+
     private readonly IMapper mapper;
 
     public MatchSettleServiceImp(
@@ -34,7 +36,8 @@ public class MatchSettleServiceImp : MatchSettleService
         IMapper mapper,
         OtherInfoService otherInfoService,
         ScaleOutSettleService scaleOutSettleService,
-        AutoPayoutResultService autoPayoutResultService)
+        AutoPayoutResultService autoPayoutResultService,
+        LogDirectlyService logDirectlyService)
     {
         this.matchQueryService = matchQueryService;
         this.matchSettleCriteriaService = matchSettleCriteriaService;
@@ -42,6 +45,7 @@ public class MatchSettleServiceImp : MatchSettleService
         this.otherInfoService = otherInfoService;
         this.scaleOutSettleService = scaleOutSettleService;
         this.autoPayoutResultService = autoPayoutResultService;
+        this.logDirectlyService = logDirectlyService;
     }
 
     public async Task<Models.Result> Settle(Match match, int sourceId)
@@ -53,9 +57,9 @@ public class MatchSettleServiceImp : MatchSettleService
         var resultValidation = await ValidateBeforePushing(match, actionName, resourceResult);
         if (resultValidation.ErrCode == 0)
         {
+            logDirectlyService.WriteLog(match, actionName);
             await scaleOutSettleService.UpdateUnderSettlementFlag(match.MatchId, 0, actionName);
             await autoPayoutResultService.Insert(match, sourceId, MatchStatus.Waiting);
-
             await Execute(match, matchChecking, resourceResult, sourceId);
 
             await UpdateAutoRefundChildMatch(match, actionName);
