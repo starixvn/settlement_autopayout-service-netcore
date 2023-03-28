@@ -38,8 +38,9 @@ public class LogDirectlyServiceImp : LogDirectlyService
 
     private static string GenerateLogData(Match match, string actionName)
     {
-        return $"NAP: Auto Payout Calculate({actionName}) for matchId: {match.MatchId} score: "
-                            + $"{match.FinalHomeScore ?? 0}-{match.FinalAwayScore ?? 0} HT: {match.HtHomeScore ?? 0}-{match.HtAwayScore ?? 0} "
-                            + $"GoalRecord: {match.GoalRecord} Remark({match.BetStatus})";
+        var score = $"score: {match.FinalHomeScore ?? 0}-{match.FinalAwayScore ?? 0} HT: {match.HtHomeScore ?? 0}-{match.HtAwayScore ?? 0}";
+        var message = $"NAP: Auto Payout Calculate({actionName}) for matchid: {match.MatchId} {score} GoalRecord: {match.GoalRecord} Remark({match.BetStatus})";
+
+        return message;
     }
 }
