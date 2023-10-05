@@ -6,7 +6,7 @@ COPY ./Sources/AutoPayout.Sportsbook ./AutoPayout.Sportsbook
 COPY ./Sources/Fanex.AutoPayout.Service/Fanex.AutoPayout.Service.csproj ./Fanex.AutoPayout.Service/Fanex.AutoPayout.Service.csproj
 
 WORKDIR /src/Fanex.AutoPayout.Service
-RUN dotnet nuget add source http://nuget.nexdev.net/api/v2
+RUN dotnet nuget add source https://nuget.nexdev.net/api/v2
 RUN dotnet restore -v n
 
 COPY ./Sources/Fanex.AutoPayout.Service .

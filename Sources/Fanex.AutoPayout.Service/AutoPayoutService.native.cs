@@ -1,7 +1,5 @@
 ﻿using AutoPayout.Sportsbook.Services;
 using Fanex.Caching;
-using Fanex.Data;
-using Fanex.Data.SqlServer;
 using Fanex.Logging;
 using Fanex.Logging.Sentry.RavenClient;
 using Microsoft.Extensions.Configuration;
@@ -41,7 +39,6 @@ public class AutoPayoutService : IHostedService
     private void InitializeSetting()
     {
         StartUmSetting();
-        StartDataBaseSetting();
         StartLogSetting();
     }
 
@@ -129,23 +126,6 @@ public class AutoPayoutService : IHostedService
             .UseConfig(umConfig)
             .UseCacheService(new UMCacheService(new CacheService()))
             .UseRestClient(new UMRestClient(umConfig));
-    }
-
-    private void StartDataBaseSetting()
-    {
-        var connections = configuration.GetSection("ConnectionStrings")
-            .GetChildren()
-            .AsEnumerable()
-            .ToDictionary(
-                x => x.GetValue<string>("Name"),
-                y => new ConnectionConfiguration(y.GetValue<string>("Name"), y.GetValue<string>("ConnectionString"), y.GetValue<string>("ProviderName"))
-            );
-        DbSettingProviderManager
-            .StartNewSession()
-            .Use(connections)
-            .WithSqlServer()
-            .UseDefaultDbSettingProvider(resourcePath: configuration.GetSection("StoredProcedurePath").Value)
-            .Run();
     }
 
     private void StartLogSetting()
