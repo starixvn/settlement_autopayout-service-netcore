@@ -18,7 +18,7 @@ public class MatchSettleServiceImp : MatchSettleService
 {
     private readonly MatchQueryService matchQueryService;
 
-    private readonly MatchSettleCriteriaService matchSettleCriteriaService;
+    private readonly CreateCriteriaService createCriteriaService;
 
     private readonly OtherInfoService otherInfoService;
 
@@ -26,26 +26,26 @@ public class MatchSettleServiceImp : MatchSettleService
 
     private readonly AutoPayoutResultService autoPayoutResultService;
 
-    private readonly LogDirectlyService logDirectlyService;
+    private readonly LogService logService;
 
     private readonly IMapper mapper;
 
     public MatchSettleServiceImp(
         MatchQueryService matchQueryService,
-        MatchSettleCriteriaService matchSettleCriteriaService,
+        CreateCriteriaService createCriteriaService,
         IMapper mapper,
         OtherInfoService otherInfoService,
         ScaleOutSettleService scaleOutSettleService,
         AutoPayoutResultService autoPayoutResultService,
-        LogDirectlyService logDirectlyService)
+        LogService logService)
     {
         this.matchQueryService = matchQueryService;
-        this.matchSettleCriteriaService = matchSettleCriteriaService;
+        this.createCriteriaService = createCriteriaService;
         this.mapper = mapper;
         this.otherInfoService = otherInfoService;
         this.scaleOutSettleService = scaleOutSettleService;
         this.autoPayoutResultService = autoPayoutResultService;
-        this.logDirectlyService = logDirectlyService;
+        this.logService = logService;
     }
 
     public async Task<Models.Result> Settle(Match match, int sourceId)
@@ -57,7 +57,8 @@ public class MatchSettleServiceImp : MatchSettleService
         var resultValidation = await ValidateBeforePushing(match, actionName, resourceResult);
         if (resultValidation.ErrCode == 0)
         {
-            logDirectlyService.WriteLog(match, actionName);
+            var insertLogCriteria = createCriteriaService.CreateLogCriteria(match, matchChecking, actionName);
+            await WriteLog(match, insertLogCriteria, actionName);
             await scaleOutSettleService.UpdateUnderSettlementFlag(match.MatchId, 0, actionName);
             await autoPayoutResultService.Insert(match, sourceId, MatchStatus.Waiting);
             await Execute(match, matchChecking, resourceResult, sourceId);
@@ -67,6 +68,13 @@ public class MatchSettleServiceImp : MatchSettleService
         }
 
         return resultValidation;
+    }
+
+    private async Task WriteLog(Match match, InsertLogCriteria insertLogCriteria, string actionName)
+    {
+        await logService.WriteLog(insertLogCriteria);
+
+        await logService.WriteLog(match, actionName);
     }
 
     private async Task SettleHedgeMatch(
@@ -148,7 +156,7 @@ public class MatchSettleServiceImp : MatchSettleService
 
     private async Task Execute(Match match, MatchChecking matchChecking, string resourceResult, int sourceId)
     {
-        var criteria = matchSettleCriteriaService.CreateSettleCriteria(match, matchChecking);
+        var criteria = createCriteriaService.CreateSettleCriteria(match, matchChecking);
         criteria.SourceId = sourceId;
         criteria.ResourceResult = resourceResult;
         criteria.RefResult = await GetRelatedInfo(match);

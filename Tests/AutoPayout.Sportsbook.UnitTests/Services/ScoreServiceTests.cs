@@ -9,6 +9,7 @@ namespace AutoPayout.Sportsbook.UnitTests.Services;
 public class ScoreServiceTests
 {
     private readonly IOptions<AppSettingsKey> appSettingsKey;
+
     public ScoreServiceTests()
     {
         var settings = new AppSettingsKey()
@@ -76,7 +77,6 @@ public class ScoreServiceTests
         // Arrange
         var match = new Match { MatchId = 1, TypeId = 2 };
         var dynamicRepository = Substitute.For<IDynamicRepository>();
-        //  dynamicRepository.FetchAsync<Score>(Arg.Any<MatchScoreCriteria>()).Returns(new List<Score>());
         var matchQueryService = Substitute.For<MatchQueryService>();
         var service = new ScoreServiceImp(dynamicRepository, appSettingsKey, matchQueryService);
 

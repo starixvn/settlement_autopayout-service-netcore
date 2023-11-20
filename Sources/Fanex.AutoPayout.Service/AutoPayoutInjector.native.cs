@@ -40,7 +40,7 @@ public static class AutoPayoutInjector
         service.AddSingleton<ScoreMatcherController, ScoreMatcherControllerImp>();
         service.AddSingleton<ScoreService, ScoreServiceImp>();
         service.AddSingleton<SettleLogService, SettleLogServiceImp>();
-        service.AddSingleton<MatchSettleCriteriaService, MatchSettleCriteriaServiceImp>();
+        service.AddSingleton<CreateCriteriaService, CreateCriteriaServiceImp>();
         service.AddSingleton<AutoPayoutResultService, AutoPayoutResultServiceImp>();
         service.AddSingleton<ValidationGoalRecordService, ValidationGoalRecordServiceImp>();
         service.AddSingleton<ValidationSettingMatchService, ValidationSettingMatchServiceImp>();
@@ -53,7 +53,7 @@ public static class AutoPayoutInjector
         service.AddSingleton<MatchByLeagueService, MatchByLeagueServiceImp>();
         service.AddSingleton<OtherInfoService, OtherInfoServiceImp>();
         service.AddTransient<ScaleOutSettleService, ScaleOutSettleServiceImp>();
-        service.AddTransient<LogDirectlyService, LogDirectlyServiceImp>();
+        service.AddTransient<LogService, LogServiceImp>();
 
         service.AddSingleton(new UMClientConfiguration().Initialize(configuration));
         service.AddSingleton<IUMCacheService, UMCacheService>();

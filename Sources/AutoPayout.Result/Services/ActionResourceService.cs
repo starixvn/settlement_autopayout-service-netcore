@@ -8,6 +8,8 @@ public interface ActionResourceService
     List<XmlResource> HalftimeResources(Goal goal);
 
     List<XmlResource> FullTimeGoalResources(Goal goal);
+
+    ResourceItem CalculateLogResources(string resourceId, string homeValue, string awayValue);
 }
 
 public class ActionResourceServiceImp : ActionResourceService
@@ -74,7 +76,7 @@ public class ActionResourceServiceImp : ActionResourceService
         return resources;
     }
 
-    private XmlResource CreateCalculateResource(string resourceId, string homeValue)
+    private static XmlResource CreateCalculateResource(string resourceId, string homeValue)
     {
         return new XmlResource
         {
@@ -82,6 +84,16 @@ public class ActionResourceServiceImp : ActionResourceService
             ResultStatusId = SettledBy,
             SettlementStatusId = Completed,
             HomeValue = homeValue
+        };
+    }
+
+    public ResourceItem CalculateLogResources(string resourceId, string homeValue, string awayValue)
+    {
+        return new ResourceItem
+        {
+            ResourceId = resourceId,
+            HomeValue = homeValue,
+            AwayValue = awayValue
         };
     }
 }

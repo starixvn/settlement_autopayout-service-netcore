@@ -52,7 +52,7 @@ public class AutoPayoutService : IHostedService
         e.SetObserved();
         e.Exception.Handle(x =>
         {
-            LogService.Error(x.Message, x);
+            Logging.LogService.Error(x.Message, x);
             return true;
         });
     }
@@ -98,7 +98,7 @@ public class AutoPayoutService : IHostedService
         }
         catch (Exception exception)
         {
-            LogService.Error("Fanex.AutoPayout.Service: ", exception);
+            Logging.LogService.Error("Fanex.AutoPayout.Service: ", exception);
         }
     }
 
