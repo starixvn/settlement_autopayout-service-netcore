@@ -87,7 +87,7 @@ public class CreateCriteriaServiceImp : CreateCriteriaService
         {
             MatchId = match.MatchId,
             Action = actionName,
-            Sporttype = soccer,
+            SportType = soccer,
             SelectedResources = selectedResources
         };
     }

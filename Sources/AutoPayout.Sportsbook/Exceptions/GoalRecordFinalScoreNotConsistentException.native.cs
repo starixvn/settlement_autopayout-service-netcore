@@ -18,6 +18,7 @@ public class GoalRecordFinalScoreNotConsistentException : AutoPayoutException
     {
     }
 
+    [Obsolete(DiagnosticId = "SYSLIB0051")]
     protected GoalRecordFinalScoreNotConsistentException(SerializationInfo info, StreamingContext context)
         : base(info, context)
     {

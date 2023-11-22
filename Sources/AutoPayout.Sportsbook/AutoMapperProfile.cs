@@ -12,5 +12,6 @@ public class AutoMapperProfile : Profile
     {
         CreateMap<MatchChecking, Goal>();
         CreateMap<MatchSettleCriteria, UpdateMatchInfoRequest>();
+        CreateMap<XmlResource, ResourceItem>();
     }
 }
