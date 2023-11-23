@@ -72,7 +72,7 @@ public class MatchSettleServiceImp : MatchSettleService
 
     private async Task WriteLog(Match match, InsertLogCriteria insertLogCriteria, string actionName)
     {
-        await logService.WriteLog(insertLogCriteria);
+        await logService.WriteLogResettle(insertLogCriteria);
 
         await logService.WriteLog(match, actionName);
     }

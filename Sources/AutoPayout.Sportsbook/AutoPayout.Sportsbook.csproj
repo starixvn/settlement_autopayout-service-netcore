@@ -11,7 +11,7 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="Fanex.Caching" Version="2.2.4" />
-    <PackageReference Include="Fanex.Data.Repository" Version="4.2.5" />
+    <PackageReference Include="Fanex.Data.Repository" Version="4.2.5.1" />
     <PackageReference Include="Fanex.Logging" Version="2.0.1.1" />
     <PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
     <PackageReference Include="Fanex.Settlement.ScaleOut" Version="2.0.1.7" />

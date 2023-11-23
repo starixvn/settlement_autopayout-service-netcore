@@ -24,7 +24,7 @@ public class MatchSettlingPoolServiceTests
         Assert.Equal(3, matchListingService.PoolOfMatches.Count);
     }
 
-    private List<Match> CreateMatches(params int[] matchIds)
+    private static List<Match> CreateMatches(params int[] matchIds)
     {
         return matchIds.Select(i => new Match { MatchId = i, TypeId = 1 }).ToList();
     }

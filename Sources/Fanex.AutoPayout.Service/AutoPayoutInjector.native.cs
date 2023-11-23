@@ -59,6 +59,7 @@ public static class AutoPayoutInjector
         service.AddSingleton<IUMCacheService, UMCacheService>();
         service.AddSingleton<IUMRestClient, UMRestClient>();
         service.AddSingleton<ONEbook.UM.Services.IMaintenanceService, ONEbook.UM.Services.MaintenanceService>();
+        service.AddMemoryCache();
         ConfigureRedis(service, configuration);
     }
 
