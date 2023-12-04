@@ -2,10 +2,9 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-	  <TargetFramework>net7.0</TargetFramework>
+	  <TargetFramework>net8.0</TargetFramework>
 	  <Nullable>disable</Nullable>
 	  <ImplicitUsings>enable</ImplicitUsings>
-    <CodeAnalysisRuleSet>..\..\.sonarlint\autopayout-service-netcorecsharp.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,9 +20,9 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="Fanex.Caching.Redis.AspNetCore" Version="2.2.4" />
-    <PackageReference Include="Fanex.Data.Repository" Version="4.2.3" />
-    <PackageReference Include="Fanex.Data.SqlServer" Version="4.2.3" />
-    <PackageReference Include="Fanex.Logging.Sentry.RavenClient" Version="1.0.1.1" />
+    <PackageReference Include="Fanex.Data.Repository" Version="4.2.5.1" />
+    <PackageReference Include="Fanex.Data.SqlServer" Version="4.2.5.1" />
+    <PackageReference Include="Fanex.Logging.Sentry.RavenClient" Version="1.0.1.2" />
     <PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
     <PackageReference Include="Fanex.Settlement.ScaleOut" Version="2.0.1.7" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />

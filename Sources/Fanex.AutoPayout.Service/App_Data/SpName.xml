@@ -12,6 +12,7 @@
 		<Setting Key="NAP_Set_AutoRefund_ResultIns" SpName="NAP_Set_AutoRefund_ResultIns" DbName="DBPRO.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_UserLog_WriteLogPreSettlement" SpName="NAP_UserLog_WriteLogPreSettlement" DbName="DBUserLog.LogTDB.bodbAdminNet" />
 		<Setting Key="WriteLog_UserLog_Settle" SpName="WriteLog_UserLog_Settle" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" TimeOut="20" />
+		<Setting Key="NAP_SettlementLog_Ins" SpName="NAP_SettlementLog_Ins" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
 	</Function>
 
 	<Function Name="Scale Out TransDb">

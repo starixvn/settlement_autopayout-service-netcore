@@ -14,7 +14,7 @@ public class ValidationSettingMatchServiceImp : ValidationSettingMatchService
     {
         bool[] conditionsToCheck = { remark.IsMtdHold, remark.IsUndecided, remark.IsPending, remark.IsUnderSettle, remark.IsHoldKey };
 
-        if (conditionsToCheck.Any(item => item))
+        if (Array.Exists(conditionsToCheck, item => item))
         {
             throw new RemarkException();
         }

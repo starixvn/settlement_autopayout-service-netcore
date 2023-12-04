@@ -17,6 +17,7 @@ public class AutoPayoutException : Exception
     {
     }
 
+    [Obsolete(DiagnosticId = "SYSLIB0051")]
     protected AutoPayoutException(SerializationInfo info, StreamingContext context)
         : base(info, context)
     {

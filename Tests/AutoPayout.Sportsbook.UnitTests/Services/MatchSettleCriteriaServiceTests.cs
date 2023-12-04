@@ -1,9 +1,28 @@
-﻿using AutoPayout.Sportsbook.Services;
+﻿using AutoMapper;
+using AutoPayout.Result.Services;
+using AutoPayout.Sportsbook.Services;
+using Fanex.Settlement.Converter.Services;
 
 namespace AutoPayout.Sportsbook.UnitTests.Services;
 
 public class MatchSettleCriteriaServiceTests
 {
+    private readonly IMapper mapper;
+
+    private readonly ActionResourceService actionResourceService;
+
+    private readonly XmlConvertService xmlConvertService;
+
+    public MatchSettleCriteriaServiceTests()
+    {
+        actionResourceService = Substitute.For<ActionResourceService>();
+        xmlConvertService = Substitute.For<XmlConvertService>();
+        var mapperConfig = new MapperConfigurationExpression();
+        mapperConfig.AddProfile<AutoMapperProfile>();
+        var config = new MapperConfiguration(mapperConfig);
+        mapper = new Mapper(config);
+    }
+
     [Fact]
     public void CreateSettleCriteria_MatchIsHalftime_ReturnsRightActionName()
     {
@@ -12,7 +31,7 @@ public class MatchSettleCriteriaServiceTests
         var betStatusFullTimeService = Substitute.For<BetStatusFullTimeService>();
         var match = new Models.Match { TypeId = 1 };
         var matchChecking = new Models.MatchChecking();
-        var matchSettleCriteriaService = new MatchSettleCriteriaServiceImp(betStatusHalftimeService, betStatusFullTimeService);
+        var matchSettleCriteriaService = new CreateCriteriaServiceImp(betStatusHalftimeService, betStatusFullTimeService, actionResourceService, xmlConvertService, mapper);
 
         // Act
         var actual = matchSettleCriteriaService.CreateSettleCriteria(match, matchChecking);
@@ -32,7 +51,7 @@ public class MatchSettleCriteriaServiceTests
         var betStatusFullTimeService = Substitute.For<BetStatusFullTimeService>();
         var match = new Models.Match { TypeId = 1, BetStatus = currentBetStatus };
         var matchChecking = new Models.MatchChecking();
-        var matchSettleCriteriaService = new MatchSettleCriteriaServiceImp(betStatusHalftimeService, betStatusFullTimeService);
+        var matchSettleCriteriaService = new CreateCriteriaServiceImp(betStatusHalftimeService, betStatusFullTimeService, actionResourceService, xmlConvertService, mapper);
 
         // Act
         var actual = matchSettleCriteriaService.CreateSettleCriteria(match, matchChecking);
@@ -53,7 +72,7 @@ public class MatchSettleCriteriaServiceTests
         var matchChecking = new Models.MatchChecking { IsExistHtFgLg = true };
 
         betStatusHalftimeService.BetStatus(Arg.Any<string>(), Arg.Any<string>()).Returns("1FL:1-1;");
-        var matchSettleCriteriaService = new MatchSettleCriteriaServiceImp(betStatusHalftimeService, betStatusFullTimeService);
+        var matchSettleCriteriaService = new CreateCriteriaServiceImp(betStatusHalftimeService, betStatusFullTimeService, actionResourceService, xmlConvertService, mapper);
 
         // Act
         var actual = matchSettleCriteriaService.CreateSettleCriteria(match, matchChecking);
@@ -74,7 +93,7 @@ public class MatchSettleCriteriaServiceTests
 
         betStatusHalftimeService.AppendFullTimeBetStatus(Arg.Any<string>(), Arg.Any<string>())
             .Returns(expectedBetStatus);
-        var matchSettleCriteriaService = new MatchSettleCriteriaServiceImp(betStatusHalftimeService, betStatusFullTimeService);
+        var matchSettleCriteriaService = new CreateCriteriaServiceImp(betStatusHalftimeService, betStatusFullTimeService, actionResourceService, xmlConvertService, mapper);
 
         // Act
         var actual = matchSettleCriteriaService.CreateSettleCriteria(match, matchChecking);
@@ -93,7 +112,7 @@ public class MatchSettleCriteriaServiceTests
         const string expectedBetStatus = "1FL:1-2;";
         var match = new Models.Match { TypeId = 2, BetStatus = "1FL:1-2;" };
         var matchChecking = new Models.MatchChecking();
-        var matchSettleCriteriaService = new MatchSettleCriteriaServiceImp(betStatusHalftimeService, betStatusFullTimeService);
+        var matchSettleCriteriaService = new CreateCriteriaServiceImp(betStatusHalftimeService, betStatusFullTimeService, actionResourceService, xmlConvertService, mapper);
 
         // Act
         var actual = matchSettleCriteriaService.CreateSettleCriteria(match, matchChecking);
@@ -114,7 +133,7 @@ public class MatchSettleCriteriaServiceTests
         var matchChecking = new Models.MatchChecking { IsExistFgLg = true };
 
         betStatusFullTimeService.BetStatus(Arg.Any<string>(), Arg.Any<string>()).Returns("1FL:1-1;FL:1-1;");
-        var matchSettleCriteriaService = new MatchSettleCriteriaServiceImp(betStatusHalftimeService, betStatusFullTimeService);
+        var matchSettleCriteriaService = new CreateCriteriaServiceImp(betStatusHalftimeService, betStatusFullTimeService, actionResourceService, xmlConvertService, mapper);
 
         // Act
         var actual = matchSettleCriteriaService.CreateSettleCriteria(match, matchChecking);
@@ -139,7 +158,7 @@ public class MatchSettleCriteriaServiceTests
             ChildMatchType = 202
         };
         var matchChecking = new Models.MatchChecking { IsExistFgLg = false };
-        var matchSettleCriteriaService = new MatchSettleCriteriaServiceImp(betStatusHalftimeService, betStatusFullTimeService);
+        var matchSettleCriteriaService = new CreateCriteriaServiceImp(betStatusHalftimeService, betStatusFullTimeService, actionResourceService, xmlConvertService, mapper);
 
         // Act
         var actual = matchSettleCriteriaService.CreateSettleCriteria(match, matchChecking);

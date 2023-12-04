@@ -7,7 +7,7 @@ namespace AutoPayout.Sportsbook.UnitTests.Services;
 public class ScoreMatcherControllerTests
 {
     [Fact]
-    public void Verify_IsDirectSettlementMatch_ReturnsSourceIdIsAdminSite()
+    public async Task Verify_IsDirectSettlementMatch_ReturnsSourceIdIsAdminSite()
     {
         // Arrange
         var validationStatusMatchService = Substitute.For<ValidationStatusMatchService>();
@@ -27,15 +27,15 @@ public class ScoreMatcherControllerTests
         var match = new Match { AutoSetting = 16 };
 
         // Act
-        var actualSourceId = controller.Verify(match);
+        var actualSourceId = await controller.Verify(match);
 
         // Assert
         const int expectedSourceId = Source.AdminSite;
-        Assert.Equal(expectedSourceId, actualSourceId.Result);
+        Assert.Equal(expectedSourceId, actualSourceId);
     }
 
     [Fact]
-    public void Verify_ValidMatch_ReturnsSourceIdIsSbo()
+    public async Task Verify_ValidMatch_ReturnsSourceIdIsSbo()
     {
         // Arrange
         var validationStatusMatchService = Substitute.For<ValidationStatusMatchService>();
@@ -57,11 +57,11 @@ public class ScoreMatcherControllerTests
         scoreService.TryGetScore(Arg.Any<Match>()).Returns(new Score { SourceId = Source.Sbo });
 
         // Act
-        var actualSourceId = controller.Verify(match);
+        var actualSourceId = await controller.Verify(match);
 
         // Assert
         const int expectedSourceId = Source.Sbo;
-        Assert.Equal(expectedSourceId, actualSourceId.Result);
+        Assert.Equal(expectedSourceId, actualSourceId);
     }
 
     [Fact]

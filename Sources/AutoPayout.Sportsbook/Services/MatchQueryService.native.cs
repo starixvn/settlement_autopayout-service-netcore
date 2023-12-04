@@ -106,14 +106,12 @@ public class MatchQueryServiceImp : MatchQueryService
 
     private string SerializeObjectToString(List<XmlResource> resources)
     {
-        if (resources.Count > 0)
-        {
-            var xmlResults = new XmlResults { Resources = resources };
-            return xmlConvertService.Serialize(xmlResults);
-        }
-        else
+        if (resources.Count <= 0)
         {
             return string.Empty;
         }
+
+        var xmlResults = new XmlResults { Resources = resources };
+        return xmlConvertService.Serialize(xmlResults);
     }
 }
