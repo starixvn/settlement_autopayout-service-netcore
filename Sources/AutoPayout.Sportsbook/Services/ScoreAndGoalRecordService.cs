@@ -1,6 +1,6 @@
-﻿using AutoPayout.Sportsbook.Models;
+﻿namespace AutoPayout.Sportsbook.Services;
 
-namespace AutoPayout.Sportsbook.Services;
+using Models;
 
 public interface ScoreAndGoalRecordService
 {

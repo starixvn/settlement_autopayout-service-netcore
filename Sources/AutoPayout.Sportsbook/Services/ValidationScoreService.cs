@@ -1,8 +1,8 @@
-﻿using AutoPayout.Sportsbook.Constants;
-using AutoPayout.Sportsbook.Exceptions;
-using AutoPayout.Sportsbook.Models;
+﻿namespace AutoPayout.Sportsbook.Services;
 
-namespace AutoPayout.Sportsbook.Services;
+using Constants;
+using Exceptions;
+using Models;
 
 public interface ValidationScoreService
 {

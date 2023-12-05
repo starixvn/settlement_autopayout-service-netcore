@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using AutoPayout.Result.Models;
+﻿using AutoPayout.Result.Models;
 using AutoPayout.Sportsbook.Criteria;
 using AutoPayout.Sportsbook.Models;
 using Fanex.Settlement.ScaleOut.Request;

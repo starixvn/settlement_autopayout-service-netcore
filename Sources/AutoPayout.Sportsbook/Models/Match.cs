@@ -1,6 +1,6 @@
-﻿using AutoPayout.Sportsbook.Constants;
+﻿namespace AutoPayout.Sportsbook.Models;
 
-namespace AutoPayout.Sportsbook.Models;
+using Constants;
 
 public class Match
 {
@@ -9,6 +9,8 @@ public class Match
     private const int ToBase = 2;
 
     private const int DirectSettlement = 4;
+
+    private const int FastMarketSettlement = 2;
 
     public int MatchId { get; set; }
 
@@ -37,16 +39,23 @@ public class Match
         }
     }
 
+    public bool IsAutoFastMarketSettlement
+    {
+        get
+        {
+            var value = Convert.ToString(AutoSetting, ToBase).Reverse();
+            return !string.IsNullOrWhiteSpace(value) && value.Length > FastMarketSettlement && value[FastMarketSettlement].Equals('1');
+        }
+    }
+
     public string GoalRecord
     {
         get =>
             string.IsNullOrWhiteSpace(goalRecord)
                 ? string.Empty
                 : goalRecord.ToUpperInvariant();
-        set
-        {
-            goalRecord = value;
-        }
+
+        set => goalRecord = value;
     }
 
     public byte SettlementStatus { get; set; }
@@ -71,9 +80,9 @@ public class Match
     public int ChildLeagueType { get; set; }
 
     public bool IsSabaPenaltyShootout => SabaSoccer.LeagueGroupIds.Contains(LeagueGroupId) && SabaSoccer.LeagueIds.Contains(LeagueId)
-        && (ChildMatchType == SoccerChildMatchType.PenaltyShootoutHdp || ChildMatchType == SoccerChildMatchType.PenaltyShootoutOu);
+        && ChildMatchType is MatchType.PenaltyShootoutHdp or MatchType.PenaltyShootoutOu;
 
-    public bool IsTotalCornerGoalMatch => MainType == TotalCornerTotalGoalMatch.MainType && ChildLeagueType == TotalCornerTotalGoalMatch.ChildLeagueType;
+    public bool IsTotalCornerGoalMatch => MainType == MatchType.TotalCornerMainLeague && ChildLeagueType == MatchType.TotalCornerChildLeague;
 
     public override bool Equals(object obj)
     {

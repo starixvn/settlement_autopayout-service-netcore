@@ -1,7 +1,7 @@
-﻿using AutoPayout.Sportsbook.Criteria;
-using AutoPayout.Sportsbook.Models;
+﻿namespace AutoPayout.Sportsbook.Services;
 
-namespace AutoPayout.Sportsbook.Services;
+using Criteria;
+using Models;
 
 public interface LogService
 {

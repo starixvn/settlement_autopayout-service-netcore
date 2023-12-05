@@ -12,7 +12,6 @@ public class RemarkSettingModel
 
     private const int UndecidedPosition = 1;
 
-
     public string SettlementStatus { get; set; }
 
     public bool IsPending => !string.IsNullOrWhiteSpace(SettlementStatus) && SettlementStatus[PendingPosition].Equals('1');
@@ -24,5 +23,4 @@ public class RemarkSettingModel
     public bool IsMtdHold => !string.IsNullOrWhiteSpace(SettlementStatus) && SettlementStatus.Length > MtdHoldPosition && SettlementStatus[MtdHoldPosition].Equals('1');
 
     public bool IsHoldKey => !string.IsNullOrWhiteSpace(SettlementStatus) && SettlementStatus.Length > HoldKeyPosition && SettlementStatus[HoldKeyPosition].Equals('1');
-
 }
