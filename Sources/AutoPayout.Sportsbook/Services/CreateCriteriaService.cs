@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using AutoPayout.Result.Constants;
+﻿using AutoPayout.Result.Constants;
 using AutoPayout.Result.Models;
 using AutoPayout.Result.Services;
 using AutoPayout.Sportsbook.Constants;

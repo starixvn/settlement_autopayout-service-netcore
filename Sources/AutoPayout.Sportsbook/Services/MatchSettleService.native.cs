@@ -1,17 +1,16 @@
-﻿using AutoMapper;
-using AutoPayout.Result.Models;
-using AutoPayout.Sportsbook.Constants;
-using AutoPayout.Sportsbook.Criteria;
-using AutoPayout.Sportsbook.Models;
-using Fanex.Settlement.ScaleOut.Constants;
+﻿using AutoPayout.Result.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 
 namespace AutoPayout.Sportsbook.Services;
 
+using Constants;
+using Criteria;
+using Models;
+
 public interface MatchSettleService
 {
-    Task<Models.Result> Settle(Match match, int sourceId);
+    Task<Result> Settle(Match match, int sourceId);
 }
 
 public class MatchSettleServiceImp : MatchSettleService
@@ -24,7 +23,7 @@ public class MatchSettleServiceImp : MatchSettleService
 
     private readonly ScaleOutSettleService scaleOutSettleService;
 
-    private readonly AutoPayoutResultService autoPayoutResultService;
+    private readonly InsertInfoService insertInfoService;
 
     private readonly LogService logService;
 
@@ -36,7 +35,7 @@ public class MatchSettleServiceImp : MatchSettleService
         IMapper mapper,
         OtherInfoService otherInfoService,
         ScaleOutSettleService scaleOutSettleService,
-        AutoPayoutResultService autoPayoutResultService,
+        InsertInfoService insertInfoService,
         LogService logService)
     {
         this.matchQueryService = matchQueryService;
@@ -44,11 +43,11 @@ public class MatchSettleServiceImp : MatchSettleService
         this.mapper = mapper;
         this.otherInfoService = otherInfoService;
         this.scaleOutSettleService = scaleOutSettleService;
-        this.autoPayoutResultService = autoPayoutResultService;
+        this.insertInfoService = insertInfoService;
         this.logService = logService;
     }
 
-    public async Task<Models.Result> Settle(Match match, int sourceId)
+    public async Task<Result> Settle(Match match, int sourceId)
     {
         var actionName = match.TypeId == SettleType.Halftime ? ActionName.CalculateHalfTime : ActionName.CalculateFullTime;
 
@@ -60,14 +59,29 @@ public class MatchSettleServiceImp : MatchSettleService
             var insertLogCriteria = createCriteriaService.CreateLogCriteria(match, matchChecking, actionName);
             await WriteLog(match, insertLogCriteria, actionName);
             await scaleOutSettleService.UpdateUnderSettlementFlag(match.MatchId, 0, actionName);
-            await autoPayoutResultService.Insert(match, sourceId, MatchStatus.Waiting);
+            await insertInfoService.InsertResult(match, sourceId, MatchStatus.Waiting);
             await Execute(match, matchChecking, resourceResult, sourceId);
 
             await UpdateAutoRefundChildMatch(match, actionName);
+            await InsertMessageToLetstalk(match);
             await SettleHedgeMatch(match, matchChecking, resourceResult, actionName, sourceId);
         }
 
         return resultValidation;
+    }
+
+    private async Task InsertMessageToLetstalk(Match match)
+    {
+        if (match.IsAutoFastMarketSettlement || match.TypeId == SettleType.Halftime)
+        {
+            return;
+        }
+
+        var isExistedTicketRunning = await matchQueryService.IsExistedFastMarketTicketRunning(match.MatchId);
+        if (isExistedTicketRunning)
+        {
+            await insertInfoService.InsertMessageToLetstalk(match.MatchId);
+        }
     }
 
     private async Task WriteLog(Match match, InsertLogCriteria insertLogCriteria, string actionName)
@@ -89,7 +103,7 @@ public class MatchSettleServiceImp : MatchSettleService
         {
             match.MatchId = hedgeMatch.MatchId;
             await scaleOutSettleService.UpdateUnderSettlementFlag(match.MatchId, 0, actionName);
-            await autoPayoutResultService.Insert(match, sourceId, MatchStatus.Waiting);
+            await insertInfoService.InsertResult(match, sourceId, MatchStatus.Waiting);
             await Execute(match, matchChecking, resourceResult, sourceId);
         }
     }
@@ -125,7 +139,7 @@ public class MatchSettleServiceImp : MatchSettleService
         await scaleOutSettleService.UpdateAutoRefundChildMatch(request);
     }
 
-    private async Task<Models.Result> ValidateBeforePushing(Match match, string actionName, string resourceResult)
+    private async Task<Result> ValidateBeforePushing(Match match, string actionName, string resourceResult)
     {
         var request = new EventTicketRequest
         {
@@ -139,7 +153,7 @@ public class MatchSettleServiceImp : MatchSettleService
 
         var result = await scaleOutSettleService.ValidateEventAndTicket(request);
 
-        return new Models.Result
+        return new Result
         {
             ErrCode = result.ErrorCode,
             ErrMsg = result.ErrorMessage

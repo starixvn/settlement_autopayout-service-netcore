@@ -15,7 +15,7 @@ public class MatchSettleControllerUnitTests
         var scoreMatcherController = Substitute.For<ScoreMatcherController>();
         var settleLogService = Substitute.For<SettleLogService>();
         var matchListingService = Substitute.For<MatchSettlingPoolService>();
-        var autoPayoutResultService = Substitute.For<AutoPayoutResultService>();
+        var autoPayoutResultService = Substitute.For<InsertInfoService>();
         var matchSettleService = Substitute.For<MatchSettleService>();
 
         matchSettleService.Settle(Arg.Any<Match>(), Arg.Any<int>()).Returns(new Models.Result());
@@ -45,14 +45,14 @@ public class MatchSettleControllerUnitTests
         matchSettleService.Settle(Arg.Any<Match>(), Arg.Any<int>()).Returns(new Models.Result { ErrMsg = "Error message" });
         var settleLogService = Substitute.For<SettleLogService>();
         var matchListingService = Substitute.For<MatchSettlingPoolService>();
-        var autoPayoutResultService = Substitute.For<AutoPayoutResultService>();
+        var autoPayoutResultService = Substitute.For<InsertInfoService>();
         var controller = new MatchSettleControllerImp(matchSettleService, scoreMatcherController, settleLogService, matchListingService, autoPayoutResultService);
 
         // Assert
         await controller.Process(anyMatch);
 
         await settleLogService.Received().Log(anyMatch, Arg.Any<string>());
-        await autoPayoutResultService.Received().Insert(anyMatch, Arg.Any<int>(), Arg.Any<int>());
+        await autoPayoutResultService.Received().InsertResult(anyMatch, Arg.Any<int>(), Arg.Any<int>());
         matchListingService.Received().Remove(anyMatch);
     }
 
@@ -66,7 +66,7 @@ public class MatchSettleControllerUnitTests
         matchSettleService.Settle(Arg.Any<Match>(), Arg.Any<int>()).Returns(new Models.Result { ErrCode = 1 });
         var settleLogService = Substitute.For<SettleLogService>();
         var matchListingService = Substitute.For<MatchSettlingPoolService>();
-        var autoPayoutResultService = Substitute.For<AutoPayoutResultService>();
+        var autoPayoutResultService = Substitute.For<InsertInfoService>();
         var controller = new MatchSettleControllerImp(matchSettleService, scoreMatcherController, settleLogService, matchListingService, autoPayoutResultService);
         scoreMatcherController.Verify(anyMatch).Returns(Task.FromException<int>(new AutoPayoutException()));
 
@@ -74,7 +74,7 @@ public class MatchSettleControllerUnitTests
         await controller.Process(anyMatch);
 
         await settleLogService.Received().Log(anyMatch, Arg.Any<AutoPayoutException>());
-        await autoPayoutResultService.Received().Insert(anyMatch, 0, MatchStatus.Failed);
+        await autoPayoutResultService.Received().InsertResult(anyMatch, 0, MatchStatus.Failed);
         matchListingService.Received().Remove(anyMatch);
     }
 }

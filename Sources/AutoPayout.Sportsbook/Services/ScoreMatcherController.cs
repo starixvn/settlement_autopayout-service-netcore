@@ -1,7 +1,7 @@
-﻿using AutoPayout.Sportsbook.Constants;
-using AutoPayout.Sportsbook.Models;
+﻿namespace AutoPayout.Sportsbook.Services;
 
-namespace AutoPayout.Sportsbook.Services;
+using Constants;
+using Models;
 
 public interface ScoreMatcherController
 {

@@ -13,9 +13,17 @@
 		<Setting Key="NAP_UserLog_WriteLogPreSettlement" SpName="NAP_UserLog_WriteLogPreSettlement" DbName="DBUserLog.LogTDB.bodbAdminNet" />
 		<Setting Key="WriteLog_UserLog_Settle" SpName="WriteLog_UserLog_Settle" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" TimeOut="20" />
 		<Setting Key="NAP_SettlementLog_Ins" SpName="NAP_SettlementLog_Ins" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
+		<Setting Key="NAP_Set_LetstalkMessage_Insert" SpName="NAP_Set_LetstalkMessage_Insert" DbName="DBTXN.bodb02.bodbAdminNet" />
 	</Function>
 
 	<Function Name="Scale Out TransDb">
+		<Function Name="NAP_Set_FastMarket_MatchSelDetail_Ticket">
+			<Setting Key="NAP_Set_FastMarket_MatchSelDetail_Ticket_DBTXN" SpName="NAP_Set_FastMarket_MatchSelDetail_Ticket" DbName="DBTXN.bodb02.bodbAdminNet" />
+			<Setting Key="NAP_Set_FastMarket_MatchSelDetail_Ticket_DBSID01" SpName="NAP_Set_FastMarket_MatchSelDetail_Ticket" DbName="DBSID01.bodb02.bodbAdminNet" />
+			<Setting Key="NAP_Set_FastMarket_MatchSelDetail_Ticket_DBSID02" SpName="NAP_Set_FastMarket_MatchSelDetail_Ticket" DbName="DBSID02.bodb02.bodbAdminNet" />
+			<Setting Key="NAP_Set_FastMarket_MatchSelDetail_Ticket_DBSID03" SpName="NAP_Set_FastMarket_MatchSelDetail_Ticket" DbName="DBSID03.bodb02.bodbAdminNet" />
+		</Function>
+
 		<Function Name="NAP_Set_AutoPayout_MatchChecking">
 			<Setting Key="NAP_Set_AutoPayout_MatchChecking_DBTXN" SpName="NAP_Set_AutoPayout_MatchChecking" DbName="DBTXN.bodb02.bodbAdminNet" />
 			<Setting Key="NAP_Set_AutoPayout_MatchChecking_DBSID01" SpName="NAP_Set_AutoPayout_MatchChecking" DbName="DBSID01.bodb02.bodbAdminNet" />

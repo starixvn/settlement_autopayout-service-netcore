@@ -1,8 +1,8 @@
-﻿using AutoPayout.Sportsbook.Criteria;
-using AutoPayout.Sportsbook.Exceptions;
-using AutoPayout.Sportsbook.Models;
+﻿namespace AutoPayout.Sportsbook.Services;
 
-namespace AutoPayout.Sportsbook.Services;
+using Criteria;
+using Exceptions;
+using Models;
 
 public interface SettleLogService
 {

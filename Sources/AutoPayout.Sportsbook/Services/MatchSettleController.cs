@@ -1,7 +1,7 @@
-﻿using AutoPayout.Sportsbook.Exceptions;
-using AutoPayout.Sportsbook.Models;
+﻿namespace AutoPayout.Sportsbook.Services;
 
-namespace AutoPayout.Sportsbook.Services;
+using Exceptions;
+using Models;
 
 public interface MatchSettleController
 {
@@ -18,20 +18,20 @@ public class MatchSettleControllerImp : MatchSettleController
 
     private readonly MatchSettlingPoolService matchSettlingPoolService;
 
-    private readonly AutoPayoutResultService autoPayoutResultService;
+    private readonly InsertInfoService insertInfoService;
 
     public MatchSettleControllerImp(
         MatchSettleService matchSettleService,
         ScoreMatcherController scoreMatcherController,
         SettleLogService settleLogService,
         MatchSettlingPoolService matchSettlingPoolService,
-        AutoPayoutResultService autoPayoutResultService)
+        InsertInfoService insertInfoService)
     {
         this.matchSettleService = matchSettleService;
         this.scoreMatcherController = scoreMatcherController;
         this.settleLogService = settleLogService;
         this.matchSettlingPoolService = matchSettlingPoolService;
-        this.autoPayoutResultService = autoPayoutResultService;
+        this.insertInfoService = insertInfoService;
     }
 
     public async Task Process(Match match)
@@ -43,7 +43,7 @@ public class MatchSettleControllerImp : MatchSettleController
             if (!string.IsNullOrWhiteSpace(result.ErrMsg))
             {
                 await settleLogService.Log(match, result.ErrMsg);
-                await autoPayoutResultService.Insert(match, sourceId, MatchStatus.Failed);
+                await insertInfoService.InsertResult(match, sourceId, MatchStatus.Failed);
             }
         }
         catch (AutoPayoutException exception)
@@ -59,6 +59,6 @@ public class MatchSettleControllerImp : MatchSettleController
     private async Task HandleAutoPayoutException(Match match, AutoPayoutException exception)
     {
         await settleLogService.Log(match, exception);
-        await autoPayoutResultService.Insert(match, 0, MatchStatus.Failed);
+        await insertInfoService.InsertResult(match, 0, MatchStatus.Failed);
     }
 }

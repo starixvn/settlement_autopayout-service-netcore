@@ -41,7 +41,7 @@ public static class AutoPayoutInjector
         service.AddSingleton<ScoreService, ScoreServiceImp>();
         service.AddSingleton<SettleLogService, SettleLogServiceImp>();
         service.AddSingleton<CreateCriteriaService, CreateCriteriaServiceImp>();
-        service.AddSingleton<AutoPayoutResultService, AutoPayoutResultServiceImp>();
+        service.AddSingleton<InsertInfoService, InsertInfoServiceImp>();
         service.AddSingleton<ValidationGoalRecordService, ValidationGoalRecordServiceImp>();
         service.AddSingleton<ValidationSettingMatchService, ValidationSettingMatchServiceImp>();
         service.AddSingleton<ValidationStatusMatchService, ValidationStatusMatchServiceImp>();

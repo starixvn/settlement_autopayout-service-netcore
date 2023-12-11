@@ -1,8 +1,8 @@
-﻿using AutoPayout.Sportsbook.Models;
-using Fanex.Caching;
-using Microsoft.Extensions.Options;
+﻿using Fanex.Caching;
 
 namespace AutoPayout.Sportsbook.Services;
+
+using Models;
 
 public interface MatchByLeagueService
 {
@@ -41,8 +41,10 @@ public class MatchByLeagueServiceImp : MatchByLeagueService
                 return leagueId > 0
                     ? (from m in matches where m.LeagueId != leagueId select m).ToList()
                     : matches;
+
             case "UAT":
                 return (from m in matches where m.LeagueId == leagueId select m).ToList();
+
             default:
                 return matches;
         }

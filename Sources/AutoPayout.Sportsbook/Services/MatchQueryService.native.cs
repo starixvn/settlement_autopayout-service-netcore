@@ -1,11 +1,10 @@
-﻿using AutoPayout.Result.Models;
-using AutoPayout.Result.Services;
-using AutoPayout.Sportsbook.Constants;
-using AutoPayout.Sportsbook.Criteria;
-using AutoPayout.Sportsbook.Models;
-using Microsoft.Extensions.Options;
+﻿namespace AutoPayout.Sportsbook.Services;
 
-namespace AutoPayout.Sportsbook.Services;
+using AutoPayout.Result.Models;
+using AutoPayout.Result.Services;
+using Constants;
+using Criteria;
+using Models;
 
 public interface MatchQueryService
 {
@@ -20,6 +19,8 @@ public interface MatchQueryService
     void ExecuteAllSiteDb(MatchSettleCriteria criteria);
 
     Task<(RemarkSettingModel matchRemark, List<ResultDetail> resultDetail)> GetMatchAndResultDetail(int matchId);
+
+    Task<bool> IsExistedFastMarketTicketRunning(int matchId);
 }
 
 public class MatchQueryServiceImp : MatchQueryService
@@ -113,5 +114,19 @@ public class MatchQueryServiceImp : MatchQueryService
 
         var xmlResults = new XmlResults { Resources = resources };
         return xmlConvertService.Serialize(xmlResults);
+    }
+
+    public async Task<bool> IsExistedFastMarketTicketRunning(int matchId)
+    {
+        var runningTicket = 0;
+        var criteria = new GetFastMarketTicketDetailCriteria { MatchId = matchId };
+        foreach (var server in appSettingsKey.SiteDbServer)
+        {
+            criteria.DbServer = server;
+            var ticketCounts = await repository.GetAsync<TicketCounts>(criteria);
+            runningTicket += ticketCounts?.BetRunningCount ?? 0;
+        }
+
+        return runningTicket > 0;
     }
 }
