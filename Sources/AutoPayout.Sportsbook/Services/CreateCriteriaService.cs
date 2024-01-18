@@ -50,7 +50,7 @@ public class CreateCriteriaServiceImp : CreateCriteriaService
         else
         {
             var betStatus = BetStatusFullTime(match, matchChecking);
-            return match.IsSabaPenaltyShootout
+            return (match.IsSabaPenaltyShootout || match.IsNthCorner)
                 ? new MatchSettleAllCriteria(match, betStatus)
                 : new MatchSettleFullTimeCriteria(match, betStatus);
         }
