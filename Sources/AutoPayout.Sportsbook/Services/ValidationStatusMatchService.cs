@@ -35,6 +35,6 @@ public class ValidationStatusMatchServiceImp : ValidationStatusMatchService
 
     private static bool IsHalfTimeNotDone(Match match)
     {
-        return match.TypeId == SettleType.FullTime && !match.IsHalfTimeCalculated && !match.IsSabaPenaltyShootout;
+        return match.TypeId == SettleType.FullTime && !match.IsNthCorner && !match.IsHalfTimeCalculated && !match.IsSabaPenaltyShootout;
     }
 }

@@ -79,10 +79,14 @@ public class Match
 
     public int ChildLeagueType { get; set; }
 
+    public int SubType { get; set; }
+
     public bool IsSabaPenaltyShootout => SabaSoccer.LeagueGroupIds.Contains(LeagueGroupId) && SabaSoccer.LeagueIds.Contains(LeagueId)
         && ChildMatchType is MatchType.PenaltyShootoutHdp or MatchType.PenaltyShootoutOu;
 
     public bool IsTotalCornerGoalMatch => MainType == MatchType.TotalCornerMainLeague && ChildLeagueType == MatchType.TotalCornerChildLeague;
+
+    public bool IsNthCorner => (SubType >= 2101 && SubType <= 2199) || (SubType >= 2601 && SubType <= 2699);
 
     public override bool Equals(object obj)
     {

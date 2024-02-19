@@ -34,12 +34,12 @@ public class ValidationGoalRecordServiceImp : ValidationGoalRecordService
         }
         else
         {
-            if (!match.IsSabaPenaltyShootout && !scoreAndGoalRecordService.IsConsistentHalftime(match))
+            if (!match.IsSabaPenaltyShootout && !match.IsNthCorner && !scoreAndGoalRecordService.IsConsistentHalftime(match))
             {
                 throw new GoalRecordHalftimeScoreNotConsistentException();
             }
 
-            if (!match.IsSabaPenaltyShootout && !scoreAndGoalRecordService.IsConsistentFullTime(match))
+            if (!match.IsSabaPenaltyShootout && !match.IsNthCorner && !scoreAndGoalRecordService.IsConsistentFullTime(match))
             {
                 throw new GoalRecordFinalScoreNotConsistentException();
             }
