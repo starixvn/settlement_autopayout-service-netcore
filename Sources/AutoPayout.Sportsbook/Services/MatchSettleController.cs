@@ -43,7 +43,7 @@ public class MatchSettleControllerImp : MatchSettleController
             if (!string.IsNullOrWhiteSpace(result.ErrMsg))
             {
                 await settleLogService.Log(match, result.ErrMsg);
-                await insertInfoService.InsertResult(match, sourceId, MatchStatus.Failed);
+                await insertInfoService.InsertResult(match, sourceId, MatchStatus.Failed, result.ErrMsg);
             }
         }
         catch (AutoPayoutException exception)
@@ -59,6 +59,6 @@ public class MatchSettleControllerImp : MatchSettleController
     private async Task HandleAutoPayoutException(Match match, AutoPayoutException exception)
     {
         await settleLogService.Log(match, exception);
-        await insertInfoService.InsertResult(match, 0, MatchStatus.Failed);
+        await insertInfoService.InsertResult(match, 0, MatchStatus.Failed, exception.Description);
     }
 }
