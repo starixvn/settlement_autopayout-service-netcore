@@ -6,7 +6,7 @@ using Models;
 
 public interface InsertInfoService
 {
-    Task InsertResult(Match match, int source, int status);
+    Task InsertResult(Match match, int source, int status, string remark = "");
 
     Task InsertMessageToLetstalk(int matchId);
 }
@@ -20,14 +20,15 @@ public class InsertInfoServiceImp : InsertInfoService
         this.repository = repository;
     }
 
-    public async Task InsertResult(Match match, int source, int status)
+    public async Task InsertResult(Match match, int source, int status, string remark = "")
     {
         var criteria = new AddAutoPayoutResultCriteria
         {
             MatchId = match.MatchId,
             TypeId = match.TypeId,
             SourceId = source,
-            StatusId = status
+            StatusId = status,
+            Remark = remark
         };
 
         if (match.TypeId == SettleType.Halftime)
