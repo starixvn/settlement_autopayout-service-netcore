@@ -1,6 +1,8 @@
 ﻿using AutoPayout.Sportsbook.Services;
 using Fanex.Caching;
 using Fanex.Logging;
+using Fanex.Logging.Extensions;
+using Fanex.Logging.Extensions.Database;
 using Fanex.Logging.Sentry.RavenClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -9,6 +11,7 @@ using ONEbook.UM.AspNetCore;
 using ONEbook.UM.Configurations;
 using ONEbook.UM.Transport;
 using SharpRaven;
+using LogService = Fanex.Logging.LogService;
 
 namespace Fanex.AutoPayout.Service;
 
@@ -50,9 +53,14 @@ public class AutoPayoutService : IHostedService
     private static void TaskSchedulerUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
     {
         e.SetObserved();
-        e.Exception.Handle(x =>
+        e.Exception.Handle(exception =>
         {
-            Logging.LogService.Error(x.Message, x);
+            var logMessage = new LogMessage(exception.Message)
+                .AddSection("Database Info", DatabaseInfoGetters.GetDbExceptionInfo(exception))
+                .AddSection("Server Info", CommonInfoGetters.GetServerInfo())
+                .AddSection("Exception Info", CommonInfoGetters.GetExceptionInfo(exception))
+                .ToString();
+            LogService.Error(logMessage);
             return true;
         });
     }
