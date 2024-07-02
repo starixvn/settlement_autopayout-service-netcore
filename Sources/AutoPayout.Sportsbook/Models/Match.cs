@@ -12,6 +12,14 @@ public class Match
 
     private const int FastMarketSettlement = 2;
 
+    private const int TwentyOneAndOne = 2101;
+
+    private const int TwentyOneAndNinetyNine = 2199;
+
+    private const int TwentySixAndOne = 2601;
+
+    private const int TwentySixAndNinetyNine = 2699;
+
     public int MatchId { get; set; }
 
     public int LeagueId { get; set; }
@@ -86,7 +94,7 @@ public class Match
 
     public bool IsTotalCornerGoalMatch => MainType == MatchType.TotalCornerMainLeague && ChildLeagueType == MatchType.TotalCornerChildLeague;
 
-    public bool IsNthCorner => (SubType >= 2101 && SubType <= 2199) || (SubType >= 2601 && SubType <= 2699);
+    public bool IsNthCorner => SubType is >= TwentyOneAndOne and <= TwentyOneAndNinetyNine or >= TwentySixAndOne and <= TwentySixAndNinetyNine;
 
     public override bool Equals(object obj)
     {

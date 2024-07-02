@@ -52,7 +52,7 @@ public class MatchSettleControllerUnitTests
         await controller.Process(anyMatch);
 
         await settleLogService.Received().Log(anyMatch, Arg.Any<string>());
-        await autoPayoutResultService.Received().InsertResult(anyMatch, Arg.Any<int>(), Arg.Any<int>());
+        await autoPayoutResultService.Received().InsertResult(anyMatch, Arg.Any<int>(), Arg.Any<int>(), "Error message");
         matchListingService.Received().Remove(anyMatch);
     }
 
@@ -68,13 +68,13 @@ public class MatchSettleControllerUnitTests
         var matchListingService = Substitute.For<MatchSettlingPoolService>();
         var autoPayoutResultService = Substitute.For<InsertInfoService>();
         var controller = new MatchSettleControllerImp(matchSettleService, scoreMatcherController, settleLogService, matchListingService, autoPayoutResultService);
-        scoreMatcherController.Verify(anyMatch).Returns(Task.FromException<int>(new AutoPayoutException()));
+        scoreMatcherController.Verify(anyMatch).Returns(Task.FromException<int>(new Match3X30Exception()));
 
         // Assert
         await controller.Process(anyMatch);
 
         await settleLogService.Received().Log(anyMatch, Arg.Any<AutoPayoutException>());
-        await autoPayoutResultService.Received().InsertResult(anyMatch, 0, MatchStatus.Failed);
+        await autoPayoutResultService.Received().InsertResult(anyMatch, 0, MatchStatus.Failed, Arg.Is<string>(s => !string.IsNullOrEmpty(s)));
         matchListingService.Received().Remove(anyMatch);
     }
 }
