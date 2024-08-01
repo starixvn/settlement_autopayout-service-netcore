@@ -8,22 +8,15 @@ namespace AutoPayout.Sportsbook.UnitTests.Services;
 
 public class MatchByLeagueServiceTest
 {
-    private readonly ICache cache;
-
-    private readonly MatchQueryService matchQueryService;
-
-    private MatchByLeagueService matchByLeagueService;
-
-    public MatchByLeagueServiceTest()
+    private readonly ICache cache = new RedisCache(new RedisCacheOptions
     {
-        cache = new RedisCache(new RedisCacheOptions
-        {
-            ConnectionString = "10.18.200.131:16379,password=foo1@bared,defaultDatabase=11",
-            ApplicationName = "Settlement-LOCAL"
-        });
+        ConnectionString = "10.18.200.131:16379,password=foo1@bared,defaultDatabase=11",
+        ApplicationName = "Settlement-LOCAL"
+    });
 
-        matchQueryService = Substitute.For<MatchQueryService>();
-    }
+    private readonly MatchQueryService matchQueryService = Substitute.For<MatchQueryService>();
+
+    private MatchByLeagueServiceImp matchByLeagueService;
 
     private void SetLeague(int leagueId)
     {
@@ -33,19 +26,19 @@ public class MatchByLeagueServiceTest
         cache.Set(keyIncludeLeagueIds, leagueId, cachePolicy);
     }
 
-    private static List<Match> CreateMatchesWithLeagueOne(params int[] matchIds)
+    private static IEnumerable<Match> CreateMatchesWithLeagueOne(params int[] matchIds)
     {
         const int leagueId = 1;
         return matchIds.Select(i => new Match { MatchId = i, LeagueId = leagueId }).ToList();
     }
 
-    private static List<Match> CreateMatchesWithLeagueTwo(params int[] matchIds)
+    private static IEnumerable<Match> CreateMatchesWithLeagueTwo(params int[] matchIds)
     {
         const int leagueId = 2;
         return matchIds.Select(i => new Match { MatchId = i, LeagueId = leagueId }).ToList();
     }
 
-    private static List<Match> CreateMatchesWithLeagueThree(params int[] matchIds)
+    private static IEnumerable<Match> CreateMatchesWithLeagueThree(params int[] matchIds)
     {
         const int leagueId = 3;
         return matchIds.Select(i => new Match { MatchId = i, LeagueId = leagueId }).ToList();
@@ -137,7 +130,7 @@ public class MatchByLeagueServiceTest
         matchQueryService.GetWaitingMatches().Returns(createMatches);
 
         // Act
-        await Task.Delay(3000);
+        await Task.Delay(2000);
         var matches = await matchByLeagueService.GetMatches();
 
         // Assert
