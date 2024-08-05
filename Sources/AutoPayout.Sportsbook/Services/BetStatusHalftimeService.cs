@@ -9,16 +9,9 @@ public interface BetStatusHalftimeService
     string AppendFullTimeBetStatus(string betStatus, string fullTimeBetStatus);
 }
 
-public class BetStatusHalftimeServiceImp : BetStatusHalftimeService
+public class BetStatusHalftimeServiceImp(BetStatusService betStatusService) : BetStatusHalftimeService
 {
     private const string HtFirstLastGoalSymbol = "1FL";
-
-    private readonly BetStatusService betStatusService;
-
-    public BetStatusHalftimeServiceImp(BetStatusService betStatusService)
-    {
-        this.betStatusService = betStatusService;
-    }
 
     public string BetStatus(string currentBetStatus, string goalRecord)
     {

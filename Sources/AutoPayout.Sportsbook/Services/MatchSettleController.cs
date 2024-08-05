@@ -8,32 +8,14 @@ public interface MatchSettleController
     Task Process(Match match);
 }
 
-public class MatchSettleControllerImp : MatchSettleController
+public class MatchSettleControllerImp(
+    MatchSettleService matchSettleService,
+    ScoreMatcherController scoreMatcherController,
+    SettleLogService settleLogService,
+    MatchSettlingPoolService matchSettlingPoolService,
+    InsertInfoService insertInfoService)
+    : MatchSettleController
 {
-    private readonly MatchSettleService matchSettleService;
-
-    private readonly ScoreMatcherController scoreMatcherController;
-
-    private readonly SettleLogService settleLogService;
-
-    private readonly MatchSettlingPoolService matchSettlingPoolService;
-
-    private readonly InsertInfoService insertInfoService;
-
-    public MatchSettleControllerImp(
-        MatchSettleService matchSettleService,
-        ScoreMatcherController scoreMatcherController,
-        SettleLogService settleLogService,
-        MatchSettlingPoolService matchSettlingPoolService,
-        InsertInfoService insertInfoService)
-    {
-        this.matchSettleService = matchSettleService;
-        this.scoreMatcherController = scoreMatcherController;
-        this.settleLogService = settleLogService;
-        this.matchSettlingPoolService = matchSettlingPoolService;
-        this.insertInfoService = insertInfoService;
-    }
-
     public async Task Process(Match match)
     {
         try

@@ -11,23 +11,13 @@ public interface ScoreService
     Task<List<ResultDetail>> TryGetRelatedResults(Match match);
 }
 
-public class ScoreServiceImp : ScoreService
+public class ScoreServiceImp(
+    IDynamicRepository repository,
+    IOptions<AppSettingsKey> appSettingsKey,
+    MatchQueryService matchQueryService)
+    : ScoreService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly AppSettingsKey appSettingsKey;
-
-    private readonly MatchQueryService matchQueryService;
-
-    public ScoreServiceImp(
-        IDynamicRepository repository,
-        IOptions<AppSettingsKey> appSettingsKey,
-        MatchQueryService matchQueryService)
-    {
-        this.repository = repository;
-        this.appSettingsKey = appSettingsKey.Value;
-        this.matchQueryService = matchQueryService;
-    }
+    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
 
     public async Task<Score> TryGetScore(Match match)
     {

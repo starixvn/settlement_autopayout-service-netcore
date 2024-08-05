@@ -5,20 +5,13 @@ public interface BetStatusFullTimeService
     string BetStatus(string currentBetStatus, string goalRecord);
 }
 
-public class BetStatusFullTimeServiceImp : BetStatusFullTimeService
+public class BetStatusFullTimeServiceImp(BetStatusService betStatusService) : BetStatusFullTimeService
 {
     private const string HtFirstLastGoalSymbol = "1FL";
 
     private const string FtFirstLastGoalSymbol = "FL";
 
     private const int MaxLengthWithHalftimeFgLg = 8;
-
-    private readonly BetStatusService betStatusService;
-
-    public BetStatusFullTimeServiceImp(BetStatusService betStatusService)
-    {
-        this.betStatusService = betStatusService;
-    }
 
     public string BetStatus(string currentBetStatus, string goalRecord)
     {

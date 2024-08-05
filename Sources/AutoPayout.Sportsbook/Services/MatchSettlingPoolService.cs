@@ -9,21 +9,11 @@ public interface MatchSettlingPoolService
     void Remove(Match match);
 }
 
-public class MatchSettlingPoolServiceImp : MatchSettlingPoolService
+public class MatchSettlingPoolServiceImp(MatchByLeagueService matchByLeagueService) : MatchSettlingPoolService
 {
-    private readonly MatchByLeagueService matchByLeagueService;
+    private readonly List<Match> poolOfMatches = new();
 
-    private readonly List<Match> poolOfMatches;
-
-    private readonly object lockObject;
-
-    public MatchSettlingPoolServiceImp(MatchByLeagueService matchByLeagueService)
-    {
-        this.matchByLeagueService = matchByLeagueService;
-
-        poolOfMatches = new List<Match>();
-        lockObject = new object();
-    }
+    private readonly object lockObject = new();
 
     public List<Match> PoolOfMatches => poolOfMatches;
 

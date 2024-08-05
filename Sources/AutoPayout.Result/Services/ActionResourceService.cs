@@ -12,21 +12,12 @@ public interface ActionResourceService
     ResourceItem CalculateLogResources(string resourceId, string homeValue, string awayValue);
 }
 
-public class ActionResourceServiceImp : ActionResourceService
+public class ActionResourceServiceImp(FirstGoalService goalResultService, GoalRecordService goalRecordService)
+    : ActionResourceService
 {
     private const byte SettledBy = 5;
 
     private const byte Completed = 4;
-
-    private readonly FirstGoalService goalResultService;
-
-    private readonly GoalRecordService goalRecordService;
-
-    public ActionResourceServiceImp(FirstGoalService goalResultService, GoalRecordService goalRecordService)
-    {
-        this.goalResultService = goalResultService;
-        this.goalRecordService = goalRecordService;
-    }
 
     public List<XmlResource> HalftimeResources(Goal goal)
     {

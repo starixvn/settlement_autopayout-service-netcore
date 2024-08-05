@@ -11,15 +11,8 @@ public interface InsertInfoService
     Task InsertMessageToLetstalk(int matchId);
 }
 
-public class InsertInfoServiceImp : InsertInfoService
+public class InsertInfoServiceImp(IDynamicRepository repository) : InsertInfoService
 {
-    private readonly IDynamicRepository repository;
-
-    public InsertInfoServiceImp(IDynamicRepository repository)
-    {
-        this.repository = repository;
-    }
-
     public async Task InsertResult(Match match, int source, int status, string remark = "")
     {
         var criteria = new AddAutoPayoutResultCriteria

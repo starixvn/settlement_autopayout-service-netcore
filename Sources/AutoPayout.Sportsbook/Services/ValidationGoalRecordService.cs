@@ -9,15 +9,9 @@ public interface ValidationGoalRecordService
     void VerifyGoalRecord(Match match);
 }
 
-public class ValidationGoalRecordServiceImp : ValidationGoalRecordService
+public class ValidationGoalRecordServiceImp(ScoreAndGoalRecordService scoreAndGoalRecordService)
+    : ValidationGoalRecordService
 {
-    private readonly ScoreAndGoalRecordService scoreAndGoalRecordService;
-
-    public ValidationGoalRecordServiceImp(ScoreAndGoalRecordService scoreAndGoalRecordService)
-    {
-        this.scoreAndGoalRecordService = scoreAndGoalRecordService;
-    }
-
     public void VerifyGoalRecord(Match match)
     {
         if (match.TypeId == SettleType.Halftime)

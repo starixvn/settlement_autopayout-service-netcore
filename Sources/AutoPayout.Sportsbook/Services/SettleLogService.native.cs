@@ -11,15 +11,8 @@ public interface SettleLogService
     Task Log(Match match, AutoPayoutException exception);
 }
 
-public class SettleLogServiceImp : SettleLogService
+public class SettleLogServiceImp(IDynamicRepository repository) : SettleLogService
 {
-    private readonly IDynamicRepository repository;
-
-    public SettleLogServiceImp(IDynamicRepository repository)
-    {
-        this.repository = repository;
-    }
-
     public async Task Log(Match match, string errorMessage)
     {
         var criteria = new SettleLogCriteria(match, errorMessage);

@@ -8,36 +8,15 @@ public interface ScoreMatcherController
     Task<int> Verify(Match match);
 }
 
-public class ScoreMatcherControllerImp : ScoreMatcherController
+public class ScoreMatcherControllerImp(
+    ValidationSettingMatchService validationSettingMatchService,
+    ValidationStatusMatchService validationStatusMatchService,
+    ValidationScoreService validationScoreService,
+    ScoreService scoreService,
+    ValidationGoalRecordService validationGoalRecordService,
+    MatchQueryService matchQueryService)
+    : ScoreMatcherController
 {
-    private readonly ValidationSettingMatchService validationSettingMatchService;
-
-    private readonly ValidationStatusMatchService validationStatusMatchService;
-
-    private readonly ValidationScoreService validationScoreService;
-
-    private readonly ScoreService scoreService;
-
-    private readonly ValidationGoalRecordService validationGoalRecordService;
-
-    private readonly MatchQueryService matchQueryService;
-
-    public ScoreMatcherControllerImp(
-        ValidationSettingMatchService validationSettingMatchService,
-        ValidationStatusMatchService validationStatusMatchService,
-        ValidationScoreService validationScoreService,
-        ScoreService scoreService,
-        ValidationGoalRecordService validationGoalRecordService,
-        MatchQueryService matchQueryService)
-    {
-        this.validationSettingMatchService = validationSettingMatchService;
-        this.validationStatusMatchService = validationStatusMatchService;
-        this.validationScoreService = validationScoreService;
-        this.scoreService = scoreService;
-        this.validationGoalRecordService = validationGoalRecordService;
-        this.matchQueryService = matchQueryService;
-    }
-
     public async Task<int> Verify(Match match)
     {
         validationSettingMatchService.VerifySettingMatch(match.Remark);

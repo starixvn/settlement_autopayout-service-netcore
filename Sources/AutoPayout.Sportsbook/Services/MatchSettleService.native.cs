@@ -13,40 +13,16 @@ public interface MatchSettleService
     Task<Result> Settle(Match match, int sourceId);
 }
 
-public class MatchSettleServiceImp : MatchSettleService
+public class MatchSettleServiceImp(
+    MatchQueryService matchQueryService,
+    CreateCriteriaService createCriteriaService,
+    IMapper mapper,
+    OtherInfoService otherInfoService,
+    ScaleOutSettleService scaleOutSettleService,
+    InsertInfoService insertInfoService,
+    LogService logService)
+    : MatchSettleService
 {
-    private readonly MatchQueryService matchQueryService;
-
-    private readonly CreateCriteriaService createCriteriaService;
-
-    private readonly OtherInfoService otherInfoService;
-
-    private readonly ScaleOutSettleService scaleOutSettleService;
-
-    private readonly InsertInfoService insertInfoService;
-
-    private readonly LogService logService;
-
-    private readonly IMapper mapper;
-
-    public MatchSettleServiceImp(
-        MatchQueryService matchQueryService,
-        CreateCriteriaService createCriteriaService,
-        IMapper mapper,
-        OtherInfoService otherInfoService,
-        ScaleOutSettleService scaleOutSettleService,
-        InsertInfoService insertInfoService,
-        LogService logService)
-    {
-        this.matchQueryService = matchQueryService;
-        this.createCriteriaService = createCriteriaService;
-        this.mapper = mapper;
-        this.otherInfoService = otherInfoService;
-        this.scaleOutSettleService = scaleOutSettleService;
-        this.insertInfoService = insertInfoService;
-        this.logService = logService;
-    }
-
     public async Task<Result> Settle(Match match, int sourceId)
     {
         var actionName = match.TypeId == SettleType.Halftime ? ActionName.CalculateHalfTime : ActionName.CalculateFullTime;

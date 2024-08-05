@@ -10,15 +10,8 @@ public interface LogService
     Task WriteLogResettle(InsertLogCriteria criteria);
 }
 
-public class LogServiceImp : LogService
+public class LogServiceImp(IDynamicRepository repository) : LogService
 {
-    private readonly IDynamicRepository repository;
-
-    public LogServiceImp(IDynamicRepository repository)
-    {
-        this.repository = repository;
-    }
-
     public async Task WriteLog(Match match, string actionName)
     {
         var criteria = new LogDirectlyCriteria

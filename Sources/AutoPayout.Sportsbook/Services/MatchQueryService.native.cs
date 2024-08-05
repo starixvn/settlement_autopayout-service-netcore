@@ -23,28 +23,13 @@ public interface MatchQueryService
     Task<bool> IsExistedFastMarketTicketRunning(int matchId);
 }
 
-public class MatchQueryServiceImp : MatchQueryService
+public class MatchQueryServiceImp(
+    IDynamicRepository repository,
+    ActionResourceService actionResourceService,
+    XmlConvertService xmlConvertService,
+    IOptions<AppSettingsKey> appSettingsKey)
+    : MatchQueryService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly ActionResourceService actionResourceService;
-
-    private readonly XmlConvertService xmlConvertService;
-
-    private readonly AppSettingsKey appSettingsKey;
-
-    public MatchQueryServiceImp(
-        IDynamicRepository repository,
-        ActionResourceService actionResourceService,
-        XmlConvertService xmlConvertService,
-        IOptions<AppSettingsKey> appSettingsKey)
-    {
-        this.repository = repository;
-        this.actionResourceService = actionResourceService;
-        this.xmlConvertService = xmlConvertService;
-        this.appSettingsKey = appSettingsKey.Value;
-    }
-
     public async Task<List<Match>> GetWaitingMatches()
     {
         var criteria = new MatchListingCriteria();
@@ -62,7 +47,7 @@ public class MatchQueryServiceImp : MatchQueryService
     {
         var criteria = new MatchCheckingCriteria { MatchId = matchId };
         var listMatchChecking = new List<MatchChecking>();
-        foreach (var server in appSettingsKey.SiteDbServer)
+        foreach (var server in appSettingsKey.Value.SiteDbServer)
         {
             criteria.DbServer = server;
             var item = await repository.GetAsync<MatchChecking>(criteria) ?? new MatchChecking();
@@ -81,7 +66,7 @@ public class MatchQueryServiceImp : MatchQueryService
 
     public void ExecuteAllSiteDb(MatchSettleCriteria criteria)
     {
-        foreach (var server in appSettingsKey.SiteDbServer)
+        foreach (var server in appSettingsKey.Value.SiteDbServer)
         {
             criteria.DbServer = server;
             repository.Execute(criteria);
@@ -120,7 +105,7 @@ public class MatchQueryServiceImp : MatchQueryService
     {
         var runningTicket = 0;
         var criteria = new GetFastMarketTicketDetailCriteria { MatchId = matchId };
-        foreach (var server in appSettingsKey.SiteDbServer)
+        foreach (var server in appSettingsKey.Value.SiteDbServer)
         {
             criteria.DbServer = server;
             var ticketCounts = await repository.GetAsync<TicketCounts>(criteria);

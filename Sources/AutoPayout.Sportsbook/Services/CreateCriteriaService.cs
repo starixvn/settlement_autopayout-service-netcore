@@ -14,32 +14,14 @@ public interface CreateCriteriaService
     InsertLogCriteria CreateLogCriteria(Match match, MatchChecking matchChecking, string actionName);
 }
 
-public class CreateCriteriaServiceImp : CreateCriteriaService
+public class CreateCriteriaServiceImp(
+    BetStatusHalftimeService betStatusHalftimeService,
+    BetStatusFullTimeService betStatusFullTimeService,
+    ActionResourceService actionResourceService,
+    XmlConvertService xmlConvertService,
+    IMapper mapper)
+    : CreateCriteriaService
 {
-    private readonly BetStatusHalftimeService betStatusHalftimeService;
-
-    private readonly BetStatusFullTimeService betStatusFullTimeService;
-
-    private readonly ActionResourceService actionResourceService;
-
-    private readonly XmlConvertService xmlConvertService;
-
-    private readonly IMapper mapper;
-
-    public CreateCriteriaServiceImp(
-        BetStatusHalftimeService betStatusHalftimeService,
-        BetStatusFullTimeService betStatusFullTimeService,
-        ActionResourceService actionResourceService,
-        XmlConvertService xmlConvertService,
-        IMapper mapper)
-    {
-        this.betStatusHalftimeService = betStatusHalftimeService;
-        this.betStatusFullTimeService = betStatusFullTimeService;
-        this.actionResourceService = actionResourceService;
-        this.xmlConvertService = xmlConvertService;
-        this.mapper = mapper;
-    }
-
     public MatchSettleCriteria CreateSettleCriteria(Match match, MatchChecking matchChecking)
     {
         if (match.TypeId == SettleType.Halftime)

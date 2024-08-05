@@ -11,15 +11,8 @@ public interface ValidationScoreService
     void VerifyResultsConsistent(Match match, List<ResultDetail> results);
 }
 
-public class ValidationScoreServiceImp : ValidationScoreService
+public class ValidationScoreServiceImp(OtherInfoService otherInfoService) : ValidationScoreService
 {
-    private readonly OtherInfoService otherInfoService;
-
-    public ValidationScoreServiceImp(OtherInfoService otherInfoService)
-    {
-        this.otherInfoService = otherInfoService;
-    }
-
     public void VerifyScore(Match match, Score score)
     {
         if (score.MatchId < 1)
