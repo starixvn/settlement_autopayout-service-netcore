@@ -13,7 +13,7 @@ using ONEbook.UM.Transport;
 using SharpRaven;
 using LogService = Fanex.Logging.LogService;
 
-namespace Fanex.AutoPayout.Service;
+namespace Fanex.AutoPayout.Service.Services;
 
 public class AutoPayoutService : IHostedService
 {

@@ -1,5 +1,6 @@
 ﻿using AutoPayout.Sportsbook.Models;
 using Fanex.AutoPayout.Service;
+using Fanex.AutoPayout.Service.Services;
 using Fanex.Data.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;

@@ -33,7 +33,15 @@ public class MatchQueryServiceImp(
     public async Task<List<Match>> GetWaitingMatches()
     {
         var criteria = new MatchListingCriteria();
-        return (await repository.FetchAsync<Match>(criteria)).ToList();
+        try
+        {
+            return (await repository.FetchAsync<Match>(criteria)).ToList();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     public async Task<MatchHedgeDetail> GetHedgeMatchId(int matchId)
