@@ -89,7 +89,9 @@ public class Match
 
     public int SubType { get; set; }
 
-    public bool IsSabaPenaltyShootout => SabaSoccer.LeagueGroupIds.Contains(LeagueGroupId) && SabaSoccer.LeagueIds.Contains(LeagueId)
+    public short AutoType { get; set; } // For Saba Soccer
+
+    public bool IsSabaPenaltyShootout => AutoType == SabaSoccer.AutoDirectType
         && ChildMatchType is MatchType.PenaltyShootoutHdp or MatchType.PenaltyShootoutOu;
 
     public bool IsTotalCornerGoalMatch => MainType == MatchType.TotalCornerMainLeague && ChildLeagueType == MatchType.TotalCornerChildLeague;
