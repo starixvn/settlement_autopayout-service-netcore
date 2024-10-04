@@ -5,16 +5,21 @@ using AutoPayout.Sportsbook.Services;
 using Fanex.Caching;
 using Fanex.Caching.Redis;
 using Fanex.Data.Repository;
+using Fanex.Logging;
+using Fanex.Logging.Sentry.RavenClient;
 using Fanex.Settlement.Converter.Services;
 using Fanex.Settlement.ScaleOut;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ONEbook.UM;
 using ONEbook.UM.AspNetCore;
 using ONEbook.UM.Configurations;
 using ONEbook.UM.Helpers;
 using ONEbook.UM.Transport;
+using SharpRaven;
+using LogService = AutoPayout.Sportsbook.Services.LogService;
 
 namespace Fanex.AutoPayout.Service;
 
@@ -61,7 +66,35 @@ public static class AutoPayoutInjector
         service.AddSingleton<IUMRestClient, UMRestClient>();
         service.AddSingleton<ONEbook.UM.Services.IMaintenanceService, ONEbook.UM.Services.MaintenanceService>();
         service.AddMemoryCache();
+
+        StartUmSetting(configuration);
+        StartLogSetting(configuration);
+
         ConfigureRedis(service, configuration);
+    }
+
+    private static void StartLogSetting(IConfiguration configuration)
+    {
+        var logEngine = new List<ILogEngine>();
+
+        var sentryEngineOptions = new SentryEngineOptions
+        {
+            Dsn = new Dsn(configuration.GetSection("SentryToken").Value)
+        };
+
+        logEngine.Add(new SentryLogging(sentryEngineOptions));
+
+        LogManager.SetDefaultLogCategory(configuration.GetSection("SiteCategory").Value).Use(logEngine);
+    }
+
+    private static void StartUmSetting(IConfiguration configuration)
+    {
+        var umConfig = new UMClientConfiguration().Initialize(configuration);
+
+        UMClientManager
+            .UseConfig(umConfig)
+            .UseCacheService(new UMCacheService(new CacheService()))
+            .UseRestClient(new UMRestClient(umConfig));
     }
 
     private static void ConfigureRedis(IServiceCollection service, IConfiguration configuration)

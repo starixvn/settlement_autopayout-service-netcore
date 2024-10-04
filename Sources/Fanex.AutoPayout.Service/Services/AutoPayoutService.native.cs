@@ -1,152 +1,61 @@
 ﻿using AutoPayout.Sportsbook.Services;
-using Fanex.Caching;
-using Fanex.Logging;
 using Fanex.Logging.Extensions;
 using Fanex.Logging.Extensions.Database;
-using Fanex.Logging.Sentry.RavenClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using ONEbook.UM;
-using ONEbook.UM.AspNetCore;
-using ONEbook.UM.Configurations;
-using ONEbook.UM.Transport;
-using SharpRaven;
 using LogService = Fanex.Logging.LogService;
 
 namespace Fanex.AutoPayout.Service.Services;
 
-public class AutoPayoutService : IHostedService
+public class AutoPayoutService(
+    AutoPayoutController autoPayoutController,
+    IConfiguration configuration,
+    IMaintenanceService maintenanceService)
+    : BackgroundService
 {
-    private readonly AutoPayoutController autoPayoutController;
-
-    private readonly IMaintenanceService maintenanceService;
-
-    private readonly IConfiguration configuration;
-
-    private bool running;
-
     private int counter;
 
-    public AutoPayoutService(
-        AutoPayoutController autoPayoutController,
-        IConfiguration configuration,
-        IMaintenanceService maintenanceService)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        this.autoPayoutController = autoPayoutController;
-        this.configuration = configuration;
-        this.maintenanceService = maintenanceService;
-        InitializeExtraComponent();
-        InitializeSetting();
+        Console.WriteLine($"Auto Payout Starting at {DateTime.Now}");
+
+        using PeriodicTimer timer = new(TimeSpan.FromMilliseconds(configuration.GetValue<int>("ServiceInterval")));
+
+        while (await timer.WaitForNextTickAsync(stoppingToken))
+        {
+            await HandleAutoAsync();
+        }
     }
 
-    private void InitializeSetting()
+    private async Task HandleAutoAsync()
     {
-        StartUmSetting();
-        StartLogSetting();
-    }
-
-    private static void InitializeExtraComponent()
-    {
-        TaskScheduler.UnobservedTaskException += TaskSchedulerUnobservedTaskException;
-    }
-
-    private static void TaskSchedulerUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
-    {
-        e.SetObserved();
-        e.Exception.Handle(exception =>
+        try
+        {
+            if (!maintenanceService.IsMaintenance)
+            {
+                await autoPayoutController.ProcessAsync();
+                HandleGarbageCollector();
+            }
+        }
+        catch (Exception exception)
         {
             var logMessage = new LogMessage(exception.Message)
                 .AddSection("Database Info", DatabaseInfoGetters.GetDbExceptionInfo(exception))
                 .AddSection("Server Info", CommonInfoGetters.GetServerInfo())
                 .AddSection("Exception Info", CommonInfoGetters.GetExceptionInfo(exception))
                 .ToString();
-            LogService.Error(logMessage);
-            return true;
-        });
-    }
-
-    public Task StartAsync(CancellationToken cancellationToken)
-    {
-        running = true;
-        var autoRefundThread = new Thread(ThreadProcess);
-        Console.WriteLine($"Auto Payout Starting at {DateTime.Now}");
-        autoRefundThread.Start();
-        return Task.CompletedTask;
-    }
-
-    public Task StopAsync(CancellationToken cancellationToken)
-    {
-        running = false;
-        Console.WriteLine($"Auto Payout Stopping at {DateTime.Now}");
-        return Task.CompletedTask;
-    }
-
-    private void ThreadProcess()
-    {
-        while (running)
-        {
-            if (!maintenanceService.IsMaintenance)
-            {
-                MainProcess();
-                var value = configuration.GetSection("ServiceInterval").Value;
-                if (value != null)
-                {
-                    Thread.Sleep(int.Parse(value));
-                }
-            }
-        }
-    }
-
-    private void MainProcess()
-    {
-        try
-        {
-            autoPayoutController.ProcessAsync();
-            HandleGarbageCollector();
-        }
-        catch (Exception exception)
-        {
-            LogService.Error("Fanex.AutoPayout.Service: ", exception);
+            await LogService.ErrorAsync(logMessage);
         }
     }
 
     private void HandleGarbageCollector()
     {
-        var value = configuration.GetSection("GarbageCollectorInterval").Value;
-        if (value != null && counter >= int.Parse(value))
+        if (counter >= configuration.GetValue<int>("GarbageCollectorInterval"))
         {
             counter = 0;
             GC.WaitForPendingFinalizers();
         }
 
-        var interval = configuration.GetSection("ServiceInterval").Value;
-        if (interval != null)
-        {
-            counter += int.Parse(interval);
-        }
-    }
-
-    private void StartUmSetting()
-    {
-        var umConfig = new UMClientConfiguration().Initialize(configuration);
-
-        UMClientManager
-            .UseConfig(umConfig)
-            .UseCacheService(new UMCacheService(new CacheService()))
-            .UseRestClient(new UMRestClient(umConfig));
-    }
-
-    private void StartLogSetting()
-    {
-        var logEngine = new List<ILogEngine>();
-
-        var sentryEngineOptions = new SentryEngineOptions
-        {
-            Dsn = new Dsn(configuration.GetSection("SentryToken").Value)
-        };
-
-        logEngine.Add(new SentryLogging(sentryEngineOptions));
-
-        LogManager.SetDefaultLogCategory(configuration.GetSection("SiteCategory").Value).Use(logEngine);
+        counter += configuration.GetValue<int>("ServiceInterval");
     }
 }
