@@ -1,4 +1,5 @@
-﻿using AutoPayout.Sportsbook.Services;
+﻿using AutoPayout.Core.Services;
+using DirectPayout.Early.Services;
 using Fanex.Logging.Extensions;
 using Fanex.Logging.Extensions.Database;
 using Microsoft.Extensions.Configuration;
@@ -7,7 +8,8 @@ using LogService = Fanex.Logging.LogService;
 
 namespace Fanex.AutoPayout.Service.Services;
 
-public class EarlyService(
+public class DirectPayoutEarlyService(
+    DirectPayoutController directPayoutController,
     IConfiguration configuration,
     IMaintenanceService maintenanceService) : BackgroundService
 {
@@ -29,8 +31,7 @@ public class EarlyService(
         {
             if (!maintenanceService.IsMaintenance)
             {
-                //await autoMatchController.Process();
-                //await autoNotificationController.Process();
+                await directPayoutController.ProcessAsync();
                 HandleGarbageCollector();
             }
         }

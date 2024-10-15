@@ -21,7 +21,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Fanex.AutoPayout.Service.sln.DotSettings = Fanex.AutoPayout.Service.sln.DotSettings
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectPayout.Early", "Sources\DirectPayout.Early\DirectPayout.Early.csproj", "{A3F66E31-F81A-4AED-8267-5E6286392F61}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DirectPayout.Early", "Sources\DirectPayout.Early\DirectPayout.Early.csproj", "{A3F66E31-F81A-4AED-8267-5E6286392F61}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoPayout.Core", "Sources\AutoPayout.Core\AutoPayout.Core.csproj", "{C3707B55-DBFF-4093-B8A6-10EC43C1EC8D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fanex.AutoPayout.Service", "Sources\Fanex.AutoPayout.Service\Fanex.AutoPayout.Service.csproj", "{D64E53C7-2BF5-48C5-A375-EFAD9878A0E8}"
 EndProject

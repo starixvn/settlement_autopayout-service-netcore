@@ -1,4 +1,5 @@
-﻿using AutoPayout.Sportsbook.Models;
+﻿using AutoPayout.Core.Models;
+using AutoPayout.Sportsbook.Models;
 using AutoPayout.Sportsbook.Services;
 using Fanex.Caching;
 using Fanex.Caching.Redis;

@@ -1,4 +1,4 @@
-﻿using AutoPayout.Sportsbook.Models;
+﻿using AutoPayout.Core.Models;
 using Fanex.AutoPayout.Service;
 using Fanex.AutoPayout.Service.Services;
 using Fanex.Data.SqlServer;
@@ -12,9 +12,11 @@ builder.Services.AddFanexSql(builder.Configuration);
 
 builder.Services.Configure<AppSettingsKey>(builder.Configuration);
 
-builder.Services.InitializeServices(builder.Configuration);
+builder.Services.InitializeAutoPayoutServices(builder.Configuration);
+builder.Services.InitializeDirectPayoutServices();
 
-builder.Services.AddHostedService<AutoPayoutService>();
+//builder.Services.AddHostedService<AutoPayoutService>();
+builder.Services.AddHostedService<DirectPayoutEarlyService>();
 
 var app = builder.Build();
 

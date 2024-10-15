@@ -1,4 +1,4 @@
-﻿namespace AutoPayout.Sportsbook.Models;
+﻿namespace AutoPayout.Core.Models;
 
 public class AppSettingsKey
 {

@@ -1,4 +1,5 @@
-﻿using AutoPayout.Sportsbook.Constants;
+﻿using AutoPayout.Core.Models;
+using AutoPayout.Sportsbook.Constants;
 using AutoPayout.Sportsbook.Models;
 using AutoPayout.Sportsbook.Services;
 using Fanex.Data.Repository;

@@ -1,5 +1,9 @@
-﻿namespace DirectPayout.Early.Services;
+﻿using AutoPayout.Core.Models;
+using Microsoft.Extensions.Options;
 
+namespace DirectPayout.Early.Services;
+
+using Fanex.Caching;
 using Models;
 
 public interface MatchByLeagueService
@@ -15,26 +19,17 @@ public class MatchByLeagueServiceImp(
 {
     private const string KeyLeagueId = "Settlement-AutoPayout-AutoInstant-LeagueId";
 
-    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
-
     public async Task<List<Match>> GetMatches()
     {
         var matches = await matchQueryService.GetWaitingMatches();
 
         cache.TryGet(KeyLeagueId, out int leagueId);
 
-        switch (appSettingsKey.EnvironmentName)
+        return appSettingsKey.Value.EnvironmentName switch
         {
-            case "PRO":
-                return leagueId > 0
-                    ? (from m in matches where m.LeagueId != leagueId select m).ToList()
-                    : matches;
-
-            case "UAT":
-                return (from m in matches where m.LeagueId == leagueId select m).ToList();
-
-            default:
-                return matches;
-        }
+            "PRO" => leagueId > 0 ? (from m in matches where m.LeagueId != leagueId select m).ToList() : matches,
+            "UAT" => (from m in matches where m.LeagueId == leagueId select m).ToList(),
+            _ => matches
+        };
     }
 }
