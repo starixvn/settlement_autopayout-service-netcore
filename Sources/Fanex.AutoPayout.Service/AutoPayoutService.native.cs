@@ -106,7 +106,7 @@ public class AutoPayoutService : IHostedService
         }
         catch (Exception exception)
         {
-            Logging.LogService.Error("Fanex.AutoPayout.Service: ", exception);
+            LogService.Error("Fanex.AutoPayout.Service: ", exception);
         }
     }
 
