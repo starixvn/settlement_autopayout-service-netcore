@@ -33,6 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AutoPayout.Core\AutoPayout.Core.csproj" />
     <ProjectReference Include="..\AutoPayout.Result\AutoPayout.Result.csproj" />
     <ProjectReference Include="..\AutoPayout.Sportsbook\AutoPayout.Sportsbook.csproj" />
     <ProjectReference Include="..\DirectPayout.Early\DirectPayout.Early.csproj" />
