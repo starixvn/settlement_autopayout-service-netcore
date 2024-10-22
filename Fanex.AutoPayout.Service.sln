@@ -3,15 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fanex.AutoPayout.Service", "Sources\Fanex.AutoPayout.Service\Fanex.AutoPayout.Service.csproj", "{47115490-B3B3-4A77-85CD-F50D24EAC62C}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{20B4806A-3726-4A52-A3D7-C8E62D0C6D16}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8368AB61-E027-4054-B1C0-EF211FD01536}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoPayout.Result", "Sources\AutoPayout.Result\AutoPayout.Result.csproj", "{EFB5383F-51C2-4655-A026-4B4245D7B07B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoPayout.Sportsbook", "Sources\AutoPayout.Sportsbook\AutoPayout.Sportsbook.csproj", "{1C5859B1-1701-4585-92DF-B55A562262EA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoPayout.Result.UnitTests", "Tests\AutoPayout.Result.UnitTests\AutoPayout.Result.UnitTests.csproj", "{D1539553-F6DF-4AFA-9987-850C61BE215B}"
 EndProject
@@ -25,24 +21,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Fanex.AutoPayout.Service.sln.DotSettings = Fanex.AutoPayout.Service.sln.DotSettings
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoPayout.Sportsbook", "Sources\AutoPayout.Sportsbook\AutoPayout.Sportsbook.csproj", "{48866E02-BAE5-4AED-9AA9-FDB390977EC8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fanex.AutoPayout.Service", "Sources\Fanex.AutoPayout.Service\Fanex.AutoPayout.Service.csproj", "{D64E53C7-2BF5-48C5-A375-EFAD9878A0E8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{47115490-B3B3-4A77-85CD-F50D24EAC62C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{47115490-B3B3-4A77-85CD-F50D24EAC62C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{47115490-B3B3-4A77-85CD-F50D24EAC62C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{47115490-B3B3-4A77-85CD-F50D24EAC62C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EFB5383F-51C2-4655-A026-4B4245D7B07B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EFB5383F-51C2-4655-A026-4B4245D7B07B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EFB5383F-51C2-4655-A026-4B4245D7B07B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EFB5383F-51C2-4655-A026-4B4245D7B07B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1C5859B1-1701-4585-92DF-B55A562262EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1C5859B1-1701-4585-92DF-B55A562262EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1C5859B1-1701-4585-92DF-B55A562262EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1C5859B1-1701-4585-92DF-B55A562262EA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D1539553-F6DF-4AFA-9987-850C61BE215B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D1539553-F6DF-4AFA-9987-850C61BE215B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1539553-F6DF-4AFA-9987-850C61BE215B}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -51,16 +43,24 @@ Global
 		{94730707-D551-43CE-9AB8-D8B55606557F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94730707-D551-43CE-9AB8-D8B55606557F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{94730707-D551-43CE-9AB8-D8B55606557F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48866E02-BAE5-4AED-9AA9-FDB390977EC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48866E02-BAE5-4AED-9AA9-FDB390977EC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48866E02-BAE5-4AED-9AA9-FDB390977EC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48866E02-BAE5-4AED-9AA9-FDB390977EC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D64E53C7-2BF5-48C5-A375-EFAD9878A0E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D64E53C7-2BF5-48C5-A375-EFAD9878A0E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D64E53C7-2BF5-48C5-A375-EFAD9878A0E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D64E53C7-2BF5-48C5-A375-EFAD9878A0E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{47115490-B3B3-4A77-85CD-F50D24EAC62C} = {20B4806A-3726-4A52-A3D7-C8E62D0C6D16}
 		{EFB5383F-51C2-4655-A026-4B4245D7B07B} = {20B4806A-3726-4A52-A3D7-C8E62D0C6D16}
-		{1C5859B1-1701-4585-92DF-B55A562262EA} = {20B4806A-3726-4A52-A3D7-C8E62D0C6D16}
 		{D1539553-F6DF-4AFA-9987-850C61BE215B} = {8368AB61-E027-4054-B1C0-EF211FD01536}
 		{94730707-D551-43CE-9AB8-D8B55606557F} = {8368AB61-E027-4054-B1C0-EF211FD01536}
+		{48866E02-BAE5-4AED-9AA9-FDB390977EC8} = {20B4806A-3726-4A52-A3D7-C8E62D0C6D16}
+		{D64E53C7-2BF5-48C5-A375-EFAD9878A0E8} = {20B4806A-3726-4A52-A3D7-C8E62D0C6D16}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D724EC48-1C25-4E46-B14E-7CCDF57C1C1F}
