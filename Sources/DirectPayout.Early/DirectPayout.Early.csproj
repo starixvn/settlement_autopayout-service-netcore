@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AutoPayout.Core\AutoPayout.Core.csproj" />
+    <ProjectReference Include="..\AutoPayout.Sportsbook\AutoPayout.Sportsbook.csproj" />
   </ItemGroup>
 
 </Project>

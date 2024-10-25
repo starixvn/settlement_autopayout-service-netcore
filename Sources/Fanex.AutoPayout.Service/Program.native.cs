@@ -1,4 +1,5 @@
 ﻿using AutoPayout.Core.Models;
+using DirectPayout.Early;
 using Fanex.AutoPayout.Service;
 using Fanex.AutoPayout.Service.Services;
 using Fanex.Data.SqlServer;
@@ -13,7 +14,8 @@ builder.Services.AddFanexSql(builder.Configuration);
 builder.Services.Configure<AppSettingsKey>(builder.Configuration);
 
 builder.Services.InitializeAutoPayoutServices(builder.Configuration);
-builder.Services.InitializeDirectPayoutServices();
+
+builder.AddDirectPayoutEarlyModule();
 
 //builder.Services.AddHostedService<AutoPayoutService>();
 builder.Services.AddHostedService<DirectPayoutEarlyService>();

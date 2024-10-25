@@ -9,11 +9,17 @@ public interface MatchSettlingPoolService
     void Remove(Match match);
 }
 
-public class MatchSettlingPoolServiceImp(MatchByLeagueService matchByLeagueService) : MatchSettlingPoolService
+public class MatchSettlingPoolServiceImp : MatchSettlingPoolService
 {
     private readonly List<Match> poolOfMatches = [];
 
     private readonly object lockObject = new();
+    private readonly MatchService matchService;
+
+    public MatchSettlingPoolServiceImp(MatchService matchService)
+    {
+        this.matchService = matchService;
+    }
 
     public List<Match> PoolOfMatches => poolOfMatches;
 
@@ -21,13 +27,13 @@ public class MatchSettlingPoolServiceImp(MatchByLeagueService matchByLeagueServi
     {
         lock (lockObject)
         {
-            poolOfMatches.RemoveAll(m => m.MatchId == match.MatchId && m.ResourceId == match.ResourceId);
+            poolOfMatches.RemoveAll(m => m.MatchId == match.MatchId);
         }
     }
 
     public async Task<List<Match>> PeekNewMatch()
     {
-        var matches = await matchByLeagueService.GetMatches();
+        var matches = await matchService.GetMatches();
 
         lock (lockObject)
         {

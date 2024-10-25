@@ -8,11 +8,15 @@ public interface MatchSettleService
     Task<Result> Settle(Match match, int sourceId);
 }
 
-public class MatchSettleServiceImp(
-    MatchQueryService matchQueryService
-   )
-    : MatchSettleService
+public class MatchSettleServiceImp : MatchSettleService
 {
+    //private readonly ScaleOutSettleService scaleOutSettleService;
+
+    //public MatchSettleServiceImp(ScaleOutSettleService scaleOutSettleService)
+    //{
+    //    this.scaleOutSettleService = scaleOutSettleService;
+    //}
+
     public async Task<Result> Settle(Match match, int sourceId)
     {
         return new Result();
@@ -23,5 +27,23 @@ public class MatchSettleServiceImp(
     //    await logService.WriteLogResettle(insertLogCriteria);
 
     //    await logService.WriteLog(match, actionName);
+    //}
+
+
+    //private async Task<Result> ValidateBeforeExecute(MatchSettleCriteria criteria)
+    //{
+    //    var request = new EventTicketRequest
+    //    {
+    //        MatchId = criteria.MatchId,
+    //        Action = criteria.Action,
+    //        //SpName = criteria.SpName,
+    //        //Mode = Action.Mode.ContainsKey(criteria.Action) ? Action.Mode[criteria.Action] : "ALL",
+    //        SelectedResources = criteria.ResourceResult
+    //    };
+
+    //    var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(request);
+
+
+    //    return new Result();
     //}
 }

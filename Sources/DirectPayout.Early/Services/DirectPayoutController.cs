@@ -13,11 +13,11 @@ public class DirectPayoutControllerImp(
     public async Task ProcessAsync()
     {
         var newMatches = await matchSettlingPoolService.PeekNewMatch();
-        matchSettleController.Process(newMatches[0]);
-        //newMatches.ForEach(m =>
-        //{
-        //    Task.Run(() => matchSettleController.Process(m))
-        //        .ConfigureAwait(false);
-        //});
+
+        newMatches.ForEach(m =>
+        {
+            Task.Run(() => matchSettleController.Process(m))
+                .ConfigureAwait(false);
+        });
     }
 }

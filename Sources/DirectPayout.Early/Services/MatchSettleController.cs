@@ -1,4 +1,5 @@
-﻿using DirectPayout.Early.Models;
+﻿using AutoPayout.Sportsbook.Services;
+using DirectPayout.Early.Models;
 
 namespace DirectPayout.Early.Services;
 
@@ -10,7 +11,8 @@ public interface MatchSettleController
 public class MatchSettleControllerImp(
     MatchSettleService matchSettleService,
     //SettleLogService settleLogService,
-    MatchSettlingPoolService matchSettlingPoolService)
+    MatchSettlingPoolService matchSettlingPoolService,
+    ScoreMatcherController scoreMatcherController)
     //InsertInfoService insertInfoService)
     : MatchSettleController
 {

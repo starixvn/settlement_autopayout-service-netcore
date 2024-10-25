@@ -20,7 +20,6 @@ using ONEbook.UM.Configurations;
 using ONEbook.UM.Helpers;
 using ONEbook.UM.Transport;
 using SharpRaven;
-using DirectPayoutEarly = DirectPayout.Early.Services;
 using LogService = AutoPayout.Sportsbook.Services.LogService;
 
 namespace Fanex.AutoPayout.Service;
@@ -73,16 +72,6 @@ public static class AutoPayoutInjector
         StartLogSetting(configuration);
 
         ConfigureRedis(service, configuration);
-    }
-
-    public static void InitializeDirectPayoutServices(this IServiceCollection service)
-    {
-        service.AddSingleton<DirectPayoutEarly.DirectPayoutController, DirectPayoutEarly.DirectPayoutControllerImp>();
-        service.AddSingleton<DirectPayoutEarly.MatchByLeagueService, DirectPayoutEarly.MatchByLeagueServiceImp>();
-        service.AddSingleton<DirectPayoutEarly.MatchQueryService, DirectPayoutEarly.MatchQueryServiceImp>();
-        service.AddSingleton<DirectPayoutEarly.MatchSettleController, DirectPayoutEarly.MatchSettleControllerImp>();
-        service.AddSingleton<DirectPayoutEarly.MatchSettleService, DirectPayoutEarly.MatchSettleServiceImp>();
-        service.AddSingleton<DirectPayoutEarly.MatchSettlingPoolService, DirectPayoutEarly.MatchSettlingPoolServiceImp>();
     }
 
     private static void StartLogSetting(IConfiguration configuration)
