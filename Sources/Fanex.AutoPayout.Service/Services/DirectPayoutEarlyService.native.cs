@@ -19,7 +19,7 @@ public class DirectPayoutEarlyService(
     {
         using PeriodicTimer timer = new(TimeSpan.FromMilliseconds(configuration.GetValue<int>("ServiceInterval")));
 
-        while (await timer.WaitForNextTickAsync(stoppingToken))
+        //while (await timer.WaitForNextTickAsync(stoppingToken))
         {
             await HandleAutoAsync();
         }
