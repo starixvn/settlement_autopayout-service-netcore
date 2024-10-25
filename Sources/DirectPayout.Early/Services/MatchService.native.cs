@@ -20,11 +20,16 @@ public class MatchServiceImp : MatchService
     private readonly AppSettingsKey appSettingsKey;
     private readonly IDynamicRepository repository;
 
-    public MatchServiceImp(ResultDetailService resultDetailService, ICache cache, IOptions<AppSettingsKey> appSettingsKey)
+    public MatchServiceImp(
+        ResultDetailService resultDetailService,
+        ICache cache,
+        IOptions<AppSettingsKey> appSettingsKey,
+        IDynamicRepository repository)
     {
         this.resultDetailService = resultDetailService;
         this.cache = cache;
         this.appSettingsKey = appSettingsKey.Value;
+        this.repository = repository;
     }
 
     public async Task<List<Match>> GetMatches()

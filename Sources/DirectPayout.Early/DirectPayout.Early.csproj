@@ -11,12 +11,10 @@
 
   <ItemGroup>
     <PackageReference Include="Fanex.Caching" Version="2.2.5" />
-    <PackageReference Include="Fanex.Data.Repository" Version="4.2.6" />
     <PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AutoPayout.Core\AutoPayout.Core.csproj" />
     <ProjectReference Include="..\AutoPayout.Sportsbook\AutoPayout.Sportsbook.csproj" />
   </ItemGroup>
 
