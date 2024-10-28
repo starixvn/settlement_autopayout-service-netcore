@@ -2,24 +2,21 @@
 
 namespace DirectPayout.Early.Models;
 
-
-public record class ResourceItem([property: XmlAttribute("Id")] string ResourceId);
-
 public class CheckOddsItem
 {
-    private readonly List<ResourceItem> resourceIdItems = new List<ResourceItem>();
+    private readonly List<CheckOddsResourceItem> resourceIdItems = new List<CheckOddsResourceItem>();
 
     [XmlAttribute("MatchId")]
     public int MatchId { get; set; }
 
     [XmlElement("ResourceId")]
-    public List<ResourceItem> ResourceIdItems
+    public List<CheckOddsResourceItem> ResourceIdItems
     {
         get
         {
             ResourceIds.ForEach(item =>
             {
-                resourceIdItems.Add(new ResourceItem(item));
+                resourceIdItems.Add(new CheckOddsResourceItem(item));
             });
             return resourceIdItems;
         }

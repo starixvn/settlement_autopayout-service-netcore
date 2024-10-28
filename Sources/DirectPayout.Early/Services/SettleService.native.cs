@@ -1,103 +1,82 @@
 ﻿using AutoPayout.Core.Models;
 using DirectPayout.Early.Criteria;
-using DirectPayout.Early.Models;
+using DirectPayout.Early.Exceptions;
+using Fanex.Settlement.Converter.Services;
+using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
 
 namespace DirectPayout.Early.Services;
 
-public interface MatchSettleService
+public interface SettleService
 {
-    Task<Result> Settle(Match match, int sourceId);
+    Task Settle(SettleCriteria settleCriteria);
 }
 
-public class MatchSettleServiceImp : MatchSettleService
+public class SettleServiceImp : SettleService
 {
     private readonly ScaleOutSettleService scaleOutSettleService;
     private readonly IDynamicRepository repository;
-    private readonly AppSettingsKey appSettingsKey;
+    private readonly AppSettingsKey appSettings;
+    private readonly AutoPayoutResultService autoPayoutResultService;
 
-    public MatchSettleServiceImp(ScaleOutSettleService scaleOutSettleService, IDynamicRepository repository, IOptions<AppSettingsKey> options)
+    public SettleServiceImp(
+        ScaleOutSettleService scaleOutSettleService,
+        IDynamicRepository repository,
+        IOptions<AppSettingsKey> options,
+        XmlConvertService xmlConvertService,
+        ValidationService validationService,
+        AutoPayoutResultService autoPayoutResultService)
     {
         this.scaleOutSettleService = scaleOutSettleService;
         this.repository = repository;
-        this.appSettingsKey = options.Value;
+        appSettings = options.Value;
+        this.autoPayoutResultService = autoPayoutResultService;
     }
 
-
-
-    //public MatchSettleServiceImp(ScaleOutSettleService scaleOutSettleService)
-    //{
-    //    this.scaleOutSettleService = scaleOutSettleService;
-    //}
-
-    public async Task<Result> Settle(Match match, int sourceId)
+    public async Task Settle(SettleCriteria settleCriteria)
     {
-        var resultValidate = await ValidateBeforeExecute();
-        if (resultValidate.ErrCode != 0)
+        await scaleOutSettleService.UpdateUnderSettlementFlag(settleCriteria.MatchId, settleCriteria.AdminId, settleCriteria.Action);
+        await autoPayoutResultService.InsOrUpdAutoPayoutResult(settleCriteria, AutoPayoutResultStatus.Waiting);
+        await UpdateMatchInfo(settleCriteria);
+        var result = await ExecuteAllSite(settleCriteria);
+        await autoPayoutResultService.InsOrUpdAutoPayoutResult(settleCriteria, AutoPayoutResultStatus.Completed);
+
+        if (result.ErrCode != 0 && result.ErrCode != 99)
         {
-            return resultValidate;
+            throw new AppException(result.ErrMsg);
         }
-
-        await scaleOutSettleService.UpdateUnderSettlementFlag(match.MatchId, 0, "");
-
-        await ExcuteAllSite(new SettleCriteria
-        {
-            MatchId = match.MatchId,
-        });
-
-        return new Result();
     }
 
-    //private async Task WriteLog(Match match, InsertLogCriteria insertLogCriteria, string actionName)
-    //{
-    //    await logService.WriteLogResettle(insertLogCriteria);
+    private async Task UpdateMatchInfo(SettleCriteria criteria)
+    {
+        var updateMatchInfoRequest = new UpdateMatchInfoRequest
+        {
+            Action = criteria.Action,
+            IsAuto = true,
+            MatchId = criteria.MatchId,
+            SelectedResources = criteria.SelectedResources,
+            AdminId = criteria.AdminId,
+        };
+        updateMatchInfoRequest.IsAuto = true;
 
-    //    await logService.WriteLog(match, actionName);
-    //}
-
-    private async Task<Result> ExcuteOnSite(SettleCriteria criteria, string server)
+        await scaleOutSettleService.UpdateMatchInfo(updateMatchInfoRequest);
+    }
+    private async Task<Result> ExecuteOnSite(SettleCriteria criteria, string server)
     {
         criteria.DbServer = server;
 
         await repository.ExecuteAsync(criteria);
 
-        return new Result
-        {
-            ErrCode = criteria.ErrCode,
-            ErrMsg = criteria.ErrMsg
-        };
+        return new Result(criteria.ErrCode, criteria.ErrMsg);
     }
 
-    private async Task<Result> ExcuteAllSite(SettleCriteria criteria)
+    private async Task<Result> ExecuteAllSite(SettleCriteria criteria)
     {
-        var servers = appSettingsKey.SiteDbServer;
-        var tasks = servers.Select(x => ExcuteOnSite(criteria, x)).ToList();
+        var servers = appSettings.SiteDbServer;
+        var tasks = servers.Select(x => ExecuteOnSite(criteria, x)).ToList();
         var results = await Task.WhenAll(tasks);
 
         return results.First(x => x.ErrCode != 0) ?? new Result();
-    }
-
-
-    private async Task<Result> ValidateBeforeExecute()
-    {
-        //var request = new EventTicketRequest
-        //{
-        //    MatchId = criteria.MatchId,
-        //    Action = criteria.Action,
-        //    //SpName = criteria.SpName,
-        //    //Mode = Action.Mode.ContainsKey(criteria.Action) ? Action.Mode[criteria.Action] : "ALL",
-        //    SelectedResources = criteria.ResourceResult
-        //};
-
-        //var result = await scaleOutSettleService.ValidateEventAndTicket(request);
-
-
-        //return new Result
-        //{
-        //    ErrCode = result.ErrorCode,
-        //    ErrMsg = result.ErrorMessage
-        //};
-        return new Result();
     }
 }

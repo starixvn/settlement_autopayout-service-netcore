@@ -2,24 +2,29 @@
 
 namespace DirectPayout.Early.Services;
 
-public class AutoPayoutResultService
+public interface AutoPayoutResultService
+{
+    Task InsOrUpdAutoPayoutResult(SettleCriteria settleCriteria, int statusId, string remark = null);
+}
+
+public class AutoPayoutResultServiceImp : AutoPayoutResultService
 {
     private readonly IDynamicRepository repository;
 
-    public AutoPayoutResultService(IDynamicRepository repository)
+    public AutoPayoutResultServiceImp(IDynamicRepository repository)
     {
         this.repository = repository;
     }
 
-    public async Task InsertAutoPayoutResult()
+    public async Task InsOrUpdAutoPayoutResult(SettleCriteria settleCriteria, int statusId, string remark = null)
     {
-        var criteria = new AutoPayoutResultInsCriteria();
-        await repository.ExecuteAsync(criteria);
-    }
-
-    public async Task UpdateAutoPayoutResult()
-    {
-        var criteria = new AutoPayoutResultUpdCriteria();
+        var criteria = new AutoPayoutResultInsOrUpdCriteria
+        {
+            MatchId = settleCriteria.MatchId,
+            StatusId = statusId,
+            SelectedResources = settleCriteria.SelectedResources,
+            Remark = remark
+        };
         await repository.ExecuteAsync(criteria);
     }
 }
