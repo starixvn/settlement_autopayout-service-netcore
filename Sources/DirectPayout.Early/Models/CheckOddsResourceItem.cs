@@ -1,4 +1,8 @@
 ﻿using System.Xml.Serialization;
 
 namespace DirectPayout.Early.Models;
-public record class CheckOddsResourceItem([property: XmlAttribute("Id")] string ResourceId);
+public class CheckOddsResourceItem
+{
+    [XmlAttribute("Id")]
+    public string ResourceId { get; set; }
+}

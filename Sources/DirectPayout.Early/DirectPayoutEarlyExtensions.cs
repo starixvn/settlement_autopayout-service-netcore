@@ -12,8 +12,12 @@ public static class DirectPayoutEarlyExtensions
             .AddSingleton<DirectPayoutController, DirectPayoutControllerImp>()
             .AddSingleton<MatchService, MatchServiceImp>()
             .AddSingleton<MatchSettleController, MatchSettleControllerImp>()
-            .AddSingleton<MatchSettleService, MatchSettleServiceImp>()
-            .AddSingleton<MatchSettlingPoolService, MatchSettlingPoolServiceImp>();
+            .AddSingleton<SettleService, SettleServiceImp>()
+            .AddSingleton<MatchSettlingPoolService, MatchSettlingPoolServiceImp>()
+            .AddSingleton<LogSettleService, LogSettleServiceImp>()
+            .AddSingleton<AutoPayoutResultService, AutoPayoutResultServiceImp>()
+            .AddSingleton<ResultDetailService, ResultDetailServiceImp>()
+            .AddSingleton<ValidationService, ValidationServiceImp>();
 
         return builder;
     }

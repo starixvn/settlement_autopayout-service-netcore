@@ -1,6 +1,7 @@
 ﻿using AutoPayout.Core.Models;
 using DirectPayout.Early.Criteria;
 using DirectPayout.Early.Exceptions;
+using DirectPayout.Early.Models;
 using Fanex.Settlement.Converter.Services;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
@@ -10,7 +11,7 @@ namespace DirectPayout.Early.Services;
 
 public interface SettleService
 {
-    Task Settle(SettleCriteria settleCriteria);
+    Task Settle(Match match, SettleCriteria settleCriteria);
 }
 
 public class SettleServiceImp : SettleService
@@ -19,6 +20,7 @@ public class SettleServiceImp : SettleService
     private readonly IDynamicRepository repository;
     private readonly AppSettingsKey appSettings;
     private readonly AutoPayoutResultService autoPayoutResultService;
+    private readonly LogSettleService logSettleService;
 
     public SettleServiceImp(
         ScaleOutSettleService scaleOutSettleService,
@@ -26,20 +28,29 @@ public class SettleServiceImp : SettleService
         IOptions<AppSettingsKey> options,
         XmlConvertService xmlConvertService,
         ValidationService validationService,
-        AutoPayoutResultService autoPayoutResultService)
+        AutoPayoutResultService autoPayoutResultService,
+        LogSettleService logSettleService)
     {
         this.scaleOutSettleService = scaleOutSettleService;
         this.repository = repository;
         appSettings = options.Value;
         this.autoPayoutResultService = autoPayoutResultService;
+        this.logSettleService = logSettleService;
     }
 
-    public async Task Settle(SettleCriteria settleCriteria)
+    public async Task Settle(Match match, SettleCriteria settleCriteria)
     {
+        await logSettleService.WriteLogResettle(match);
+        await logSettleService.WriteLog(settleCriteria);
+
         await scaleOutSettleService.UpdateUnderSettlementFlag(settleCriteria.MatchId, settleCriteria.AdminId, settleCriteria.Action);
+
         await autoPayoutResultService.InsOrUpdAutoPayoutResult(settleCriteria, AutoPayoutResultStatus.Waiting);
+
         await UpdateMatchInfo(settleCriteria);
+
         var result = await ExecuteAllSite(settleCriteria);
+
         await autoPayoutResultService.InsOrUpdAutoPayoutResult(settleCriteria, AutoPayoutResultStatus.Completed);
 
         if (result.ErrCode != 0 && result.ErrCode != 99)
@@ -58,7 +69,6 @@ public class SettleServiceImp : SettleService
             SelectedResources = criteria.SelectedResources,
             AdminId = criteria.AdminId,
         };
-        updateMatchInfoRequest.IsAuto = true;
 
         await scaleOutSettleService.UpdateMatchInfo(updateMatchInfoRequest);
     }
@@ -77,6 +87,6 @@ public class SettleServiceImp : SettleService
         var tasks = servers.Select(x => ExecuteOnSite(criteria, x)).ToList();
         var results = await Task.WhenAll(tasks);
 
-        return results.First(x => x.ErrCode != 0) ?? new Result();
+        return results.FirstOrDefault(x => x.ErrCode != 0) ?? new Result();
     }
 }

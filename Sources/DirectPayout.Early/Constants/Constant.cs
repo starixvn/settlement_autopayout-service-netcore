@@ -14,4 +14,5 @@ public static class ErrorCodes
     public const string MatchCalculated = "DP-ERR2";
     public const string InvalidInput = "DP-ERR3";
     public const string FTInconsistent = "DP-ERR4";
+    public const int MatchInQueue = 1_001_003;
 }

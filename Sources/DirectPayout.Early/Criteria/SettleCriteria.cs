@@ -11,12 +11,11 @@ public class SettleCriteria : NonQueryCommand
     public string SelectedResources { get; set; }
 
     public string Action { get; set; } = "CAL";
+    public bool IsAuto { get; set; } = true;
 
     public int ErrCode { get; set; }
 
     public string ErrMsg { get; set; }
-
-    public bool IsAuto { get; set; } = true;
 
     [SpParam(Ignored = true)]
     public string DbServer { get; set; }

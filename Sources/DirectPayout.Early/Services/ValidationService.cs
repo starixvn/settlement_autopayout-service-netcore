@@ -1,9 +1,14 @@
-﻿using DirectPayout.Early.Criteria;
+﻿using AutoPayout.Core.Models;
+using DirectPayout.Early.Constants;
+using DirectPayout.Early.Criteria;
 using DirectPayout.Early.Exceptions;
 using DirectPayout.Early.Models;
 using Fanex.Settlement.Converter.Services;
+using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
+using Microsoft.Extensions.Options;
+using Polly;
 
 namespace DirectPayout.Early.Services;
 
@@ -18,12 +23,18 @@ public class ValidationServiceImp : ValidationService
     private readonly IDynamicRepository repository;
     private readonly XmlConvertService xmlConvertService;
     private readonly ScaleOutSettleService scaleOutSettleService;
+    private readonly AppSettingsKey appSettings;
 
-    public ValidationServiceImp(IDynamicRepository repository, XmlConvertService xmlConvertService, ScaleOutSettleService scaleOutSettleService)
+    public ValidationServiceImp(
+        IDynamicRepository repository,
+        XmlConvertService xmlConvertService,
+        ScaleOutSettleService scaleOutSettleService,
+        IOptions<AppSettingsKey> options)
     {
         this.repository = repository;
         this.xmlConvertService = xmlConvertService;
         this.scaleOutSettleService = scaleOutSettleService;
+        this.appSettings = options.Value;
     }
 
     public async Task VerifyEventAndTicket(SettleCriteria criteria)
@@ -34,14 +45,19 @@ public class ValidationServiceImp : ValidationService
             Action = criteria.Action, // "CAL"
             SpName = criteria.SpName,
             Mode = "EAR",
+            IsAuto = true,
             SelectedResources = criteria.SelectedResources
         };
 
-        var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(request);
+        var result = await Policy
+            .HandleResult<ResultMessage>(r => r.ErrorCode == ErrorCodes.MatchInQueue)
+            .WaitAndRetryAsync(appSettings.RetryCount, retryAttempt => TimeSpan.FromSeconds(appSettings.RetryInterval))
+            .ExecuteAsync(async () => await scaleOutSettleService.ValidateEventAndTicket(request));
 
-        if (resultMessage.ErrorCode != 0)
+
+        if (result.ErrorCode != 0)
         {
-            throw new AppException(resultMessage.ErrorMessage);
+            throw new AppException(result.ErrorMessage);
         }
     }
     public async Task VerifyNoRunningOdds(Match match)
@@ -75,7 +91,10 @@ public class ValidationServiceImp : ValidationService
             ResourceIds = resourceIds
         };
 
-        var resources = new Resources<CheckOddsItem>(new List<CheckOddsItem> { checkOddsItem });
+        var resources = new Resources<CheckOddsItem>()
+        {
+            ResourceItems = new List<CheckOddsItem> { checkOddsItem }
+        };
 
         return xmlConvertService.Serialize(resources);
     }

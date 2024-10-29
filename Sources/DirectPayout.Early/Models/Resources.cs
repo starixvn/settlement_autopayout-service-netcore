@@ -3,4 +3,8 @@
 namespace DirectPayout.Early.Models;
 
 [XmlRoot("Resources")]
-public record class Resources<T>([property: XmlElement("Resource")] List<T> ResourceItems);
+public class Resources<T>
+{
+    [XmlElement("Resource")]
+    public List<T> ResourceItems { get; set; }
+}

@@ -16,7 +16,10 @@ public class CheckOddsItem
         {
             ResourceIds.ForEach(item =>
             {
-                resourceIdItems.Add(new CheckOddsResourceItem(item));
+                resourceIdItems.Add(new CheckOddsResourceItem
+                {
+                    ResourceId = item
+                });
             });
             return resourceIdItems;
         }

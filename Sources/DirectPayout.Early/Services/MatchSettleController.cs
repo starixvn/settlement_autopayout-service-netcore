@@ -18,19 +18,22 @@ public class MatchSettleControllerImp : MatchSettleController
     private readonly XmlConvertService xmlConvertService;
     private readonly SettleService settleService;
     private readonly AutoPayoutResultService autoPayoutResultService;
+    private readonly LogSettleService logSettleService;
 
     public MatchSettleControllerImp(
         MatchSettlingPoolService matchSettlingPoolService,
         ValidationService validationService,
         XmlConvertService xmlConvertService,
         SettleService settleService,
-        AutoPayoutResultService autoPayoutResultService)
+        AutoPayoutResultService autoPayoutResultService,
+        LogSettleService logSettleService)
     {
         this.matchSettlingPoolService = matchSettlingPoolService;
         this.validationService = validationService;
         this.xmlConvertService = xmlConvertService;
         this.settleService = settleService;
         this.autoPayoutResultService = autoPayoutResultService;
+        this.logSettleService = logSettleService;
     }
 
     public async Task Process(Match match)
@@ -42,14 +45,15 @@ public class MatchSettleControllerImp : MatchSettleController
             var settleCriteria = CreateSettleCriteria(match);
             await validationService.VerifyEventAndTicket(settleCriteria);
 
-            await settleService.Settle(settleCriteria);
-            //log
-            //insert
-
+            await settleService.Settle(match, settleCriteria);
         }
         catch (AutoPayoutException exception)
         {
             await HandleAutoPayoutException(match, exception);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
         }
         finally
         {
@@ -59,12 +63,17 @@ public class MatchSettleControllerImp : MatchSettleController
 
     private SettleCriteria CreateSettleCriteria(Match match)
     {
-        var resources = new Resources<ResultDetail>(match.ResultDetails);
+        var resources = new Resources<ResultDetail>()
+        {
+            ResourceItems = match.ResultDetails
+        };
 
         return new SettleCriteria
         {
             MatchId = match.MatchId,
             SelectedResources = xmlConvertService.Serialize(resources),
+            Action = "CAL",
+            IsAuto = true
         };
     }
 
@@ -72,6 +81,6 @@ public class MatchSettleControllerImp : MatchSettleController
     {
         var settleCriteria = CreateSettleCriteria(match);
         await autoPayoutResultService.InsOrUpdAutoPayoutResult(settleCriteria, AutoPayoutResultStatus.Failed, exception.Message);
-
+        await logSettleService.WriteLogErrorSettle(match, exception.Message);
     }
 }
