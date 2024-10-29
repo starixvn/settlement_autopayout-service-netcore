@@ -22,8 +22,8 @@ public class ResultDetailServiceImp : ResultDetailService
     {
         var resultDetail = await repository.FetchAsync<ResultDetail>(new ScheduleSelCriteria());
 
-        var validResults = resultDetail.Where(r => r.LastModifyDate <= DateTime.Now);
+        //var validResults = resultDetail.Where(r => r.LastModifyDate);
 
-        return validResults;
+        return resultDetail;
     }
 }

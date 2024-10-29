@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fanex.AutoPayout.Service", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoPayout.Sportsbook", "Sources\AutoPayout.Sportsbook\AutoPayout.Sportsbook.csproj", "{5576EA20-A460-4FDA-9157-DA961E6D98D7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectPayout.Early.Tests", "Tests\DirectPayout.Early.Tests\DirectPayout.Early.Tests.csproj", "{F143C946-F1E2-44EB-91BE-B1C39AC04DF4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{5576EA20-A460-4FDA-9157-DA961E6D98D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5576EA20-A460-4FDA-9157-DA961E6D98D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5576EA20-A460-4FDA-9157-DA961E6D98D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F143C946-F1E2-44EB-91BE-B1C39AC04DF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F143C946-F1E2-44EB-91BE-B1C39AC04DF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F143C946-F1E2-44EB-91BE-B1C39AC04DF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F143C946-F1E2-44EB-91BE-B1C39AC04DF4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -75,6 +81,7 @@ Global
 		{C3707B55-DBFF-4093-B8A6-10EC43C1EC8D} = {20B4806A-3726-4A52-A3D7-C8E62D0C6D16}
 		{D64E53C7-2BF5-48C5-A375-EFAD9878A0E8} = {20B4806A-3726-4A52-A3D7-C8E62D0C6D16}
 		{5576EA20-A460-4FDA-9157-DA961E6D98D7} = {20B4806A-3726-4A52-A3D7-C8E62D0C6D16}
+		{F143C946-F1E2-44EB-91BE-B1C39AC04DF4} = {8368AB61-E027-4054-B1C0-EF211FD01536}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D724EC48-1C25-4E46-B14E-7CCDF57C1C1F}

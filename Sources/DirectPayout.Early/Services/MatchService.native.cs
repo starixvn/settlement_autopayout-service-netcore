@@ -1,5 +1,4 @@
 ﻿using AutoPayout.Core.Models;
-using DirectPayout.Early.Criteria;
 using DirectPayout.Early.Models;
 using Fanex.Caching;
 using Microsoft.Extensions.Options;
@@ -38,14 +37,6 @@ public class MatchServiceImp : MatchService
 
         return await GetMatchesByEnv(matches);
     }
-
-    public async Task<MatchDetail> GetMatchDetail(int matchId, short sportType)
-    {
-        var matchDetail = await repository.GetAsync<MatchDetail>(new MatchDetailSelCriteria { MatchId = matchId });
-
-        return matchDetail;
-    }
-
 
 
     private async Task<List<Match>> GetMatchesByEnv(List<Match> matches)

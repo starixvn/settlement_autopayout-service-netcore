@@ -2,7 +2,6 @@
 using DirectPayout.Early.Criteria;
 using DirectPayout.Early.Exceptions;
 using DirectPayout.Early.Models;
-using Fanex.Settlement.Converter.Services;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
@@ -26,8 +25,6 @@ public class SettleServiceImp : SettleService
         ScaleOutSettleService scaleOutSettleService,
         IDynamicRepository repository,
         IOptions<AppSettingsKey> options,
-        XmlConvertService xmlConvertService,
-        ValidationService validationService,
         AutoPayoutResultService autoPayoutResultService,
         LogSettleService logSettleService)
     {
