@@ -17,7 +17,7 @@ builder.Services.InitializeAutoPayoutServices(builder.Configuration);
 
 builder.AddDirectPayoutEarlyModule();
 
-//builder.Services.AddHostedService<AutoPayoutService>();
+builder.Services.AddHostedService<AutoPayoutService>();
 builder.Services.AddHostedService<DirectPayoutEarlyService>();
 
 var app = builder.Build();
