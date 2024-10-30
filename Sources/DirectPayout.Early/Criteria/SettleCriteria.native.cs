@@ -25,5 +25,5 @@ public class SettleCriteria : NonQueryCommand
 
     public override string GetSettingKey() => $"NAP_Admin_Settlement_Auto_1s_Push_{DbServer}";
 
-    public override bool IsValid() => AdminId > 0 && MatchId > 0;
+    public override bool IsValid() => MatchId > 0;
 }

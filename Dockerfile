@@ -1,8 +1,10 @@
 FROM hub.nexdev.net/base/dotnet/core/sdk:8.0-alpine AS builder
 WORKDIR /src
 
+COPY ./Sources/AutoPayout.Core ./AutoPayout.Core
 COPY ./Sources/AutoPayout.Result ./AutoPayout.Result
 COPY ./Sources/AutoPayout.Sportsbook ./AutoPayout.Sportsbook
+COPY ./Sources/DirectPayout.Early ./DirectPayout.Early
 COPY ./Sources/Fanex.AutoPayout.Service/Fanex.AutoPayout.Service.csproj ./Fanex.AutoPayout.Service/Fanex.AutoPayout.Service.csproj
 
 WORKDIR /src/Fanex.AutoPayout.Service
@@ -19,3 +21,5 @@ WORKDIR /app
 COPY --from=builder /app .
 
 ENTRYPOINT ["dotnet", "Fanex.AutoPayout.Service.dll"]
+
+
