@@ -1,6 +1,5 @@
 ﻿using AutoPayout.Core.Models;
 using DirectPayout.Early.Criteria;
-using DirectPayout.Early.Exceptions;
 using DirectPayout.Early.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
@@ -38,6 +37,7 @@ public class SettleServiceImp : SettleService
     public async Task Settle(Match match, SettleCriteria settleCriteria)
     {
         await logSettleService.WriteLogResettle(match);
+
         await logSettleService.WriteLog(settleCriteria);
 
         await scaleOutSettleService.UpdateUnderSettlementFlag(settleCriteria.MatchId, settleCriteria.AdminId, settleCriteria.Action);
@@ -49,11 +49,6 @@ public class SettleServiceImp : SettleService
         var result = await ExecuteAllSite(settleCriteria);
 
         await autoPayoutResultService.InsOrUpdAutoPayoutResult(settleCriteria, AutoPayoutResultStatus.Completed);
-
-        if (result.ErrCode != 0 && result.ErrCode != 99)
-        {
-            throw new AppException(result.ErrMsg);
-        }
     }
 
     private async Task UpdateMatchInfo(SettleCriteria criteria)

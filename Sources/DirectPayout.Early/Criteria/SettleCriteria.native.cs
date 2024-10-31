@@ -13,6 +13,8 @@ public class SettleCriteria : NonQueryCommand
     public string Action { get; set; } = "CAL";
     public bool IsAuto { get; set; } = true;
 
+    public string BroadcastSessionId { get; } = Guid.NewGuid().ToString();
+
     public int ErrCode { get; set; }
 
     public string ErrMsg { get; set; }
