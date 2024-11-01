@@ -1,6 +1,6 @@
 ﻿using AutoPayout.Core.Models;
-using AutoPayout.Sportsbook.Exceptions;
 using DirectPayout.Early.Criteria;
+using DirectPayout.Early.Exceptions;
 using DirectPayout.Early.Models;
 using Fanex.Settlement.Converter.Services;
 
@@ -47,7 +47,7 @@ public class MatchSettleControllerImp : MatchSettleController
 
             await settleService.Settle(match, settleCriteria);
         }
-        catch (AutoPayoutException exception)
+        catch (AppException exception)
         {
             await HandleAutoPayoutException(match, exception);
         }
@@ -73,7 +73,7 @@ public class MatchSettleControllerImp : MatchSettleController
         };
     }
 
-    private async Task HandleAutoPayoutException(Match match, AutoPayoutException exception)
+    private async Task HandleAutoPayoutException(Match match, AppException exception)
     {
         var settleCriteria = CreateSettleCriteria(match);
         await autoPayoutResultService.InsOrUpdAutoPayoutResult(settleCriteria, AutoPayoutResultStatus.Failed, exception.Message);
