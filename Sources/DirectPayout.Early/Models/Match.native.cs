@@ -7,4 +7,12 @@ public class Match
     public int LeagueId { get; set; }
 
     public List<ResultDetail> ResultDetails { get; set; } = [];
+
+    public override bool Equals(object obj)
+    {
+        return obj is Match match
+               && match.MatchId == MatchId;
+    }
+
+    public override int GetHashCode() => MatchId;
 }
