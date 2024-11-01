@@ -16,7 +16,6 @@ public class RelatedMatchesNotCalculatedException : AutoPayoutException
     {
     }
 
-    [Obsolete(DiagnosticId = "SYSLIB0051")]
     protected RelatedMatchesNotCalculatedException(SerializationInfo info, StreamingContext context)
         : base(info, context)
     {

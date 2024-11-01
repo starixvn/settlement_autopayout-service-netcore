@@ -18,7 +18,7 @@ public class AutoPayoutService(
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        Console.WriteLine($"Auto Payout Starting at {DateTime.Now}");
+        Console.WriteLine($"Auto Payout Starting at {DateTimeOffset.Now}");
 
         using PeriodicTimer timer = new(TimeSpan.FromMilliseconds(configuration.GetValue<int>("ServiceInterval")));
 

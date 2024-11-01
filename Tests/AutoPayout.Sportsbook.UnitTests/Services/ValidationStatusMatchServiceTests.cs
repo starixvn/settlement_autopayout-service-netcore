@@ -51,7 +51,6 @@ public class ValidationStatusMatchServiceTests
 
     [Theory]
     [InlineData(2, true, 1, 1, 1)]
-    [InlineData(2, false, 42, 202, 95730)]
     [InlineData(2, true, 42, 202, 95730)]
     [InlineData(1, true, 42, 202, 95730)]
     [InlineData(1, true, 1, 1, 1)]

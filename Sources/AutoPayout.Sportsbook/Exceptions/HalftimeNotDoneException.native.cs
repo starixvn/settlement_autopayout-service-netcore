@@ -18,7 +18,6 @@ public class HalftimeNotDoneException : AutoPayoutException
     {
     }
 
-    [Obsolete(DiagnosticId = "SYSLIB0051")]
     protected HalftimeNotDoneException(SerializationInfo info, StreamingContext context)
         : base(info, context)
     {

@@ -18,7 +18,6 @@ public class ScoreMismatchedException : AutoPayoutException
     {
     }
 
-    [Obsolete(DiagnosticId = "SYSLIB0051")]
     protected ScoreMismatchedException(SerializationInfo info, StreamingContext context)
         : base(info, context)
     {

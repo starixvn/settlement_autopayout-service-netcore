@@ -18,7 +18,6 @@ public class SourceNotFoundException : AutoPayoutException
     {
     }
 
-    [Obsolete(DiagnosticId = "SYSLIB0051")]
     protected SourceNotFoundException(SerializationInfo info, StreamingContext context)
         : base(info, context)
     {

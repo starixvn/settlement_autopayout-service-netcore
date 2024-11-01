@@ -18,7 +18,6 @@ public class GoalRecordNotSemiColonException : AutoPayoutException
     {
     }
 
-    [Obsolete(DiagnosticId = "SYSLIB0051")]
     protected GoalRecordNotSemiColonException(SerializationInfo info, StreamingContext context)
         : base(info, context)
     {
