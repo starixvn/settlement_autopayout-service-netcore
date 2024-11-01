@@ -11,35 +11,20 @@ public interface MatchSettleController
     Task Process(Match match);
 }
 
-public class MatchSettleControllerImp : MatchSettleController
+public class MatchSettleControllerImp(
+    MatchSettlingPoolService matchSettlingPoolService,
+    ValidationService validationService,
+    XmlConvertService xmlConvertService,
+    SettleService settleService,
+    AutoPayoutResultService autoPayoutResultService,
+    LogSettleService logSettleService)
+    : MatchSettleController
 {
-    private readonly MatchSettlingPoolService matchSettlingPoolService;
-    private readonly ValidationService validationService;
-    private readonly XmlConvertService xmlConvertService;
-    private readonly SettleService settleService;
-    private readonly AutoPayoutResultService autoPayoutResultService;
-    private readonly LogSettleService logSettleService;
-
-    public MatchSettleControllerImp(
-        MatchSettlingPoolService matchSettlingPoolService,
-        ValidationService validationService,
-        XmlConvertService xmlConvertService,
-        SettleService settleService,
-        AutoPayoutResultService autoPayoutResultService,
-        LogSettleService logSettleService)
-    {
-        this.matchSettlingPoolService = matchSettlingPoolService;
-        this.validationService = validationService;
-        this.xmlConvertService = xmlConvertService;
-        this.settleService = settleService;
-        this.autoPayoutResultService = autoPayoutResultService;
-        this.logSettleService = logSettleService;
-    }
-
     public async Task Process(Match match)
     {
         try
         {
+            await Task.Delay(TimeSpan.FromSeconds(20)); // Simulate processing time
             await validationService.VerifyNoRunningOdds(match);
 
             var settleCriteria = CreateSettleCriteria(match);
@@ -59,7 +44,7 @@ public class MatchSettleControllerImp : MatchSettleController
 
     private SettleCriteria CreateSettleCriteria(Match match)
     {
-        var resources = new Resources<ResultDetail>()
+        var resources = new Resources<ResultDetail>
         {
             ResourceItems = match.ResultDetails
         };
@@ -76,7 +61,10 @@ public class MatchSettleControllerImp : MatchSettleController
     private async Task HandleAutoPayoutException(Match match, AppException exception)
     {
         var settleCriteria = CreateSettleCriteria(match);
-        await autoPayoutResultService.InsOrUpdAutoPayoutResult(settleCriteria, AutoPayoutResultStatus.Failed, exception.Message);
-        await logSettleService.WriteLogErrorSettle(match, exception.Message);
+        var resultDetailInfo = match.ResultDetails.Select(x => x.ResourceId);
+        var errorMessage = $"Failed Direct Payout: Result ({string.Join(",", resultDetailInfo.ToArray())}) {exception.Message}";
+
+        await autoPayoutResultService.InsOrUpdAutoPayoutResult(settleCriteria, AutoPayoutResultStatus.Failed, errorMessage);
+        await logSettleService.WriteLogErrorSettle(match, errorMessage);
     }
 }
