@@ -42,13 +42,13 @@ public class SettleServiceImp : SettleService
 
         await scaleOutSettleService.UpdateUnderSettlementFlag(settleCriteria.MatchId, settleCriteria.AdminId, settleCriteria.Action);
 
-        await autoPayoutResultService.InsOrUpdAutoPayoutResult(settleCriteria, AutoPayoutResultStatus.Waiting);
+        await autoPayoutResultService.InsOrUpdAutoPayoutResult(match, AutoPayoutResultStatus.Waiting);
 
         await UpdateMatchInfo(settleCriteria);
 
-        var result = await ExecuteAllSite(settleCriteria);
+        _ = await ExecuteAllSite(settleCriteria);
 
-        await autoPayoutResultService.InsOrUpdAutoPayoutResult(settleCriteria, AutoPayoutResultStatus.Completed);
+        await autoPayoutResultService.InsOrUpdAutoPayoutResult(match, AutoPayoutResultStatus.Completed);
     }
 
     private async Task UpdateMatchInfo(SettleCriteria criteria)

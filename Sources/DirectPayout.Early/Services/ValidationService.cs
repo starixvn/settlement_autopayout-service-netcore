@@ -3,7 +3,6 @@ using DirectPayout.Early.Constants;
 using DirectPayout.Early.Criteria;
 using DirectPayout.Early.Exceptions;
 using DirectPayout.Early.Models;
-using Fanex.Settlement.Converter.Services;
 using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
@@ -17,13 +16,16 @@ public interface ValidationService
     Task VerifyNoRunningOdds(Match match);
 
     Task VerifyEventAndTicket(SettleCriteria criteria);
+
+    Task VerifyRelatedResults(Match match);
 }
 
 public class ValidationServiceImp(
     IDynamicRepository repository,
     XmlConvertService xmlConvertService,
     ScaleOutSettleService scaleOutSettleService,
-    IOptions<AppSettingsKey> appSettings)
+    IOptions<AppSettingsKey> appSettings,
+    AutoPayoutResultService autoPayoutResultService)
     : ValidationService
 {
     public async Task VerifyEventAndTicket(SettleCriteria criteria)
@@ -67,6 +69,42 @@ public class ValidationServiceImp(
         {
             throw new RunningOddsException();
         }
+    }
+
+    public async Task VerifyRelatedResults(Match match)
+    {
+        foreach (var item in match.ResultDetails)
+        {
+            if (!string.IsNullOrEmpty(item.RelatedCalResources) || !string.IsNullOrEmpty(item.RelatedSettResources))
+            {
+                var criteria = new CheckRelatedResultsCriteria
+                {
+                    MatchId = match.MatchId,
+                    RelatedCalResources = item.RelatedCalResources ?? string.Empty,
+                    RelatedSettResources = item.RelatedSettResources ?? string.Empty
+                };
+
+                var inValid = await repository.GetAsync<bool>(criteria);
+
+                item.IsInvalid = inValid;
+            }
+        }
+
+        await HandleExpiredResults(match);
+
+        match.ResultDetails = match.ResultDetails.Where(x => !x.IsInvalid && !x.Expired).ToList();
+
+        if (!match.ResultDetails.Any())
+        {
+            throw new IgnoreSettlementException();
+        }
+    }
+
+    private async Task HandleExpiredResults(Match match)
+    {
+        var expiredResults = match.ResultDetails.Where(x => x.Expired).ToList();
+        var errorMessage = string.Format(ErrorMsg.ExpiredResults, string.Join(",", expiredResults.Select(x => x.ToString())));
+        await autoPayoutResultService.UpdAutoPayoutFailResult(new Match { MatchId = match.MatchId, ResultDetails = expiredResults }, errorMessage);
     }
 
     private string CreateMatchResources(Match match)

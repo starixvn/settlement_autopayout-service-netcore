@@ -67,3 +67,15 @@ public class FTInconsistentException : AppException
     {
     }
 }
+
+
+public class IgnoreSettlementException : AppException
+{
+    public IgnoreSettlementException() : base(ErrorMsg.MatchNotValidResults)
+    {
+    }
+
+    public IgnoreSettlementException(string message, Exception innerException) : base(message, innerException)
+    {
+    }
+}

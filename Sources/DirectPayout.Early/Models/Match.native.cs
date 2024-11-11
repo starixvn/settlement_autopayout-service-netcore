@@ -15,4 +15,7 @@ public class Match
     }
 
     public override int GetHashCode() => MatchId;
+
+
+    public override string ToString() => $"Match({MatchId}) has {string.Join(",", ResultDetails.Select(x => x.ToString()))}";
 }

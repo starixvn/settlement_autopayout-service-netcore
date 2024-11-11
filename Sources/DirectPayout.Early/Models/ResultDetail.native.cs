@@ -23,5 +23,19 @@ public class ResultDetail
     public DateTime LastModifyDate { get; set; }
 
     [XmlIgnore]
-    public int WaitingTime { get; set; }
+    public string RelatedCalResources { get; set; }
+
+    [XmlIgnore]
+    public string RelatedSettResources { get; set; }
+
+    [XmlIgnore]
+    public bool Expired { get; set; }
+
+
+    [XmlIgnore]
+    public bool IsInvalid { get; set; }
+
+    public override string ToString() => $"{ResourceId}({HomeValue}-{AwayValue}) has" +
+        $" {(!string.IsNullOrEmpty(RelatedCalResources) ? $"RelatedCalResources({RelatedCalResources})" : "")}" +
+        $" {(!string.IsNullOrEmpty(RelatedSettResources) ? $"RelatedSettResources({RelatedSettResources})" : "")}";
 }

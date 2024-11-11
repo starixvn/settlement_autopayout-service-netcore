@@ -1,8 +1,6 @@
-﻿using AutoPayout.Core.Models;
-using DirectPayout.Early.Criteria;
+﻿using DirectPayout.Early.Criteria;
 using DirectPayout.Early.Exceptions;
 using DirectPayout.Early.Models;
-using Fanex.Settlement.Converter.Services;
 
 namespace DirectPayout.Early.Services;
 
@@ -24,7 +22,7 @@ public class MatchSettleControllerImp(
     {
         try
         {
-            await Task.Delay(TimeSpan.FromSeconds(20)); // Simulate processing time
+            await validationService.VerifyRelatedResults(match);
             await validationService.VerifyNoRunningOdds(match);
 
             var settleCriteria = CreateSettleCriteria(match);
@@ -32,10 +30,14 @@ public class MatchSettleControllerImp(
 
             await settleService.Settle(match, settleCriteria);
         }
-        catch (AppException exception)
+        catch (AppException exception) when (exception is not IgnoreSettlementException)
         {
             await HandleAutoPayoutException(match, exception);
         }
+        //catch (Exception exception)
+        //{
+        //    await ExceptionLog(match, exception);
+        //}
         finally
         {
             matchSettlingPoolService.Remove(match);
@@ -60,11 +62,17 @@ public class MatchSettleControllerImp(
 
     private async Task HandleAutoPayoutException(Match match, AppException exception)
     {
-        var settleCriteria = CreateSettleCriteria(match);
-        var resultDetailInfo = match.ResultDetails.Select(x => x.ResourceId);
-        var errorMessage = $"Failed Direct Payout: Result ({string.Join(",", resultDetailInfo.ToArray())}) {exception.Message}";
+        var errorMessage = $"Failed Direct Payout: Result ({string.Join(",", match.ResultDetails.Select(x => x.ToString()))}) {exception.Message}";
 
-        await autoPayoutResultService.InsOrUpdAutoPayoutResult(settleCriteria, AutoPayoutResultStatus.Failed, errorMessage);
+        await autoPayoutResultService.UpdAutoPayoutFailResult(match, errorMessage);
         await logSettleService.WriteLogErrorSettle(match, errorMessage);
+    }
+
+    private async Task ExceptionLog(Match match, Exception exception)
+    {
+        var logMessage = new LogMessage($"Match: {match.ToString()} - {exception.Message}")
+            .ToString();
+
+        await LogService.ErrorAsync(logMessage);
     }
 }
