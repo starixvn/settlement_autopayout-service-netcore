@@ -11,17 +11,9 @@ public interface AutoPayoutResultService
     Task UpdAutoPayoutFailResult(Match match, string remark);
 }
 
-public class AutoPayoutResultServiceImp : AutoPayoutResultService
+public class AutoPayoutResultServiceImp(IDynamicRepository repository, XmlConvertService xmlConvertService)
+    : AutoPayoutResultService
 {
-    private readonly IDynamicRepository repository;
-    private readonly XmlConvertService xmlConvertService;
-
-    public AutoPayoutResultServiceImp(IDynamicRepository repository, XmlConvertService xmlConvertService)
-    {
-        this.repository = repository;
-        this.xmlConvertService = xmlConvertService;
-    }
-
     public async Task InsOrUpdAutoPayoutResult(Match match, int statusId, string remark = null)
     {
         var resources = new Resources<ResultDetail>

@@ -17,7 +17,6 @@ namespace DirectPayout.Early.Tests.Services;
 public class ValidationServiceTests
 {
     private readonly IDynamicRepository repository;
-    private readonly XmlConvertService xmlConvertService;
     private readonly ScaleOutSettleService scaleOutSettleService;
     private readonly ValidationServiceImp validationService;
     private readonly AppSettingsKey appSettings;
@@ -25,8 +24,9 @@ public class ValidationServiceTests
     public ValidationServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
-        xmlConvertService = Substitute.For<XmlConvertService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
+        var xmlConvertService = Substitute.For<XmlConvertService>();
+        var autoPayoutResultService = Substitute.For<AutoPayoutResultService>();
 
         appSettings = new AppSettingsKey
         {
@@ -39,7 +39,8 @@ public class ValidationServiceTests
             repository,
             xmlConvertService,
             scaleOutSettleService,
-            options
+            options,
+            autoPayoutResultService
         );
     }
 
@@ -127,5 +128,4 @@ public class ValidationServiceTests
         // Act & Assert
         await Assert.ThrowsAsync<RunningOddsException>(() => validationService.VerifyNoRunningOdds(match));
     }
-
 }

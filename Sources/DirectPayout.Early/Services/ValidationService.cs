@@ -117,7 +117,7 @@ public class ValidationServiceImp(
             ResourceIds = resourceIds
         };
 
-        var resources = new Resources<CheckOddsItem>()
+        var resources = new Resources<CheckOddsItem>
         {
             ResourceItems = [checkOddsItem]
         };

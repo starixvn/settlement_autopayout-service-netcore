@@ -55,7 +55,7 @@ public class SettleServiceTests
         await logSettleService.Received(1).WriteLogResettle(match);
         await logSettleService.Received(1).WriteLog(settleCriteria);
         await scaleOutSettleService.Received(1).UpdateUnderSettlementFlag(settleCriteria.MatchId, settleCriteria.AdminId, settleCriteria.Action);
-        await autoPayoutResultService.Received(1).InsOrUpdAutoPayoutResult(settleCriteria, AutoPayoutResultStatus.Waiting);
+        await autoPayoutResultService.Received(1).InsOrUpdAutoPayoutResult(Arg.Any<Match>(), AutoPayoutResultStatus.Waiting);
         await scaleOutSettleService.Received(1).UpdateMatchInfo(Arg.Is<UpdateMatchInfoRequest>(req =>
             req.Action == settleCriteria.Action &&
             req.IsAuto &&
@@ -63,5 +63,4 @@ public class SettleServiceTests
             req.SelectedResources == settleCriteria.SelectedResources &&
             req.AdminId == settleCriteria.AdminId));
     }
-
 }

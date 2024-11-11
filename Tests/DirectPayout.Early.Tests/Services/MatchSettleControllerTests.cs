@@ -56,12 +56,11 @@ public class MatchSettleControllerTests
         matchSettlingPoolService.Received(1).Remove(match);
     }
 
-
     [Fact]
     public async Task Process_ShouldHandleAutoPayoutException_WhenThrown()
     {
         // Arrange
-        var match = new Match { MatchId = 1, ResultDetails = new List<ResultDetail>() };
+        var match = new Match { MatchId = 1, ResultDetails = [] };
         var exception = new AutoPayoutException("Auto payout error");
 
         validationService.VerifyEventAndTicket(Arg.Any<SettleCriteria>())
@@ -72,10 +71,8 @@ public class MatchSettleControllerTests
 
         // Assert
         await autoPayoutResultService.Received(1)
-            .InsOrUpdAutoPayoutResult(Arg.Any<SettleCriteria>(), AutoPayoutResultStatus.Failed, exception.Message);
+            .InsOrUpdAutoPayoutResult(Arg.Any<Match>(), AutoPayoutResultStatus.Failed, exception.Message);
         await logSettleService.Received(1).WriteLogErrorSettle(match, exception.Message);
         matchSettlingPoolService.Received(1).Remove(match);
     }
-
-
 }
