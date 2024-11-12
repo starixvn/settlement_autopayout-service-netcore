@@ -25,7 +25,8 @@ public class ValidationServiceImp(
     XmlConvertService xmlConvertService,
     ScaleOutSettleService scaleOutSettleService,
     IOptions<AppSettingsKey> appSettings,
-    AutoPayoutResultService autoPayoutResultService)
+    AutoPayoutResultService autoPayoutResultService,
+    LogSettleService logSettleService)
     : ValidationService
 {
     public async Task VerifyEventAndTicket(SettleCriteria criteria)
@@ -103,8 +104,12 @@ public class ValidationServiceImp(
     private async Task HandleExpiredResults(Match match)
     {
         var expiredResults = match.ResultDetails.Where(x => x.Expired).ToList();
-        var errorMessage = string.Format(ErrorMsg.ExpiredResults, string.Join(",", expiredResults.Select(x => x.ToString())));
-        await autoPayoutResultService.UpdAutoPayoutFailResult(new Match { MatchId = match.MatchId, ResultDetails = expiredResults }, errorMessage);
+        if (expiredResults.Any())
+        {
+            var errorMessage = string.Format(ErrorMsg.ExpiredResults, string.Join(",", expiredResults.Select(x => x.ToString())));
+            await autoPayoutResultService.UpdAutoPayoutFailResult(new Match { MatchId = match.MatchId, ResultDetails = expiredResults }, errorMessage);
+            await logSettleService.WriteLogErrorSettle(match, errorMessage);
+        }
     }
 
     private string CreateMatchResources(Match match)
