@@ -20,6 +20,10 @@ FROM hub.nexdev.net/base/dotnet/core/aspnet:8.0-alpine AS base
 WORKDIR /app
 COPY --from=builder /app .
 
+ENV TZ="America/La_Paz"
+ENV COMPlus_EnableDiagnostics=0
+
 ENTRYPOINT ["dotnet", "Fanex.AutoPayout.Service.dll"]
+
 
 
