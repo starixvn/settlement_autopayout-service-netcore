@@ -3,11 +3,9 @@ using DirectPayout.Early.Constants;
 using DirectPayout.Early.Criteria;
 using DirectPayout.Early.Exceptions;
 using DirectPayout.Early.Models;
-using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
-using Polly;
 
 namespace DirectPayout.Early.Services;
 
@@ -31,6 +29,7 @@ public class ValidationServiceImp(
 {
     public async Task VerifyEventAndTicket(SettleCriteria criteria)
     {
+        var result = new Result();
         var request = new EventTicketRequest
         {
             MatchId = criteria.MatchId,
@@ -41,14 +40,26 @@ public class ValidationServiceImp(
             SelectedResources = criteria.SelectedResources
         };
 
-        var result = await Policy
-            .HandleResult<ResultMessage>(r => r.ErrorCode == ErrorCodes.MatchInQueue)
-            .WaitAndRetryAsync(appSettings.Value.RetryCount, retryAttempt => TimeSpan.FromSeconds(appSettings.Value.RetryInterval))
-            .ExecuteAsync(async () => await scaleOutSettleService.ValidateEventAndTicket(request));
-
-        if (result.ErrorCode != 0)
+        for (var i = 0; i < appSettings.Value.RetryCount; i++)
         {
-            throw new AppException(result.ErrorMessage);
+            var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(request);
+            Console.WriteLine($"VerifyEventAndTicket {resultMessage.ErrorMessage}");
+            if (resultMessage.ErrorCode == ErrorCodes.MatchInQueue && i < appSettings.Value.RetryCount - 1)
+            {
+                await Task.Delay(appSettings.Value.RetryInterval);
+                continue;
+            }
+
+            result = new Result
+            {
+                ErrCode = resultMessage.ErrorCode,
+                ErrMsg = resultMessage.ErrorMessage
+            };
+        }
+
+        if (result.ErrCode != 0)
+        {
+            throw new AppException(result.ErrMsg);
         }
     }
 
@@ -86,6 +97,8 @@ public class ValidationServiceImp(
                 };
 
                 var inValid = await repository.GetAsync<bool>(criteria);
+
+                Console.WriteLine($"{item.ToString()} {inValid}");
 
                 item.IsInvalid = inValid;
             }

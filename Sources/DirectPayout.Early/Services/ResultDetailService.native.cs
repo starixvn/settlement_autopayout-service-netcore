@@ -36,7 +36,6 @@ public class ResultDetailServiceImp : ResultDetailService
         foreach (var resultDetail in resultDetails)
         {
             var processTime = DateTimeOffset.Now - resultDetail.LastModifyDate;
-            Console.WriteLine($"now {DateTimeOffset.Now} last {resultDetail.LastModifyDate} time {processTime}");
             resultDetail.Expired = processTime.TotalMilliseconds > appSettings.RetryProcessScore;
         }
     }

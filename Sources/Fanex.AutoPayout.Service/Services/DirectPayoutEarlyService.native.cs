@@ -21,6 +21,7 @@ public class DirectPayoutEarlyService(
 
         while (await timer.WaitForNextTickAsync(stoppingToken))
         {
+            Console.WriteLine($"ExecuteAsync {DateTimeOffset.Now}");
             await HandleAutoAsync();
         }
     }
@@ -37,6 +38,7 @@ public class DirectPayoutEarlyService(
         }
         catch (Exception exception)
         {
+            Console.WriteLine($"HandleAutoAsync {exception}");
             var logMessage = new LogMessage(exception.Message)
                 .AddSection("Database Info", DatabaseInfoGetters.GetDbExceptionInfo(exception))
                 .AddSection("Server Info", CommonInfoGetters.GetServerInfo())

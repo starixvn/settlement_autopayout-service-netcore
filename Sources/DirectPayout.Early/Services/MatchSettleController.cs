@@ -22,22 +22,28 @@ public class MatchSettleControllerImp(
     {
         try
         {
+            Console.WriteLine($"Process {match.MatchId}");
             await validationService.VerifyRelatedResults(match);
+            Console.WriteLine("Done VerifyRelatedResults");
             await validationService.VerifyNoRunningOdds(match);
+            Console.WriteLine("Done VerifyNoRunningOdds");
 
             var settleCriteria = CreateSettleCriteria(match);
             await validationService.VerifyEventAndTicket(settleCriteria);
+            Console.WriteLine("Done VerifyEventAndTicket");
 
             await settleService.Settle(match, settleCriteria);
+            Console.WriteLine("Done Settle");
         }
         catch (AppException exception) when (exception is not IgnoreSettlementException)
         {
+            Console.WriteLine(exception);
             await HandleAutoPayoutException(match, exception);
         }
-        //catch (Exception exception)
-        //{
-        //    await ExceptionLog(match, exception);
-        //}
+        catch (IgnoreSettlementException exception)
+        {
+            Console.WriteLine(exception);
+        }
         finally
         {
             matchSettlingPoolService.Remove(match);
