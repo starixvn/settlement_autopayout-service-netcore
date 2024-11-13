@@ -93,7 +93,7 @@ public class ValidationServiceImp(
 
         await HandleExpiredResults(match);
 
-        match.ResultDetails = match.ResultDetails.Where(x => !x.IsInvalid && !x.Expired).ToList();
+        match.ResultDetails = match.ResultDetails.Where(x => !x.IsInvalid).ToList();
 
         if (!match.ResultDetails.Any())
         {
@@ -103,7 +103,7 @@ public class ValidationServiceImp(
 
     private async Task HandleExpiredResults(Match match)
     {
-        var expiredResults = match.ResultDetails.Where(x => x.Expired).ToList();
+        var expiredResults = match.ResultDetails.Where(x => x.IsInvalid && x.Expired).ToList();
         if (expiredResults.Any())
         {
             var errorMessage = string.Format(ErrorMsg.ExpiredResults, string.Join(",", expiredResults.Select(x => x.ToString())));
