@@ -6,6 +6,8 @@ using DirectPayout.Early.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
+using Match = DirectPayout.Early.Models.Match;
+using ResultDetail = DirectPayout.Early.Models.ResultDetail;
 
 namespace DirectPayout.Early.Services;
 
@@ -43,7 +45,6 @@ public class ValidationServiceImp(
         for (var i = 0; i < appSettings.Value.RetryCount; i++)
         {
             var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(request);
-            Console.WriteLine($"VerifyEventAndTicket {resultMessage.ErrorMessage}");
             if (resultMessage.ErrorCode == ErrorCodes.MatchInQueue && i < appSettings.Value.RetryCount - 1)
             {
                 await Task.Delay(appSettings.Value.RetryInterval);
@@ -87,21 +88,14 @@ public class ValidationServiceImp(
     {
         foreach (var item in match.ResultDetails)
         {
-            if (!string.IsNullOrEmpty(item.RelatedCalResources) || !string.IsNullOrEmpty(item.RelatedSettResources))
+            if (string.IsNullOrEmpty(item.RelatedCalResources) && string.IsNullOrEmpty(item.RelatedSettResources))
             {
-                var criteria = new CheckRelatedResultsCriteria
-                {
-                    MatchId = match.MatchId,
-                    RelatedCalResources = item.RelatedCalResources ?? string.Empty,
-                    RelatedSettResources = item.RelatedSettResources ?? string.Empty
-                };
-
-                var inValid = await repository.GetAsync<bool>(criteria);
-
-                Console.WriteLine($"{item.ToString()} {inValid}");
-
-                item.IsInvalid = inValid;
+                continue;
             }
+
+            var isValid = await IsValidRelatedResult(match, item);
+
+            item.IsInvalid = !isValid;
         }
 
         await HandleExpiredResults(match);
@@ -112,6 +106,54 @@ public class ValidationServiceImp(
         {
             throw new IgnoreSettlementException();
         }
+    }
+
+    private async Task<bool> IsValidRelatedResult(Match match, ResultDetail item)
+    {
+        var criteria = new CheckRelatedResultsCriteria
+        {
+            MatchId = match.MatchId,
+            SportType = 1, // Soccer
+            RelatedCalResources = item.RelatedCalResources ?? string.Empty,
+            RelatedSettResources = item.RelatedSettResources ?? string.Empty
+        };
+
+        var relatedResults = await repository.FetchAsync<ResultDetail>(criteria);
+
+        var isExistsRelatedResults = TryGetExistsResults(match.ResultDetails, relatedResults.ToList(), out var existingResourceIds);
+
+        var checkingRelatedResults = relatedResults
+            .Where(x => !existingResourceIds.Contains(x.ResourceId))
+            .ToList();
+
+        var isCalRelatedResults = IsCalRelatedResults(checkingRelatedResults, item.RelatedCalResourceIds);
+        var isSettleRelatedResults = IsSettleRelatedResults(checkingRelatedResults, item.RelatedSettResourcesIds);
+
+        return isExistsRelatedResults || (isCalRelatedResults && isSettleRelatedResults);
+    }
+
+    private bool IsCalRelatedResults(List<ResultDetail> relatedResults, List<string> relatedCalResourceIds)
+    {
+        return relatedCalResourceIds.Count == 0
+               || relatedResults.TrueForAll(x => relatedCalResourceIds.Contains(x.ResourceId) && x.SettlementStatusId == SettlementStatusId.Calculated);
+    }
+
+
+    private bool IsSettleRelatedResults(List<ResultDetail> relatedResults, List<string> relatedSettResourcesIds)
+    {
+        return relatedSettResourcesIds.Count == 0
+               || relatedResults.TrueForAll(x => relatedSettResourcesIds.Contains(x.ResourceId) && (x.ResultStatusId is ResultStatusId.ManualCompleted or ResultStatusId.AutoCompleted));
+    }
+
+    private bool TryGetExistsResults(List<ResultDetail> settlingResults, List<ResultDetail> relatedResults, out List<string> existingResourceIds)
+    {
+        var settlingResultsIds = settlingResults.Select(x => x.ResourceId).ToList();
+
+        existingResourceIds = relatedResults
+            .Where(x => settlingResultsIds.Contains(x.ResourceId))
+            .Select(x => x.ResourceId).ToList();
+
+        return existingResourceIds.Count > 0;
     }
 
     private async Task HandleExpiredResults(Match match)

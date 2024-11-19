@@ -26,7 +26,20 @@ public class ResultDetail
     public string RelatedCalResources { get; set; }
 
     [XmlIgnore]
+    public List<string> RelatedCalResourceIds => string.IsNullOrEmpty(RelatedCalResources) ? [] : [.. RelatedCalResources.Split(",")];
+
+
+    [XmlIgnore]
     public string RelatedSettResources { get; set; }
+
+    [XmlIgnore]
+    public List<string> RelatedSettResourcesIds => string.IsNullOrEmpty(RelatedSettResources) ? [] : [.. RelatedSettResources.Split(",")];
+
+    [XmlIgnore]
+    public byte ResultStatusId { get; set; }
+
+    [XmlIgnore]
+    public short SettlementStatusId { get; set; }
 
     [XmlIgnore]
     public bool Expired { get; set; }

@@ -1,4 +1,5 @@
-﻿namespace DirectPayout.Early.Constants;
+﻿
+namespace DirectPayout.Early.Constants;
 
 public static class ErrorMsg
 {
@@ -18,4 +19,20 @@ public static class ErrorCodes
     public const string InvalidInput = "DP-ERR3";
     public const string FTInconsistent = "DP-ERR4";
     public const int MatchInQueue = 1_001_003;
+}
+
+public static class SettlementStatusId
+{
+    public const int Calculated = 4;
+
+    public const int Running = 0;
+}
+
+public static class ResultStatusId
+{
+    public const int Running = 1;
+
+    public const int AutoCompleted = 2;
+
+    public const int ManualCompleted = 5;
 }
