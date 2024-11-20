@@ -120,7 +120,7 @@ public class ValidationServiceImp(
 
         var relatedResults = await repository.FetchAsync<ResultDetail>(criteria);
 
-        var isExistsRelatedResults = TryGetExistsResults(match.ResultDetails, relatedResults.ToList(), out var existingResourceIds);
+        var isExistsRelatedResults = TryGetAllExistsResults(match.ResultDetails, relatedResults.ToList(), out var existingResourceIds);
 
         var checkingRelatedResults = relatedResults
             .Where(x => !existingResourceIds.Contains(x.ResourceId))
@@ -145,7 +145,7 @@ public class ValidationServiceImp(
                || relatedResults.TrueForAll(x => relatedSettResourcesIds.Contains(x.ResourceId) && (x.ResultStatusId is ResultStatusId.ManualCompleted or ResultStatusId.AutoCompleted));
     }
 
-    private bool TryGetExistsResults(List<ResultDetail> settlingResults, List<ResultDetail> relatedResults, out List<string> existingResourceIds)
+    private bool TryGetAllExistsResults(List<ResultDetail> settlingResults, List<ResultDetail> relatedResults, out List<string> existingResourceIds)
     {
         var settlingResultsIds = settlingResults.Select(x => x.ResourceId).ToList();
 
@@ -153,7 +153,7 @@ public class ValidationServiceImp(
             .Where(x => settlingResultsIds.Contains(x.ResourceId))
             .Select(x => x.ResourceId).ToList();
 
-        return existingResourceIds.Count > 0;
+        return existingResourceIds.Count == settlingResultsIds.Count;
     }
 
     private async Task HandleExpiredResults(Match match)

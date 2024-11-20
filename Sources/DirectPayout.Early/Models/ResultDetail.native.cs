@@ -28,7 +28,6 @@ public class ResultDetail
     [XmlIgnore]
     public List<string> RelatedCalResourceIds => string.IsNullOrEmpty(RelatedCalResources) ? [] : [.. RelatedCalResources.Split(",")];
 
-
     [XmlIgnore]
     public string RelatedSettResources { get; set; }
 
