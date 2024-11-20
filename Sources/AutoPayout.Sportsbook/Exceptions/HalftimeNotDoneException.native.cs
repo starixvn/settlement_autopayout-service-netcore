@@ -17,9 +17,4 @@ public class HalftimeNotDoneException : AutoPayoutException
         : base(message, innerException)
     {
     }
-
-    protected HalftimeNotDoneException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
 }

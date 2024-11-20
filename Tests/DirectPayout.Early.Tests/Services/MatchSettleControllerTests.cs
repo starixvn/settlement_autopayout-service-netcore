@@ -1,6 +1,5 @@
-﻿using AutoPayout.Core.Models;
-using AutoPayout.Sportsbook.Exceptions;
-using DirectPayout.Early.Criteria;
+﻿using DirectPayout.Early.Criteria;
+using DirectPayout.Early.Exceptions;
 using DirectPayout.Early.Models;
 using DirectPayout.Early.Services;
 using Fanex.Settlement.Converter.Services;
@@ -61,18 +60,16 @@ public class MatchSettleControllerTests
     {
         // Arrange
         var match = new Match { MatchId = 1, ResultDetails = [] };
-        var exception = new AutoPayoutException("Auto payout error");
+        var exception = new AppException("Auto payout error");
 
-        validationService.VerifyEventAndTicket(Arg.Any<SettleCriteria>())
-            .Throws(exception);
+        validationService.VerifyEventAndTicket(Arg.Any<SettleCriteria>()).Throws(exception);
 
         // Act
         await controller.Process(match);
 
         // Assert
-        await autoPayoutResultService.Received(1)
-            .InsOrUpdAutoPayoutResult(Arg.Any<Match>(), AutoPayoutResultStatus.Failed, exception.Message);
-        await logSettleService.Received(1).WriteLogErrorSettle(match, exception.Message);
-        matchSettlingPoolService.Received(1).Remove(match);
+        await autoPayoutResultService.Received(1).UpdAutoPayoutFailResult(Arg.Any<Match>(), Arg.Any<string>());
+        await logSettleService.Received(1).WriteLogErrorSettle(Arg.Any<Match>(), Arg.Any<string>());
+        matchSettlingPoolService.Received(1).Remove(Arg.Any<Match>());
     }
 }

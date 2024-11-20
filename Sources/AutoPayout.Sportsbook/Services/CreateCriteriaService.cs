@@ -59,7 +59,6 @@ public class CreateCriteriaServiceImp(
 
     public InsertLogCriteria CreateLogCriteria(Match match, MatchChecking matchChecking, string actionName)
     {
-        const int soccer = 1;
         var goal = mapper.Map<MatchChecking, Goal>(matchChecking);
         goal.GoalRecord = match.GoalRecord;
 
@@ -68,7 +67,6 @@ public class CreateCriteriaServiceImp(
         {
             MatchId = match.MatchId,
             Action = actionName,
-            SportType = soccer,
             SelectedResources = selectedResources
         };
     }

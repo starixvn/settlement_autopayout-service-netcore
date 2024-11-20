@@ -27,7 +27,7 @@ public class ValidationServiceTests
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         var xmlConvertService = Substitute.For<XmlConvertService>();
         var autoPayoutResultService = Substitute.For<AutoPayoutResultService>();
-
+        var logSettleService = Substitute.For<LogSettleService>();
         appSettings = new AppSettingsKey
         {
             RetryCount = 3,
@@ -40,7 +40,8 @@ public class ValidationServiceTests
             xmlConvertService,
             scaleOutSettleService,
             options,
-            autoPayoutResultService
+            autoPayoutResultService,
+            logSettleService
         );
     }
 
@@ -57,7 +58,7 @@ public class ValidationServiceTests
         await validationService.VerifyEventAndTicket(criteria);
 
         // Assert
-        await scaleOutSettleService.Received(1).ValidateEventAndTicket(Arg.Any<EventTicketRequest>());
+        await scaleOutSettleService.Received(3).ValidateEventAndTicket(Arg.Any<EventTicketRequest>());
     }
 
     [Fact]

@@ -17,9 +17,4 @@ public class GoalRecordNotSemiColonException : AutoPayoutException
         : base(message, innerException)
     {
     }
-
-    protected GoalRecordNotSemiColonException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
 }

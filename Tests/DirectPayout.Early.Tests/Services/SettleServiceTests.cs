@@ -13,17 +13,15 @@ namespace DirectPayout.Early.Tests.Services;
 public class SettleServiceTests
 {
     private readonly ScaleOutSettleService scaleOutSettleService;
-    private readonly IDynamicRepository repository;
-    private readonly IOptions<AppSettingsKey> appSettingsKey;
     private readonly AutoPayoutResultService autoPayoutResultService;
     private readonly LogSettleService logSettleService;
     private readonly SettleServiceImp settleService;
 
     public SettleServiceTests()
     {
+        var repository = Substitute.For<IDynamicRepository>();
+        var appSettingsKey = Options.Create(new AppSettingsKey { SiteDbServer = ["Server1", "Server2"] });
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
-        repository = Substitute.For<IDynamicRepository>();
-        appSettingsKey = Options.Create(new AppSettingsKey { SiteDbServer = ["Server1", "Server2"] });
         autoPayoutResultService = Substitute.For<AutoPayoutResultService>();
         logSettleService = Substitute.For<LogSettleService>();
 
@@ -45,7 +43,7 @@ public class SettleServiceTests
             MatchId = match.MatchId,
             Action = "CAL",
             AdminId = 123,
-            SelectedResources = "<resources></resources>" // Assuming XML format
+            SelectedResources = "<resources></resources>"
         };
 
         // Act

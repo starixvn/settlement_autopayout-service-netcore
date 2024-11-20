@@ -15,9 +15,4 @@ public class RelatedMatchesNotCalculatedException : AutoPayoutException
         : base(message, innerException)
     {
     }
-
-    protected RelatedMatchesNotCalculatedException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
 }

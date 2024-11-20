@@ -17,9 +17,4 @@ public class RemarkException : AutoPayoutException
         : base(message, innerException)
     {
     }
-
-    protected RemarkException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
 }

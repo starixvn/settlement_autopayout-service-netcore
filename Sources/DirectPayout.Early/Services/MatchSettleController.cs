@@ -22,27 +22,19 @@ public class MatchSettleControllerImp(
     {
         try
         {
-            Console.WriteLine($"Process {match.MatchId}");
             await validationService.VerifyRelatedResults(match);
-            Console.WriteLine("Done VerifyRelatedResults");
             await validationService.VerifyNoRunningOdds(match);
-            Console.WriteLine("Done VerifyNoRunningOdds");
-
             var settleCriteria = CreateSettleCriteria(match);
             await validationService.VerifyEventAndTicket(settleCriteria);
-            Console.WriteLine("Done VerifyEventAndTicket");
-
             await settleService.Settle(match, settleCriteria);
-            Console.WriteLine("Done Settle");
         }
         catch (AppException exception) when (exception is not IgnoreSettlementException)
         {
-            Console.WriteLine(exception);
             await HandleAutoPayoutException(match, exception);
         }
         catch (IgnoreSettlementException exception)
         {
-            Console.WriteLine(exception);
+            await LogService.ErrorAsync(exception.Message);
         }
         finally
         {
@@ -66,19 +58,11 @@ public class MatchSettleControllerImp(
         };
     }
 
-    private async Task HandleAutoPayoutException(Match match, AppException exception)
+    private async Task HandleAutoPayoutException(Match match, Exception exception)
     {
         var errorMessage = $"Failed Direct Payout: Result ({string.Join(",", match.ResultDetails.Select(x => x.ToString()))}) {exception.Message}";
 
         await autoPayoutResultService.UpdAutoPayoutFailResult(match, errorMessage);
         await logSettleService.WriteLogErrorSettle(match, errorMessage);
-    }
-
-    private async Task ExceptionLog(Match match, Exception exception)
-    {
-        var logMessage = new LogMessage($"Match: {match.ToString()} - {exception.Message}")
-            .ToString();
-
-        await LogService.ErrorAsync(logMessage);
     }
 }

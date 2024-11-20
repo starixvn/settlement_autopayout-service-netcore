@@ -1,4 +1,5 @@
-﻿using AutoPayout.Sportsbook.Criteria;
+﻿using AutoPayout.Core.Constants;
+using AutoPayout.Sportsbook.Criteria;
 using DirectPayout.Early.Criteria;
 using DirectPayout.Early.Models;
 
@@ -7,32 +8,25 @@ namespace DirectPayout.Early.Services;
 public interface LogSettleService
 {
     Task WriteLog(SettleCriteria settleCriteria);
+
     Task WriteLogErrorSettle(Match match, string error);
+
     Task WriteLogResettle(Match match);
 }
 
-public class LogSettleServiceImp : LogSettleService
+public class LogSettleServiceImp(IDynamicRepository repository) : LogSettleService
 {
-    private readonly IDynamicRepository repository;
-
-    public LogSettleServiceImp(IDynamicRepository repository)
-    {
-        this.repository = repository;
-    }
-
     public async Task WriteLog(SettleCriteria settleCriteria)
     {
         var criteria = new InsertLogCriteria
         {
             MatchId = settleCriteria.MatchId,
             Action = settleCriteria.Action,
-            SportType = 1, //soccer
             IsAuto = true,
             SelectedResources = settleCriteria.SelectedResources
         };
 
         await repository.ExecuteAsync(criteria);
-
     }
 
     public async Task WriteLogResettle(Match match)
@@ -57,7 +51,7 @@ public class LogSettleServiceImp : LogSettleService
         {
             MatchId = match.MatchId,
             Remark = error,
-            ActionId = 148 // calc-ear
+            ActionId = ActionId.EarlyType
         };
 
         await repository.ExecuteAsync(criteria);

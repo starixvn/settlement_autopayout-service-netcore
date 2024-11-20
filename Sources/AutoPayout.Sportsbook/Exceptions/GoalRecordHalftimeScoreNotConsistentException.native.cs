@@ -17,9 +17,4 @@ public class GoalRecordHalftimeScoreNotConsistentException : AutoPayoutException
         : base(message, innerException)
     {
     }
-
-    protected GoalRecordHalftimeScoreNotConsistentException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
 }

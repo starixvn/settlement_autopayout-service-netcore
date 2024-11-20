@@ -21,7 +21,6 @@ public class DirectPayoutEarlyService(
 
         while (await timer.WaitForNextTickAsync(stoppingToken))
         {
-            Console.WriteLine($"ExecuteAsync {DateTimeOffset.Now}");
             await HandleAutoAsync();
         }
     }

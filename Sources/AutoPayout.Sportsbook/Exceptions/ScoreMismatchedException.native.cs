@@ -17,9 +17,4 @@ public class ScoreMismatchedException : AutoPayoutException
         : base(message, innerException)
     {
     }
-
-    protected ScoreMismatchedException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
 }

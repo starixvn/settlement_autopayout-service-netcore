@@ -17,9 +17,4 @@ public class GoalRecordFinalScoreNotConsistentException : AutoPayoutException
         : base(message, innerException)
     {
     }
-
-    protected GoalRecordFinalScoreNotConsistentException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
 }

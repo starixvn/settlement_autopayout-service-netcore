@@ -17,9 +17,4 @@ public class Match3X30Exception : AutoPayoutException
         : base(message, innerException)
     {
     }
-
-    protected Match3X30Exception(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
 }

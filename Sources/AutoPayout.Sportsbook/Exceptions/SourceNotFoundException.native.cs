@@ -17,9 +17,4 @@ public class SourceNotFoundException : AutoPayoutException
         : base(message, innerException)
     {
     }
-
-    protected SourceNotFoundException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
 }

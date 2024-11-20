@@ -15,9 +15,4 @@ public class RelatedMatchesInconsistentException : AutoPayoutException
         : base(message, innerException)
     {
     }
-
-    protected RelatedMatchesInconsistentException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
 }

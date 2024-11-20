@@ -18,7 +18,7 @@ public class SettleLogCriteria : NonQueryCommand
     {
         MatchId = match.MatchId;
         GoalRecord = match.GoalRecord;
-        ActionId = match.TypeId == SettleType.FullTime ? SettleActionId.FullTypeAfterSettleFail : SettleActionId.HalfTypeAfterSettleFail;
+        ActionId = match.TypeId == SettleType.FullTime ? Core.Constants.ActionId.FullTypeAfterSettleFail : Core.Constants.ActionId.HalfTypeAfterSettleFail;
         Remark = errorMessage;
     }
 
@@ -50,13 +50,13 @@ public class SettleLogCriteria : NonQueryCommand
     {
         if (match.TypeId == SettleType.Halftime)
         {
-            ActionId = SettleActionId.HalfType;
+            ActionId = Core.Constants.ActionId.HalfType;
             HtHomeScore = match.HtHomeScore ?? 0;
             HtAwayScore = match.HtAwayScore ?? 0;
         }
         else
         {
-            ActionId = SettleActionId.FullType;
+            ActionId = Core.Constants.ActionId.FullType;
             HtHomeScore = match.HtHomeScore ?? 0;
             HtAwayScore = match.HtAwayScore ?? 0;
             FinalHomeScore = match.FinalHomeScore ?? 0;

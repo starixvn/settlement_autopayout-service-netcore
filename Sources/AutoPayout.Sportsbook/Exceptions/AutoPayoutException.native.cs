@@ -17,11 +17,6 @@ public class AutoPayoutException : Exception
     {
     }
 
-    protected AutoPayoutException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
-
     public string Description
     {
         get;
