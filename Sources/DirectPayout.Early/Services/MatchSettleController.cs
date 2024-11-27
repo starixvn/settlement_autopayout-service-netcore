@@ -37,7 +37,7 @@ public class MatchSettleControllerImp(
         }
         catch (IgnoreSettlementException exception)
         {
-            await LogService.ErrorAsync(exception.Message);
+            await LogService.InfoAsync(exception.Message);
         }
         finally
         {
