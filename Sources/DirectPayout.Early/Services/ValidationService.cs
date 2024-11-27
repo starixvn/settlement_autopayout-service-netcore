@@ -135,14 +135,14 @@ public class ValidationServiceImp(
     private bool IsCalRelatedResults(List<ResultDetail> relatedResults, List<string> relatedCalResourceIds)
     {
         return relatedCalResourceIds.Count == 0
-               || relatedResults.TrueForAll(x => relatedCalResourceIds.Contains(x.ResourceId) && x.SettlementStatusId == SettlementStatusId.Calculated);
+               || relatedResults.Count > 0 && relatedResults.TrueForAll(x => relatedCalResourceIds.Contains(x.ResourceId) && x.SettlementStatusId == SettlementStatusId.Calculated);
     }
 
 
     private bool IsSettleRelatedResults(List<ResultDetail> relatedResults, List<string> relatedSettResourcesIds)
     {
         return relatedSettResourcesIds.Count == 0
-               || relatedResults.TrueForAll(x => relatedSettResourcesIds.Contains(x.ResourceId) && (x.ResultStatusId is ResultStatusId.ManualCompleted or ResultStatusId.AutoCompleted));
+               || relatedResults.Count > 0 && relatedResults.TrueForAll(x => relatedSettResourcesIds.Contains(x.ResourceId) && (x.ResultStatusId is ResultStatusId.ManualCompleted or ResultStatusId.AutoCompleted));
     }
 
     private bool TryGetAllExistsResults(List<ResultDetail> settlingResults, List<ResultDetail> relatedResults, out List<string> existingResourceIds)

@@ -20,6 +20,7 @@ public class ValidationServiceTests
     private readonly ScaleOutSettleService scaleOutSettleService;
     private readonly ValidationServiceImp validationService;
     private readonly AppSettingsKey appSettings;
+    private readonly LogSettleService logSettleService;
 
     public ValidationServiceTests()
     {
@@ -27,7 +28,7 @@ public class ValidationServiceTests
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         var xmlConvertService = Substitute.For<XmlConvertService>();
         var autoPayoutResultService = Substitute.For<AutoPayoutResultService>();
-        var logSettleService = Substitute.For<LogSettleService>();
+        logSettleService = Substitute.For<LogSettleService>();
         appSettings = new AppSettingsKey
         {
             RetryCount = 3,
@@ -128,5 +129,101 @@ public class ValidationServiceTests
 
         // Act & Assert
         await Assert.ThrowsAsync<RunningOddsException>(() => validationService.VerifyNoRunningOdds(match));
+    }
+
+    [Fact]
+    public async Task VerifyRelatedResults_ShouldNotModify_WhenNoRelatedResources()
+    {
+        // Arrange
+        var match = new Match
+        {
+            MatchId = 1,
+            ResultDetails = new List<ResultDetail>
+            {
+                new ResultDetail { RelatedCalResources = null, RelatedSettResources = null }
+            }
+        };
+
+        // Act
+        await validationService.VerifyRelatedResults(match);
+
+        // Assert
+        Assert.All(match.ResultDetails, result => Assert.False(result.IsInvalid));
+    }
+
+
+    [Fact]
+    public async Task VerifyRelatedResults_ShouldSetInvalid_ForInvalidRelatedCalResources()
+    {
+        // Arrange
+        var match = new Match
+        {
+            MatchId = 1,
+            ResultDetails = new List<ResultDetail>
+            {
+                new ResultDetail
+                {
+                    ResourceId = "0101",
+                    RelatedCalResources = "0102",
+                }
+            }
+        };
+
+        repository.FetchAsync<ResultDetail>(Arg.Any<CheckRelatedResultsCriteria>()).Returns(new List<ResultDetail>
+        {
+            new ResultDetail { ResourceId = "0102" }
+        });
+
+        // Assert
+        await Assert.ThrowsAsync<IgnoreSettlementException>(() => validationService.VerifyRelatedResults(match));
+    }
+
+
+    [Fact]
+    public async Task VerifyRelatedResults_ShouldSetInvalid_ForInvalidRelatedSettResources()
+    {
+        // Arrange
+        var match = new Match
+        {
+            MatchId = 1,
+            ResultDetails = new List<ResultDetail>
+            {
+                new ResultDetail
+                {
+                    ResourceId = "0101",
+                    RelatedSettResources = "0102",
+                }
+            }
+        };
+
+        repository.FetchAsync<ResultDetail>(Arg.Any<CheckRelatedResultsCriteria>()).Returns(new List<ResultDetail>
+        {
+            new ResultDetail { ResourceId = "0102" }
+        });
+
+        // Assert
+        await Assert.ThrowsAsync<IgnoreSettlementException>(() => validationService.VerifyRelatedResults(match));
+    }
+
+    [Fact]
+    public async Task VerifyRelatedResults_ShouldLogAndRemoveExpiredResults()
+    {
+        // Arrange
+        var match = new Match
+        {
+            MatchId = 1,
+            ResultDetails = new List<ResultDetail>
+            {
+                new ResultDetail { IsInvalid = true, Expired = true },
+                new ResultDetail { IsInvalid = false, Expired = true }
+
+            }
+        };
+
+        // Act
+        await validationService.VerifyRelatedResults(match);
+
+        // Assert
+        await logSettleService.Received(1).WriteLogErrorSettle(match, Arg.Any<string>());
     }
 }
