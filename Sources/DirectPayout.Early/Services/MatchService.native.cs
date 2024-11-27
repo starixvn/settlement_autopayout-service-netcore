@@ -27,15 +27,24 @@ public class MatchServiceImp(
 
     private async Task<List<Match>> GetMatchesByEnv(List<Match> matches)
     {
-        var (_, response) = await cache.TryGetAsync<string>(KeyLeagueId);
-        var leagueIds = (response ?? "").Split(",");
+        cache.TryGet(KeyLeagueId, out int leagueId);
 
-        return appSettingsKey.Value.EnvironmentName switch
+        Console.WriteLine($"GetMatchesByEnv: {matches.Count}");
+        Console.WriteLine($"Settlement-AutoPayout-AutoInstant-LeagueId: {leagueId}");
+
+        switch (appSettingsKey.Value.EnvironmentName)
         {
-            "UAT" => matches.Where(m => leagueIds.Contains(m.LeagueId.ToString())).ToList(),
-            "PRO" => leagueIds.Length > 0 ? matches.Where(m => !leagueIds.Contains(m.LeagueId.ToString())).ToList() : matches,
-            _ => matches
-        };
+            case "PRO":
+                return leagueId > 0
+                    ? (from m in matches where m.LeagueId != leagueId select m).ToList()
+                    : matches;
+
+            case "UAT":
+                return (from m in matches where m.LeagueId == leagueId select m).ToList();
+
+            default:
+                return matches;
+        }
     }
 
     private async Task<List<Match>> GetWaitingMatches()
