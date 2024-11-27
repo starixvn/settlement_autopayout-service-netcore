@@ -22,17 +22,13 @@ public class MatchSettleControllerImp(
     {
         try
         {
-            Console.WriteLine(match.ToString());
             await validationService.VerifyRelatedResults(match);
-            Console.Write(match.ToString());
-            Console.WriteLine("VerifyRelatedResults");
+
             await validationService.VerifyNoRunningOdds(match);
-            Console.Write(match.ToString());
-            Console.WriteLine("VerifyNoRunningOdds");
+
             var settleCriteria = CreateSettleCriteria(match);
             await validationService.VerifyEventAndTicket(settleCriteria);
-            Console.Write(match.ToString());
-            Console.WriteLine("VerifyEventAndTicket");
+
             await settleService.Settle(match, settleCriteria);
         }
         catch (AppException exception) when (exception is not IgnoreSettlementException)

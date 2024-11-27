@@ -29,22 +29,14 @@ public class MatchServiceImp(
     {
         cache.TryGet(KeyLeagueId, out int leagueId);
 
-        Console.WriteLine($"GetMatchesByEnv: {matches.Count}");
-        Console.WriteLine($"Settlement-AutoPayout-AutoInstant-LeagueId: {leagueId}");
-
-        switch (appSettingsKey.Value.EnvironmentName)
+        return appSettingsKey.Value.EnvironmentName switch
         {
-            case "PRO":
-                return leagueId > 0
-                    ? (from m in matches where m.LeagueId != leagueId select m).ToList()
-                    : matches;
-
-            case "UAT":
-                return (from m in matches where m.LeagueId == leagueId select m).ToList();
-
-            default:
-                return matches;
-        }
+            "PRO" => leagueId > 0
+                                ? (from m in matches where m.LeagueId != leagueId select m).ToList()
+                                : matches,
+            "UAT" => (from m in matches where m.LeagueId == leagueId select m).ToList(),
+            _ => matches,
+        };
     }
 
     private async Task<List<Match>> GetWaitingMatches()
