@@ -17,10 +17,4 @@ public class GoalRecordHalftimeScoreNotConsistentException : AutoPayoutException
         : base(message, innerException)
     {
     }
-
-    [Obsolete(DiagnosticId = "SYSLIB0051")]
-    protected GoalRecordHalftimeScoreNotConsistentException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
 }

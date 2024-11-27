@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Sources\AutoPayout.Core\AutoPayout.Core.csproj" />
     <ProjectReference Include="..\..\Sources\AutoPayout.Sportsbook\AutoPayout.Sportsbook.csproj" />
   </ItemGroup>
 

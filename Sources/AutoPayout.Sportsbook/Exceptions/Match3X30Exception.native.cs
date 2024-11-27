@@ -17,10 +17,4 @@ public class Match3X30Exception : AutoPayoutException
         : base(message, innerException)
     {
     }
-
-    [Obsolete(DiagnosticId = "SYSLIB0051")]
-    protected Match3X30Exception(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
 }

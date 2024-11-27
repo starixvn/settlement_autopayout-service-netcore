@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoPayout.Result.Services;
+using AutoPayout.Sportsbook.Constants;
 using AutoPayout.Sportsbook.Services;
 using Fanex.Settlement.Converter.Services;
 
@@ -155,8 +156,10 @@ public class MatchSettleCriteriaServiceTests
             GoalRecord = "TestGoalRecord",
             LeagueGroupId = 42,
             LeagueId = 95730,
-            ChildMatchType = 202
+            ChildMatchType = 202,
+            AutoType = SabaSoccer.AutoDirectType
         };
+
         var matchChecking = new Models.MatchChecking { IsExistFgLg = false };
         var matchSettleCriteriaService = new CreateCriteriaServiceImp(betStatusHalftimeService, betStatusFullTimeService, actionResourceService, xmlConvertService, mapper);
 

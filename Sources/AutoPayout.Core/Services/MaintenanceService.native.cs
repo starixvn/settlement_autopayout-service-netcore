@@ -1,7 +1,7 @@
 ﻿using ONEbook.UM;
 using ONEbook.UM.Services;
 
-namespace AutoPayout.Sportsbook.Services;
+namespace AutoPayout.Core.Services;
 
 public interface IMaintenanceService
 {

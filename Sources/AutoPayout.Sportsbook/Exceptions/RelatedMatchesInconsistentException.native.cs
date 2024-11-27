@@ -15,10 +15,4 @@ public class RelatedMatchesInconsistentException : AutoPayoutException
         : base(message, innerException)
     {
     }
-
-    [Obsolete(DiagnosticId = "SYSLIB0051")]
-    protected RelatedMatchesInconsistentException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
 }

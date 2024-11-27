@@ -1,4 +1,5 @@
 ﻿global using AutoMapper;
+global using AutoPayout.Core.Models;
 global using Fanex.Data;
 global using Fanex.Data.Repository;
 global using Fanex.Settlement.Converter.Helpers;

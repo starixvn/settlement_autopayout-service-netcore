@@ -2,6 +2,7 @@
 
 namespace AutoPayout.Sportsbook.Services;
 
+using AutoPayout.Core.Constants;
 using Models;
 
 public interface MatchByLeagueService
@@ -15,28 +16,19 @@ public class MatchByLeagueServiceImp(
     IOptions<AppSettingsKey> appSettingsKey)
     : MatchByLeagueService
 {
-    private const string KeyLeagueId = "Settlement-AutoPayout-AutoInstant-LeagueId";
-
-    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
-
     public async Task<List<Match>> GetMatches()
     {
         var matches = await matchQueryService.GetWaitingMatches();
 
-        cache.TryGet(KeyLeagueId, out int leagueId);
+        var (_, leagueId) = await cache.TryGetAsync<int>(CacheKey.LeagueId);
 
-        switch (appSettingsKey.EnvironmentName)
+        return appSettingsKey.Value.EnvironmentName switch
         {
-            case "PRO":
-                return leagueId > 0
-                    ? (from m in matches where m.LeagueId != leagueId select m).ToList()
-                    : matches;
-
-            case "UAT":
-                return (from m in matches where m.LeagueId == leagueId select m).ToList();
-
-            default:
-                return matches;
-        }
+            "PRO" => leagueId > 0
+                ? (from m in matches where m.LeagueId != leagueId select m).ToList()
+                : matches,
+            "UAT" => (from m in matches where m.LeagueId == leagueId select m).ToList(),
+            _ => matches
+        };
     }
 }
