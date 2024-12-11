@@ -206,6 +206,39 @@ public class ValidationServiceTests
     }
 
     [Fact]
+    public async Task VerifyRelatedResults_ShouldSetInvalid_ForRelatedSettResources()
+    {
+        // Arrange
+        var match = new Match
+        {
+            MatchId = 1,
+            ResultDetails = new List<ResultDetail>
+            {
+                new ResultDetail
+                {
+                    ResourceId = "0101",
+                    RelatedSettResources = "0102,0103",
+                    LastModifyDate = DateTime.Now
+                },
+                new ResultDetail
+                {
+                    ResourceId = "0103",
+                    LastModifyDate = DateTime.Now.AddHours(-11)
+                }
+            }
+        };
+
+        repository.FetchAsync<ResultDetail>(Arg.Any<CheckRelatedResultsCriteria>()).Returns(new List<ResultDetail>
+        {
+            new ResultDetail { ResourceId = "0102", ResultStatusId = ResultStatusId.ManualCompleted },
+            new ResultDetail { ResourceId = "0103" }
+        });
+
+        // Assert
+        await Assert.ThrowsAsync<IgnoreSettlementException>(() => validationService.VerifyRelatedResults(match));
+    }
+
+    [Fact]
     public async Task VerifyRelatedResults_ShouldLogAndRemoveExpiredResults()
     {
         // Arrange
