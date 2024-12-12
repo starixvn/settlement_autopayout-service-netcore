@@ -93,9 +93,10 @@ public class ValidationServiceImp(
                 continue;
             }
 
-            var isValid = await IsValidRelatedResult(match, item);
+            var isValid = await IsValidRelatedResult(match, item); // 
 
-            item.IsInvalid = !isValid;
+            item.IsInvalid = !isValid; // false
+            item.Expired = !isValid && item.Expired; // false
         }
 
         await HandleExpiredResults(match);
@@ -134,14 +135,16 @@ public class ValidationServiceImp(
 
     private bool IsCalRelatedResults(List<ResultDetail> relatedResults, List<string> relatedCalResourceIds)
     {
-        return relatedCalResourceIds.Count == 0
+        return relatedResults.Count == 0
+            || relatedCalResourceIds.Count == 0
                || relatedResults.Count > 0 && relatedResults.TrueForAll(x => relatedCalResourceIds.Contains(x.ResourceId) && x.SettlementStatusId == SettlementStatusId.Calculated);
     }
 
 
     private bool IsSettleRelatedResults(List<ResultDetail> relatedResults, List<string> relatedSettResourcesIds)
     {
-        return relatedSettResourcesIds.Count == 0
+        return relatedResults.Count == 0
+            || relatedSettResourcesIds.Count == 0
                || relatedResults.Count > 0 && relatedResults.TrueForAll(x => relatedSettResourcesIds.Contains(x.ResourceId) && (x.ResultStatusId is ResultStatusId.ManualCompleted or ResultStatusId.AutoCompleted));
     }
 
@@ -153,7 +156,7 @@ public class ValidationServiceImp(
             .Where(x => settlingResultsIds.Contains(x.ResourceId))
             .Select(x => x.ResourceId).ToList();
 
-        return existingResourceIds.Count == settlingResultsIds.Count;
+        return existingResourceIds.Count == relatedResults.Count;
     }
 
     private async Task HandleExpiredResults(Match match)
