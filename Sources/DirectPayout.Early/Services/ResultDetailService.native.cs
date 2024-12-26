@@ -10,18 +10,9 @@ public interface ResultDetailService
     Task<IEnumerable<ResultDetail>> GetResultDetailsAsync();
 }
 
-public class ResultDetailServiceImp : ResultDetailService
+public class ResultDetailServiceImp(IDynamicRepository repository, IOptions<AppSettingsKey> appSettings)
+    : ResultDetailService
 {
-    private readonly IDynamicRepository repository;
-    private readonly AppSettingsKey appSettings;
-
-    public ResultDetailServiceImp(IDynamicRepository repository, IOptions<AppSettingsKey> options)
-    {
-        this.repository = repository;
-        this.appSettings = options.Value;
-    }
-
-
     public async Task<IEnumerable<ResultDetail>> GetResultDetailsAsync()
     {
         var resultDetails = await repository.FetchAsync<ResultDetail>(new ScheduleSelCriteria());
@@ -36,7 +27,7 @@ public class ResultDetailServiceImp : ResultDetailService
         foreach (var resultDetail in resultDetails)
         {
             var processTime = DateTimeOffset.Now - resultDetail.LastModifyDate;
-            resultDetail.Expired = processTime.TotalMilliseconds > appSettings.RetryProcessScore;
+            resultDetail.Expired = processTime.TotalMilliseconds > appSettings.Value.RetryProcessScore;
         }
     }
 }

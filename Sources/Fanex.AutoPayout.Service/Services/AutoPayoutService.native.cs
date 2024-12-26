@@ -1,9 +1,9 @@
-﻿using AutoPayout.Core.Services;
-using AutoPayout.Sportsbook.Services;
+﻿using AutoPayout.Sportsbook.Services;
 using Fanex.Logging.Extensions;
 using Fanex.Logging.Extensions.Database;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using ONEbook.UM.Services;
 using LogService = Fanex.Logging.LogService;
 
 namespace Fanex.AutoPayout.Service.Services;
@@ -30,7 +30,8 @@ public class AutoPayoutService(
     {
         try
         {
-            if (!maintenanceService.IsMaintenance)
+            var isMaintenance = await maintenanceService.IsUnderMaintenanceAsync();
+            if (!isMaintenance)
             {
                 await autoPayoutController.ProcessAsync();
                 HandleGarbageCollector();

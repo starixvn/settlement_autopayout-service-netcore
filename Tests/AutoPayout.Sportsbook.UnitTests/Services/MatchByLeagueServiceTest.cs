@@ -1,4 +1,5 @@
-﻿using AutoPayout.Core.Models;
+﻿using AutoPayout.Core.Constants;
+using AutoPayout.Core.Models;
 using AutoPayout.Sportsbook.Models;
 using AutoPayout.Sportsbook.Services;
 using Fanex.Caching;
@@ -21,10 +22,9 @@ public class MatchByLeagueServiceTest
 
     private void SetLeague(int leagueId)
     {
-        const string keyIncludeLeagueIds = "Settlement-AutoPayout-AutoInstant-LeagueId";
         const int cacheExpiredInDays = 1095;
         var cachePolicy = new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromDays(cacheExpiredInDays));
-        cache.Set(keyIncludeLeagueIds, leagueId, cachePolicy);
+        cache.Set(CacheKey.LeagueId, leagueId, cachePolicy);
     }
 
     private static IEnumerable<Match> CreateMatchesWithLeagueOne(params int[] matchIds)

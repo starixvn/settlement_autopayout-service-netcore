@@ -151,7 +151,6 @@ public class ValidationServiceTests
         Assert.All(match.ResultDetails, result => Assert.False(result.IsInvalid));
     }
 
-
     [Fact]
     public async Task VerifyRelatedResults_ShouldSetInvalid_ForInvalidRelatedCalResources()
     {
@@ -178,7 +177,6 @@ public class ValidationServiceTests
         await Assert.ThrowsAsync<IgnoreSettlementException>(() => validationService.VerifyRelatedResults(match));
     }
 
-
     [Fact]
     public async Task VerifyRelatedResults_ShouldSetInvalid_ForInvalidRelatedSettResources()
     {
@@ -186,14 +184,14 @@ public class ValidationServiceTests
         var match = new Match
         {
             MatchId = 1,
-            ResultDetails = new List<ResultDetail>
-            {
+            ResultDetails =
+            [
                 new ResultDetail
                 {
                     ResourceId = "0101",
                     RelatedSettResources = "0102",
                 }
-            }
+            ]
         };
 
         repository.FetchAsync<ResultDetail>(Arg.Any<CheckRelatedResultsCriteria>()).Returns(new List<ResultDetail>
@@ -212,26 +210,21 @@ public class ValidationServiceTests
         var match = new Match
         {
             MatchId = 1,
-            ResultDetails = new List<ResultDetail>
-            {
+            ResultDetails =
+            [
                 new ResultDetail
                 {
                     ResourceId = "0101",
                     RelatedSettResources = "0102,0103",
-                    LastModifyDate = DateTime.Now
-                },
-                new ResultDetail
-                {
-                    ResourceId = "0103",
-                    LastModifyDate = DateTime.Now.AddHours(-11)
+                    LastModifyDate = DateTime.Now,
+                    ResultStatusId = ResultStatusId.Running
                 }
-            }
+            ]
         };
 
         repository.FetchAsync<ResultDetail>(Arg.Any<CheckRelatedResultsCriteria>()).Returns(new List<ResultDetail>
         {
-            new ResultDetail { ResourceId = "0102", ResultStatusId = ResultStatusId.ManualCompleted },
-            new ResultDetail { ResourceId = "0103" }
+            new() { ResourceId = "0102", ResultStatusId = ResultStatusId.Running },
         });
 
         // Assert
@@ -245,12 +238,11 @@ public class ValidationServiceTests
         var match = new Match
         {
             MatchId = 1,
-            ResultDetails = new List<ResultDetail>
-            {
+            ResultDetails =
+            [
                 new ResultDetail { IsInvalid = true, Expired = true },
                 new ResultDetail { IsInvalid = false, Expired = true }
-
-            }
+            ]
         };
 
         // Act

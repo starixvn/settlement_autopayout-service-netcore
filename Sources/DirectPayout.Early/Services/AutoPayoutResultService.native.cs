@@ -33,7 +33,7 @@ public class AutoPayoutResultServiceImp(IDynamicRepository repository, XmlConver
 
     public async Task UpdAutoPayoutFailResult(Match match, string remark)
     {
-        if (match.ResultDetails.Any())
+        if (match.ResultDetails.Count != 0)
         {
             await InsOrUpdAutoPayoutResult(match, AutoPayoutResultStatus.Failed, remark);
         }

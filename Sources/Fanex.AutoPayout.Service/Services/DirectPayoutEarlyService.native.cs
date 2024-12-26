@@ -1,9 +1,9 @@
-﻿using AutoPayout.Core.Services;
-using DirectPayout.Early.Services;
+﻿using DirectPayout.Early.Services;
 using Fanex.Logging.Extensions;
 using Fanex.Logging.Extensions.Database;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using ONEbook.UM.Services;
 using LogService = Fanex.Logging.LogService;
 
 namespace Fanex.AutoPayout.Service.Services;
@@ -29,7 +29,8 @@ public class DirectPayoutEarlyService(
     {
         try
         {
-            if (!maintenanceService.IsMaintenance)
+            var isMaintenance = await maintenanceService.IsUnderMaintenanceAsync();
+            if (!isMaintenance)
             {
                 await directPayoutController.ProcessAsync();
                 HandleGarbageCollector();

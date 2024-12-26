@@ -93,17 +93,17 @@ public class ValidationServiceImp(
                 continue;
             }
 
-            var isValid = await IsValidRelatedResult(match, item); // 
+            var isValid = await IsValidRelatedResult(match, item);
 
-            item.IsInvalid = !isValid; // false
-            item.Expired = !isValid && item.Expired; // false
+            item.IsInvalid = !isValid;
+            item.Expired = !isValid && item.Expired;
         }
 
         await HandleExpiredResults(match);
 
         match.ResultDetails = match.ResultDetails.Where(x => !x.IsInvalid).ToList();
 
-        if (!match.ResultDetails.Any())
+        if (match.ResultDetails.Count == 0)
         {
             throw new IgnoreSettlementException();
         }
@@ -114,7 +114,7 @@ public class ValidationServiceImp(
         var criteria = new CheckRelatedResultsCriteria
         {
             MatchId = match.MatchId,
-            SportType = 1, // Soccer
+            SportType = 1,
             RelatedCalResources = item.RelatedCalResources ?? string.Empty,
             RelatedSettResources = item.RelatedSettResources ?? string.Empty
         };
@@ -133,22 +133,23 @@ public class ValidationServiceImp(
         return isExistsRelatedResults || (isCalRelatedResults && isSettleRelatedResults);
     }
 
-    private bool IsCalRelatedResults(List<ResultDetail> relatedResults, List<string> relatedCalResourceIds)
+    private static bool IsCalRelatedResults(List<ResultDetail> relatedResults, List<string> relatedCalResourceIds)
     {
+        var flag = relatedResults.TrueForAll(x => relatedCalResourceIds.Contains(x.ResourceId) && x.SettlementStatusId == SettlementStatusId.Calculated);
         return relatedResults.Count == 0
-            || relatedCalResourceIds.Count == 0
-               || relatedResults.Count > 0 && relatedResults.TrueForAll(x => relatedCalResourceIds.Contains(x.ResourceId) && x.SettlementStatusId == SettlementStatusId.Calculated);
+               || relatedCalResourceIds.Count == 0
+               || relatedResults.Count > 0 && flag;
     }
 
-
-    private bool IsSettleRelatedResults(List<ResultDetail> relatedResults, List<string> relatedSettResourcesIds)
+    private static bool IsSettleRelatedResults(List<ResultDetail> relatedResults, List<string> relatedSettResourcesIds)
     {
+        var flag = relatedResults.TrueForAll(x => relatedSettResourcesIds.Contains(x.ResourceId) && (x.ResultStatusId is ResultStatusId.ManualCompleted or ResultStatusId.AutoCompleted));
         return relatedResults.Count == 0
-            || relatedSettResourcesIds.Count == 0
-               || relatedResults.Count > 0 && relatedResults.TrueForAll(x => relatedSettResourcesIds.Contains(x.ResourceId) && (x.ResultStatusId is ResultStatusId.ManualCompleted or ResultStatusId.AutoCompleted));
+               || relatedSettResourcesIds.Count == 0
+               || relatedResults.Count > 0 && flag;
     }
 
-    private bool TryGetAllExistsResults(List<ResultDetail> settlingResults, List<ResultDetail> relatedResults, out List<string> existingResourceIds)
+    private static bool TryGetAllExistsResults(List<ResultDetail> settlingResults, List<ResultDetail> relatedResults, out List<string> existingResourceIds)
     {
         var settlingResultsIds = settlingResults.Select(x => x.ResourceId).ToList();
 
@@ -162,7 +163,7 @@ public class ValidationServiceImp(
     private async Task HandleExpiredResults(Match match)
     {
         var expiredResults = match.ResultDetails.Where(x => x.IsInvalid && x.Expired).ToList();
-        if (expiredResults.Any())
+        if (expiredResults.Count != 0)
         {
             var errorMessage = string.Format(ErrorMsg.ExpiredResults, string.Join(",", expiredResults.Select(x => x.ToString())));
             await autoPayoutResultService.UpdAutoPayoutFailResult(new Match { MatchId = match.MatchId, ResultDetails = expiredResults }, errorMessage);

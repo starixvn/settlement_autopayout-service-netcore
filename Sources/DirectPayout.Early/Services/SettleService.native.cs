@@ -12,28 +12,14 @@ public interface SettleService
     Task Settle(Match match, SettleCriteria settleCriteria);
 }
 
-public class SettleServiceImp : SettleService
+public class SettleServiceImp(
+    ScaleOutSettleService scaleOutSettleService,
+    IDynamicRepository repository,
+    IOptions<AppSettingsKey> appSettings,
+    AutoPayoutResultService autoPayoutResultService,
+    LogSettleService logSettleService)
+    : SettleService
 {
-    private readonly ScaleOutSettleService scaleOutSettleService;
-    private readonly IDynamicRepository repository;
-    private readonly AppSettingsKey appSettings;
-    private readonly AutoPayoutResultService autoPayoutResultService;
-    private readonly LogSettleService logSettleService;
-
-    public SettleServiceImp(
-        ScaleOutSettleService scaleOutSettleService,
-        IDynamicRepository repository,
-        IOptions<AppSettingsKey> options,
-        AutoPayoutResultService autoPayoutResultService,
-        LogSettleService logSettleService)
-    {
-        this.scaleOutSettleService = scaleOutSettleService;
-        this.repository = repository;
-        appSettings = options.Value;
-        this.autoPayoutResultService = autoPayoutResultService;
-        this.logSettleService = logSettleService;
-    }
-
     public async Task Settle(Match match, SettleCriteria settleCriteria)
     {
         await logSettleService.WriteLogResettle(match);
@@ -64,6 +50,7 @@ public class SettleServiceImp : SettleService
 
         await scaleOutSettleService.UpdateMatchInfo(updateMatchInfoRequest);
     }
+
     private async Task<Result> ExecuteOnSite(SettleCriteria criteria, string server)
     {
         criteria.DbServer = server;
@@ -75,10 +62,12 @@ public class SettleServiceImp : SettleService
 
     private async Task<Result> ExecuteAllSite(SettleCriteria criteria)
     {
-        var servers = appSettings.SiteDbServer;
+        var servers = appSettings.Value.SiteDbServer;
         var tasks = servers.Select(x => ExecuteOnSite(criteria, x)).ToList();
         var results = await Task.WhenAll(tasks);
 
-        return results.FirstOrDefault(x => x.ErrCode != 0) ?? new Result();
+        var errorResult = results.ToList().Find(x => x.ErrCode != 0);
+
+        return errorResult ?? new Result();
     }
 }

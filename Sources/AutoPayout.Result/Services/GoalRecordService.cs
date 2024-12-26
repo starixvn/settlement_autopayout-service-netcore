@@ -23,6 +23,6 @@ public class GoalRecordServiceImp : GoalRecordService
 
     private static bool IsExistedGoalRecord(string goalRecord)
     {
-        return !string.IsNullOrWhiteSpace(goalRecord) && goalRecord.IndexOf(';') >= 0;
+        return !string.IsNullOrWhiteSpace(goalRecord) && goalRecord.Contains(';');
     }
 }

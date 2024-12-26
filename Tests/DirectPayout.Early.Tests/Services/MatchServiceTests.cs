@@ -1,4 +1,5 @@
-﻿using AutoPayout.Core.Models;
+﻿using AutoPayout.Core.Constants;
+using AutoPayout.Core.Models;
 using DirectPayout.Early.Models;
 using DirectPayout.Early.Services;
 using Fanex.Caching;
@@ -12,14 +13,13 @@ public class MatchServiceTests
     private readonly ResultDetailService resultDetailService;
     private readonly ICache cache;
     private readonly MatchServiceImp matchService;
-    private const string KeyLeagueId = "Settlement-AutoPayout-AutoInstant-LeagueId";
     private readonly IOptions<AppSettingsKey> appSettingsKey;
 
     public MatchServiceTests()
     {
         resultDetailService = Substitute.For<ResultDetailService>();
         cache = Substitute.For<ICache>();
-        appSettingsKey = Options.Create(new AppSettingsKey { EnvironmentName = "UAT" });
+        appSettingsKey = Options.Create(new AppSettingsKey { EnvironmentName = "PRO" });
 
         matchService = new MatchServiceImp(resultDetailService, cache, appSettingsKey);
     }
@@ -28,8 +28,8 @@ public class MatchServiceTests
     public async Task GetMatches_ShouldReturnFilteredMatches_WhenEnvironmentIsUAT()
     {
         // Arrange
-        const string leagueIds = "1,2,3";
-        cache.TryGetAsync<string>(KeyLeagueId).Returns(Task.FromResult((true, leagueIds)));
+        const int leagueIds = 4;
+        cache.TryGetAsync<int>(CacheKey.LeagueId).Returns(Task.FromResult((true, leagueIds)));
 
         var resultDetails = new List<ResultDetail>
     {
@@ -53,13 +53,13 @@ public class MatchServiceTests
     {
         // Arrange
         appSettingsKey.Value.EnvironmentName = "PRO";
-        const string leagueIds = "1,2,3";
-        cache.TryGetAsync<string>(KeyLeagueId).Returns(Task.FromResult((true, leagueIds)));
+        const int leagueIds = 1;
+        cache.TryGetAsync<int>(CacheKey.LeagueId).Returns(Task.FromResult((true, leagueIds)));
 
         var resultDetails = new List<ResultDetail>
     {
         new() { MatchId = 1, LeagueId = 1 },
-        new() { MatchId = 2, LeagueId = 2 },
+        new() { MatchId = 2, LeagueId = 1 },
         new() { MatchId = 3, LeagueId = 4 }
     };
 
