@@ -20,7 +20,7 @@ public class ScoreMatcherControllerImp(
     public async Task<int> Verify(Match match)
     {
         validationSettingMatchService.VerifySettingMatch(match.Remark);
-
+        await validationSettingMatchService.VerifyHoldResult(match);
         validationStatusMatchService.VerifyStatusMatch(match);
 
         if (match.IsDirectSettlement)
@@ -50,6 +50,7 @@ public class ScoreMatcherControllerImp(
 
         var (matchRemark, _) = await matchQueryService.GetMatchAndResultDetail(match.MatchId);
         validationSettingMatchService.VerifySettingMatch(matchRemark);
+        await validationSettingMatchService.VerifyHoldResult(match);
 
         return sourceId;
     }

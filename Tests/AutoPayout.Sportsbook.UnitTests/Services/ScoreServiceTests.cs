@@ -10,6 +10,9 @@ namespace AutoPayout.Sportsbook.UnitTests.Services;
 public class ScoreServiceTests
 {
     private readonly IOptions<AppSettingsKey> appSettingsKey;
+    private readonly IDynamicRepository dynamicRepository;
+    private readonly MatchQueryService matchQueryService;
+    private readonly ScoreServiceImp service;
 
     public ScoreServiceTests()
     {
@@ -20,6 +23,9 @@ public class ScoreServiceTests
             EnvironmentName = "Local",
         };
         appSettingsKey = Options.Create(settings);
+        dynamicRepository = Substitute.For<IDynamicRepository>();
+        matchQueryService = Substitute.For<MatchQueryService>();
+        service = new ScoreServiceImp(dynamicRepository, appSettingsKey, matchQueryService);
     }
 
     [Fact]
@@ -29,15 +35,12 @@ public class ScoreServiceTests
         var match = new Match { MatchId = 1, TypeId = 1 };
         var fakeScores = new List<Score>
         {
-            new Score { MatchId = 1, HomeValue = "1", AwayValue = "0", TypeId = SettleType.FullTime, SourceId = Source.Sbo },
-            new Score { MatchId = 1, HomeValue = "1", AwayValue = "1", TypeId = SettleType.Halftime, SourceId = Source.Sbo },
-            new Score { MatchId = 2, HomeValue = "1", AwayValue = "1", TypeId = SettleType.Halftime, SourceId = Source.Sbo },
+            new() { MatchId = 1, HomeValue = "1", AwayValue = "0", TypeId = SettleType.FullTime, SourceId = Source.Sbo },
+            new() { MatchId = 1, HomeValue = "1", AwayValue = "1", TypeId = SettleType.Halftime, SourceId = Source.Sbo },
+            new() { MatchId = 2, HomeValue = "1", AwayValue = "1", TypeId = SettleType.Halftime, SourceId = Source.Sbo },
         };
 
-        var dynamicRepository = Substitute.For<IDynamicRepository>();
         dynamicRepository.FetchAsync<Score>(Arg.Any<ICriteria>()).Returns(fakeScores);
-        var matchQueryService = Substitute.For<MatchQueryService>();
-        var service = new ScoreServiceImp(dynamicRepository, appSettingsKey, matchQueryService);
 
         // Act
         var actualScore = await service.TryGetScore(match);
@@ -54,15 +57,12 @@ public class ScoreServiceTests
         var match = new Match { MatchId = 1, TypeId = 2 };
         var fakeScores = new List<Score>
         {
-            new Score { MatchId = 1, HomeValue = "1", AwayValue = "0", TypeId = SettleType.FullTime,  SourceId = Source.Sbo },
-            new Score { MatchId = 1, HomeValue = "1", AwayValue = "1", TypeId = SettleType.Halftime,  SourceId = Source.Sbo },
-            new Score { MatchId = 2, HomeValue = "1", AwayValue = "1", TypeId = SettleType.FullTime, SourceId = Source.Sbo },
+            new() { MatchId = 1, HomeValue = "1", AwayValue = "0", TypeId = SettleType.FullTime,  SourceId = Source.Sbo },
+            new() { MatchId = 1, HomeValue = "1", AwayValue = "1", TypeId = SettleType.Halftime,  SourceId = Source.Sbo },
+            new() { MatchId = 2, HomeValue = "1", AwayValue = "1", TypeId = SettleType.FullTime, SourceId = Source.Sbo },
         };
 
-        var dynamicRepository = Substitute.For<IDynamicRepository>();
         dynamicRepository.FetchAsync<Score>(Arg.Any<ICriteria>()).Returns(fakeScores);
-        var matchQueryService = Substitute.For<MatchQueryService>();
-        var service = new ScoreServiceImp(dynamicRepository, appSettingsKey, matchQueryService);
 
         // Act
         var actualScore = await service.TryGetScore(match);
@@ -77,9 +77,6 @@ public class ScoreServiceTests
     {
         // Arrange
         var match = new Match { MatchId = 1, TypeId = 2 };
-        var dynamicRepository = Substitute.For<IDynamicRepository>();
-        var matchQueryService = Substitute.For<MatchQueryService>();
-        var service = new ScoreServiceImp(dynamicRepository, appSettingsKey, matchQueryService);
 
         // Act
         var actualScore = await service.TryGetScore(match);
@@ -94,14 +91,11 @@ public class ScoreServiceTests
     {
         var resultDetails = new List<ResultDetail>
         {
-            new ResultDetail { ResourceId = "01", SettlementStatusId = 4},
-            new ResultDetail { ResourceId = "00", SettlementStatusId = 4}
+            new() { ResourceId = "01", SettlementStatusId = 4},
+            new() { ResourceId = "00", SettlementStatusId = 4}
         };
         var match = new Match { MatchId = 12345, TypeId = 1 };
-        var dynamicRepository = Substitute.For<IDynamicRepository>();
-        var matchQueryService = Substitute.For<MatchQueryService>();
         matchQueryService.GetMatchAndResultDetail(Arg.Any<int>()).Returns((new RemarkSettingModel(), resultDetails));
-        var service = new ScoreServiceImp(dynamicRepository, appSettingsKey, matchQueryService);
 
         var actual = await service.TryGetRelatedResults(match);
 
@@ -113,17 +107,73 @@ public class ScoreServiceTests
     {
         var resultDetails = new List<ResultDetail>
         {
-            new ResultDetail { ResourceId = "01", SettlementStatusId = 2},
-            new ResultDetail { ResourceId = "00", SettlementStatusId = 2}
+            new() { ResourceId = "01", SettlementStatusId = 2},
+            new() { ResourceId = "00", SettlementStatusId = 2}
         };
         var match = new Match { MatchId = 12345, TypeId = 2 };
-        var dynamicRepository = Substitute.For<IDynamicRepository>();
-        var matchQueryService = Substitute.For<MatchQueryService>();
         matchQueryService.GetMatchAndResultDetail(Arg.Any<int>()).Returns((new RemarkSettingModel(), resultDetails));
-        var service = new ScoreServiceImp(dynamicRepository, appSettingsKey, matchQueryService);
 
         var actual = await service.TryGetRelatedResults(match);
 
         Assert.Empty(actual);
+    }
+
+    [Fact]
+    public async Task GetResultDetail_HalftimeMatch_ReturnsHalftimeResults()
+    {
+        // Arrange
+        var match = new Match { MatchId = 1, TypeId = SettleType.Halftime };
+        var resultDetails = new List<ResultDetail>
+        {
+            new() { ResourceId = ResourceId.HalfTime, SettlementStatusId = SettlementStatus.Calculated },
+            new() { ResourceId = ResourceId.FullTime, SettlementStatusId = SettlementStatus.Calculated }
+        };
+        matchQueryService.GetMatchAndResultDetail(Arg.Any<int>()).Returns((new RemarkSettingModel(), resultDetails));
+
+        // Act
+        var actual = await service.GetResultDetail(match);
+
+        // Assert
+        Assert.Single(actual);
+        Assert.Equal(ResourceId.HalfTime, actual.First().ResourceId);
+    }
+
+    [Fact]
+    public async Task GetResultDetail_FulltimeMatch_ReturnsFulltimeResults()
+    {
+        // Arrange
+        var match = new Match { MatchId = 1, TypeId = SettleType.FullTime };
+        var resultDetails = new List<ResultDetail>
+        {
+            new() { ResourceId = ResourceId.HalfTime, SettlementStatusId = SettlementStatus.Calculated },
+            new() { ResourceId = ResourceId.FullTime, SettlementStatusId = SettlementStatus.Calculated }
+        };
+        matchQueryService.GetMatchAndResultDetail(Arg.Any<int>()).Returns((new RemarkSettingModel(), resultDetails));
+
+        // Act
+        var actual = await service.GetResultDetail(match);
+
+        // Assert
+        Assert.Single(actual);
+        Assert.Equal(ResourceId.FullTime, actual.First().ResourceId);
+    }
+
+    [Fact]
+    public async Task GetResultDetail_GetAllTrue_ReturnsAllResults()
+    {
+        // Arrange
+        var match = new Match { MatchId = 1, TypeId = SettleType.FullTime };
+        var resultDetails = new List<ResultDetail>
+        {
+            new() { ResourceId = ResourceId.HalfTime, SettlementStatusId = SettlementStatus.Calculated },
+            new() { ResourceId = ResourceId.FullTime, SettlementStatusId = SettlementStatus.Calculated }
+        };
+        matchQueryService.GetMatchAndResultDetail(Arg.Any<int>()).Returns((new RemarkSettingModel(), resultDetails));
+
+        // Act
+        var actual = await service.GetResultDetail(match, true);
+
+        // Assert
+        Assert.Equal(2, actual.Count);
     }
 }

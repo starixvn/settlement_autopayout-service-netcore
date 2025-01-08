@@ -9,6 +9,8 @@ public interface ScoreService
     Task<Score> TryGetScore(Match match);
 
     Task<List<ResultDetail>> TryGetRelatedResults(Match match);
+
+    Task<List<ResultDetail>> GetResultDetail(Match match, bool getAll = false);
 }
 
 public class ScoreServiceImp(
@@ -66,11 +68,11 @@ public class ScoreServiceImp(
         return new List<ResultDetail>();
     }
 
-    private async Task<List<ResultDetail>> GetResultDetail(Match match)
+    public async Task<List<ResultDetail>> GetResultDetail(Match match, bool getAll = false)
     {
         var resourceId = match.TypeId == SettleType.Halftime ? ResourceId.HalfTime : ResourceId.FullTime;
         var (_, resultDetails) = await matchQueryService.GetMatchAndResultDetail(match.MatchId);
-        return resultDetails.Where(result => result.ResourceId == resourceId).ToList();
+        return resultDetails.Where(result => getAll || result.ResourceId == resourceId).ToList();
     }
 
     private static bool IsResultsCalculated(IEnumerable<ResultDetail> resultDetails)
