@@ -10,14 +10,14 @@ public interface ValidationSettingMatchService
 {
     void VerifySettingMatch(RemarkSettingModel remark);
 
-    Task VerifyHoldResult(Match match);
+    Task VerifyHoldResult(Match Match);
 }
 
 public class ValidationSettingMatchServiceImp(ScoreService scoreService) : ValidationSettingMatchService
 {
-    private const string ResourceHT = "HT";
+    private readonly string ResourceHT = "HT";
 
-    private const string ResourceFT = "FT";
+    private readonly string ResourceFT = "FT";
 
     public void VerifySettingMatch(RemarkSettingModel remark)
     {
@@ -32,16 +32,16 @@ public class ValidationSettingMatchServiceImp(ScoreService scoreService) : Valid
     public async Task VerifyHoldResult(Match match)
     {
         var resultDetails = await scoreService.GetResultDetail(match, true);
-
+        var resultMainMatch = resultDetails.Where(r => r.MatchId == match.MatchId).ToList();
         if (match.TypeId == SettleType.Halftime)
         {
-            resultDetails = resultDetails.Where(r => r.ResourceId == ResourceId.HalfTime).ToList();
+            resultMainMatch = resultMainMatch.Where(r => r.ResourceId == ResourceId.HalfTime).ToList();
         }
 
-        if (resultDetails.Exists(r => r.IsHold))
+        if (resultMainMatch.Any(r => r.IsHold))
         {
-            throw new HoldResultException(string.Join("or",
-                resultDetails.Select(r => r.ResourceId switch
+            throw new HoldResultException(string.Join(" or ",
+                resultMainMatch.Select(r => r.ResourceId switch
                 {
                     ResourceId.HalfTime => ResourceHT,
                     ResourceId.FullTime => ResourceFT,

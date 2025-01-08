@@ -6,6 +6,8 @@ public class ResultDetail
 
     private const int HoldResultPosition = 0;
 
+
+    public int MatchId { get; set; }
     public string ResourceId { get; set; }
 
     public string HomeValue { get; set; }

@@ -161,7 +161,7 @@ public class MatchSettleServiceImp(
         {
             var resourceId = match.TypeId == SettleType.Halftime ? ResourceId.HalfTime : ResourceId.FullTime;
             var (_, resultDetail) = await matchQueryService.GetMatchAndResultDetail(match.MatchId);
-            var resultsChecking = resultDetail.Where(result => result.ResourceId == resourceId).ToList();
+            var resultsChecking = resultDetail.Where(result => result.ResourceId == resourceId && result.MatchId != match.MatchId).ToList();
             var (mainScore, cornerScore) = otherInfoService.GetRelatedMatchesScore(resultsChecking);
 
             return $"{mainScore}; {cornerScore}";

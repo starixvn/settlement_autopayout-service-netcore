@@ -54,9 +54,10 @@ public class ScoreServiceImp(
         for (var i = 0; i < appSettingsKey.RetryCount; i++)
         {
             var resultsChecking = await GetResultDetail(match);
-            if (resultsChecking.Any() && IsResultsCalculated(resultsChecking))
+            var relatedResult = resultsChecking.Where(m => m.MatchId != match.MatchId).ToList();
+            if (relatedResult.Any() && IsResultsCalculated(relatedResult))
             {
-                return resultsChecking;
+                return relatedResult;
             }
 
             if (i < appSettingsKey.RetryCount - 1)
