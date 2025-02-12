@@ -117,15 +117,7 @@ public class MatchSettleServiceImp(
 
     private async Task<Core.Models.Result> ValidateBeforePushing(Match match, string actionName, string resourceResult)
     {
-        var request = new EventTicketRequest
-        {
-            MatchId = match.MatchId,
-            Mode = match.TypeId == SettleType.Halftime ? Mode.HalfTime : Mode.FullTime,
-            Action = actionName,
-            IsAuto = true,
-            SpName = "NAP_Admin_Settlement_1_AutoPayout_Push",
-            ResourceResult = resourceResult
-        };
+        var request = createCriteriaService.CreateEventTicketRequest(match, actionName, resourceResult);
 
         var result = await scaleOutSettleService.ValidateEventAndTicket(request);
 
