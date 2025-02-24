@@ -24,6 +24,8 @@ public class Match
 
     public int LeagueId { get; set; }
 
+    public int ParentId { get; set; }
+
     public int? HtHomeScore { get; set; }
 
     public int? HtAwayScore { get; set; }

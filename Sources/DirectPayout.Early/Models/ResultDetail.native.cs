@@ -47,6 +47,14 @@ public class ResultDetail
     [XmlIgnore]
     public bool IsInvalid { get; set; }
 
+    [XmlIgnore]
+
+    public short SportType { get; set; }
+
+    [XmlIgnore]
+
+    public short ChildMatchType { get; set; }
+
     public override string ToString() => $"{ResourceId}({HomeValue}-{AwayValue}) has" +
         $" {(!string.IsNullOrEmpty(RelatedCalResources) ? $"RelatedCalResources({RelatedCalResources})" : "")}" +
         $" {(!string.IsNullOrEmpty(RelatedSettResources) ? $"RelatedSettResources({RelatedSettResources})" : "")}";

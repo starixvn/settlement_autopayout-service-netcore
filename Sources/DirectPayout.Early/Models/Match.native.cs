@@ -6,6 +6,10 @@ public class Match
 
     public int LeagueId { get; set; }
 
+    public short SportType { get; set; }
+
+    public short ChildMatchType { get; set; }
+
     public List<ResultDetail> ResultDetails { get; set; } = [];
 
     public override bool Equals(object obj)

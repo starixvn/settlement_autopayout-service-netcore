@@ -1,4 +1,6 @@
-﻿namespace AutoPayout.Result.Models;
+﻿using System.Xml.Serialization;
+
+namespace AutoPayout.Core.Models;
 
 public class ResourceItem
 {

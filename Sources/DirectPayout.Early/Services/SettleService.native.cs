@@ -1,8 +1,10 @@
-﻿using AutoPayout.Core.Models;
+﻿using AutoEarlyRefund.Contracts;
+using AutoPayout.Core.Models;
 using DirectPayout.Early.Criteria;
 using DirectPayout.Early.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
+using MassTransit.Transports;
 using Microsoft.Extensions.Options;
 
 namespace DirectPayout.Early.Services;
@@ -17,7 +19,8 @@ public class SettleServiceImp(
     IDynamicRepository repository,
     IOptions<AppSettingsKey> appSettings,
     AutoPayoutResultService autoPayoutResultService,
-    LogSettleService logSettleService)
+    LogSettleService logSettleService,
+    PublishEndpoint publishEndpoint)
     : SettleService
 {
     public async Task Settle(Match match, SettleCriteria settleCriteria)
@@ -35,6 +38,18 @@ public class SettleServiceImp(
         _ = await ExecuteAllSite(settleCriteria);
 
         await autoPayoutResultService.InsOrUpdAutoPayoutResult(match, AutoPayoutResultStatus.Completed);
+
+        await publishEndpoint.Publish(new ResultsCalculated(
+            match.MatchId,
+            match.SportType,
+            match.ChildMatchType,
+            match.ResultDetails.Select(x => new ResourceItem
+            {
+                ResourceId = x.ResourceId,
+                HomeValue = x.HomeValue,
+                AwayValue = x.AwayValue,
+
+            }).ToList()), new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
     }
 
     private async Task UpdateMatchInfo(SettleCriteria criteria)

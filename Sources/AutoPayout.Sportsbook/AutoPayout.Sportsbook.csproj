@@ -15,6 +15,7 @@
     <PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
     <PackageReference Include="Fanex.Settlement.ScaleOut" Version="1.4.6.4" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.5" />
+    <PackageReference Include="MassTransit" Version="8.3.6" />
     <PackageReference Include="ONEbook.UM" Version="3.2.4" />
   </ItemGroup>
   <ItemGroup>

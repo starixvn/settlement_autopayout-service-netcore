@@ -1,4 +1,5 @@
-﻿using AutoPayout.Result.Constants;
+﻿using AutoPayout.Core.Models;
+using AutoPayout.Result.Constants;
 using AutoPayout.Result.Models;
 
 namespace AutoPayout.Result.Services;
