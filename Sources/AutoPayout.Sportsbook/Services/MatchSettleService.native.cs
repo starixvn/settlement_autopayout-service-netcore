@@ -117,15 +117,7 @@ public class MatchSettleServiceImp(
 
     private async Task<Core.Models.Result> ValidateBeforePushing(Match match, string actionName, string resourceResult)
     {
-        var request = new EventTicketRequest
-        {
-            MatchId = match.MatchId,
-            Mode = match.TypeId == SettleType.Halftime ? Mode.HalfTime : Mode.FullTime,
-            Action = actionName,
-            IsAuto = true,
-            SpName = "NAP_Admin_Settlement_1_AutoPayout_Push",
-            ResourceResult = resourceResult
-        };
+        var request = createCriteriaService.CreateEventTicketRequest(match, actionName, resourceResult);
 
         var result = await scaleOutSettleService.ValidateEventAndTicket(request);
 
@@ -161,7 +153,7 @@ public class MatchSettleServiceImp(
         {
             var resourceId = match.TypeId == SettleType.Halftime ? ResourceId.HalfTime : ResourceId.FullTime;
             var (_, resultDetail) = await matchQueryService.GetMatchAndResultDetail(match.MatchId);
-            var resultsChecking = resultDetail.Where(result => result.ResourceId == resourceId).ToList();
+            var resultsChecking = resultDetail.Where(result => result.ResourceId == resourceId && result.MatchId != match.MatchId).ToList();
             var (mainScore, cornerScore) = otherInfoService.GetRelatedMatchesScore(resultsChecking);
 
             return $"{mainScore}; {cornerScore}";

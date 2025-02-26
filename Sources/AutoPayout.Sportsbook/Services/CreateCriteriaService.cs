@@ -4,6 +4,7 @@ using AutoPayout.Result.Services;
 using AutoPayout.Sportsbook.Constants;
 using AutoPayout.Sportsbook.Criteria;
 using AutoPayout.Sportsbook.Models;
+using Fanex.Settlement.ScaleOut.Request;
 
 namespace AutoPayout.Sportsbook.Services;
 
@@ -12,6 +13,8 @@ public interface CreateCriteriaService
     MatchSettleCriteria CreateSettleCriteria(Match match, MatchChecking matchChecking);
 
     InsertLogCriteria CreateLogCriteria(Match match, MatchChecking matchChecking, string actionName);
+
+    EventTicketRequest CreateEventTicketRequest(Match match, string actionName, string resourceResult);
 }
 
 public class CreateCriteriaServiceImp(
@@ -93,5 +96,25 @@ public class CreateCriteriaServiceImp(
         {
             ResourceItems = resourcesMapper
         });
+    }
+
+    public EventTicketRequest CreateEventTicketRequest(Match match, string actionName, string resourceResult)
+    {
+
+        var selectedResource = xmlConvertService.Serialize(new Resources
+        {
+            ResourceItems = actionResourceService.CreateResourceByAction(match.TypeId)
+        });
+
+        return new EventTicketRequest
+        {
+            MatchId = match.MatchId,
+            Mode = match.TypeId == SettleType.Halftime ? Mode.HalfTime : Mode.FullTime,
+            Action = actionName,
+            IsAuto = true,
+            SpName = "NAP_Admin_Settlement_1_AutoPayout_Push",
+            ResourceResult = resourceResult,
+            SelectedResources = selectedResource
+        };
     }
 }

@@ -10,6 +10,9 @@ public interface ActionResourceService
     List<XmlResource> FullTimeGoalResources(Goal goal);
 
     ResourceItem CalculateLogResources(string resourceId, string homeValue, string awayValue);
+
+    List<ResourceItem> CreateResourceByAction(int typeId);
+
 }
 
 public class ActionResourceServiceImp(FirstGoalService goalResultService, GoalRecordService goalRecordService)
@@ -18,6 +21,8 @@ public class ActionResourceServiceImp(FirstGoalService goalResultService, GoalRe
     private const byte SettledBy = 5;
 
     private const byte Completed = 4;
+
+    private const byte HalfTimeType = 1;
 
     public List<XmlResource> HalftimeResources(Goal goal)
     {
@@ -86,5 +91,15 @@ public class ActionResourceServiceImp(FirstGoalService goalResultService, GoalRe
             HomeValue = homeValue,
             AwayValue = awayValue
         };
+    }
+
+    public List<ResourceItem> CreateResourceByAction(int typeId)
+    {
+        if (typeId == HalfTimeType)
+        {
+            return [new ResourceItem { ResourceId = ResourceKey.Halftime }];
+        }
+
+        return [new ResourceItem { ResourceId = ResourceKey.Halftime }, new ResourceItem { ResourceId = ResourceKey.Final }];
     }
 }
