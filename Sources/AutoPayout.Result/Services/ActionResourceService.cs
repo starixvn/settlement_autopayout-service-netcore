@@ -9,7 +9,7 @@ public interface ActionResourceService
 
     List<XmlResource> FullTimeGoalResources(Goal goal);
 
-    ResourceItem CalculateLogResources(string resourceId, string homeValue, string awayValue);
+    ResourceItem CalculateResources(string resourceId, string homeValue, string awayValue);
 
     List<ResourceItem> CreateResourceByAction(int typeId);
 
@@ -83,7 +83,7 @@ public class ActionResourceServiceImp(FirstGoalService goalResultService, GoalRe
         };
     }
 
-    public ResourceItem CalculateLogResources(string resourceId, string homeValue, string awayValue)
+    public ResourceItem CalculateResources(string resourceId, string homeValue, string awayValue)
     {
         return new ResourceItem
         {

@@ -4,6 +4,7 @@ using AutoPayout.Result.Services;
 using AutoPayout.Sportsbook.Constants;
 using AutoPayout.Sportsbook.Criteria;
 using AutoPayout.Sportsbook.Models;
+using Fanex.Settlement.MessageBridge.JackTime;
 using Fanex.Settlement.ScaleOut.Request;
 
 namespace AutoPayout.Sportsbook.Services;
@@ -15,6 +16,8 @@ public interface CreateCriteriaService
     InsertLogCriteria CreateLogCriteria(Match match, MatchChecking matchChecking, string actionName);
 
     EventTicketRequest CreateEventTicketRequest(Match match, string actionName, string resourceResult);
+
+    SoccerResult CreateRequestJT(Match match);
 }
 
 public class CreateCriteriaServiceImp(
@@ -81,12 +84,12 @@ public class CreateCriteriaServiceImp(
         if (match.TypeId == SettleType.Halftime)
         {
             resources = actionResourceService.HalftimeResources(goal);
-            logResource = actionResourceService.CalculateLogResources(ResourceKey.Halftime, match.HtHomeScore.ToString(), match.HtAwayScore.ToString());
+            logResource = actionResourceService.CalculateResources(ResourceKey.Halftime, match.HtHomeScore.ToString(), match.HtAwayScore.ToString());
         }
         else
         {
             resources = actionResourceService.FullTimeGoalResources(goal);
-            logResource = actionResourceService.CalculateLogResources(ResourceKey.Final, match.FinalHomeScore.ToString(), match.FinalAwayScore.ToString());
+            logResource = actionResourceService.CalculateResources(ResourceKey.Final, match.FinalHomeScore.ToString(), match.FinalAwayScore.ToString());
         }
 
         var resourcesMapper = mapper.Map<List<ResourceItem>>(resources);
@@ -116,5 +119,39 @@ public class CreateCriteriaServiceImp(
             ResourceResult = resourceResult,
             SelectedResources = selectedResource
         };
+    }
+
+    public SoccerResult CreateRequestJT(Match match)
+    {
+        return new SoccerResult
+        {
+            MatchId = match.MatchId,
+            Action = "CAL",
+            SelectedResources = CreateResourcesJT(match)
+        };
+    }
+
+
+    private string CreateResourcesJT(Match match)
+    {
+        var resourceCalculated = new List<ResourceItem>();
+        var matchPenaltyOrCorner = match.IsSabaPenaltyShootout || match.IsNthCorner;
+
+        if (match.TypeId == SettleType.Halftime || !matchPenaltyOrCorner)
+        {
+            resourceCalculated.Add(actionResourceService.CalculateResources(ResourceKey.Halftime,
+                match.HtHomeScore.ToString(), match.HtAwayScore.ToString()));
+        }
+
+        if (match.TypeId != SettleType.Halftime)
+        {
+            resourceCalculated.Add(actionResourceService.CalculateResources(ResourceKey.Final, match.FinalHomeScore.ToString(), match.FinalAwayScore.ToString()));
+        }
+
+
+        return xmlConvertService.Serialize(new Resources
+        {
+            ResourceItems = resourceCalculated
+        });
     }
 }

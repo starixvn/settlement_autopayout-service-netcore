@@ -1,8 +1,11 @@
 ﻿using AutoPayout.Core.Models;
+using AutoPayout.Sportsbook.Constants;
 using DirectPayout.Early.Criteria;
 using DirectPayout.Early.Models;
+using Fanex.Settlement.MessageBridge.JackTime;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
+using MassTransit;
 using Microsoft.Extensions.Options;
 
 namespace DirectPayout.Early.Services;
@@ -17,7 +20,9 @@ public class SettleServiceImp(
     IDynamicRepository repository,
     IOptions<AppSettingsKey> appSettings,
     AutoPayoutResultService autoPayoutResultService,
-    LogSettleService logSettleService)
+    LogSettleService logSettleService,
+    IPublishEndpoint publishEndpoint,
+    XmlConvertService xmlConvertService)
     : SettleService
 {
     public async Task Settle(Match match, SettleCriteria settleCriteria)
@@ -35,6 +40,8 @@ public class SettleServiceImp(
         _ = await ExecuteAllSite(settleCriteria);
 
         await autoPayoutResultService.InsOrUpdAutoPayoutResult(match, AutoPayoutResultStatus.Completed);
+
+        await SendRequestJT(match);
     }
 
     private async Task UpdateMatchInfo(SettleCriteria criteria)
@@ -69,5 +76,27 @@ public class SettleServiceImp(
         var errorResult = results.ToList().Find(x => x.ErrCode != 0);
 
         return errorResult ?? new Result();
+    }
+
+
+    private async Task SendRequestJT(Match match)
+    {
+        var mainResource = match.ResultDetails.Where(r => r.ResourceId is ResourceId.FullTime or ResourceId.HalfTime).ToList();
+
+        if (mainResource.Any())
+        {
+            var resources = new Resources<ResultDetail>
+            {
+                ResourceItems = mainResource
+            };
+
+
+            await publishEndpoint.Publish(new SoccerResult
+            {
+                MatchId = match.MatchId,
+                Action = "CAL",
+                SelectedResources = xmlConvertService.Serialize(resources)
+            }, new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
+        }
     }
 }
