@@ -9,11 +9,13 @@ COPY ./Sources/Fanex.AutoPayout.Service/Fanex.AutoPayout.Service.csproj ./Fanex.
 
 WORKDIR /src/Fanex.AutoPayout.Service
 RUN dotnet nuget add source https://nuget.nexdev.net/api/v2
-RUN dotnet restore -v n
+RUN --mount=type=cache,target=/root/.nuget/packages \
+	dotnet restore -v n
 
 COPY ./Sources/Fanex.AutoPayout.Service .
 
-RUN dotnet publish -r linux-x64 --self-contained false -c Release -o /app 
+RUN --mount=type=cache,target=/root/.nuget/packages \
+	dotnet publish -r linux-x64 --self-contained false -c Release -o /app
 
 FROM hub.nexdev.net/base/dotnet/core/aspnet:9.0-alpine AS base
 
@@ -24,6 +26,4 @@ ENV TZ="America/La_Paz"
 ENV COMPlus_EnableDiagnostics=0
 
 ENTRYPOINT ["dotnet", "Fanex.AutoPayout.Service.dll"]
-
-
 
