@@ -1,7 +1,7 @@
-﻿using AutoEarlyRefund.Contracts;
-using AutoPayout.Core.Models;
+﻿using AutoPayout.Core.Models;
 using DirectPayout.Early.Criteria;
 using DirectPayout.Early.Models;
+using Fanex.Settlement.MessageBridge.RefundEvents;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using MassTransit.Transports;
@@ -43,7 +43,7 @@ public class SettleServiceImp(
             match.MatchId,
             match.SportType,
             match.ChildMatchType,
-            match.ResultDetails.Select(x => new ResourceItem
+            match.ResultDetails.Select(x => new Fanex.Settlement.MessageBridge.RefundEvents.ResourceItem
             {
                 ResourceId = x.ResourceId,
                 HomeValue = x.HomeValue,

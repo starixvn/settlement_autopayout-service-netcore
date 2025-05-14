@@ -4,9 +4,9 @@ using Fanex.Settlement.ScaleOut.Services;
 
 namespace AutoPayout.Sportsbook.Services;
 
-using AutoEarlyRefund.Contracts;
 using Constants;
 using Criteria;
+using Fanex.Settlement.MessageBridge.RefundEvents;
 using MassTransit;
 using Models;
 
