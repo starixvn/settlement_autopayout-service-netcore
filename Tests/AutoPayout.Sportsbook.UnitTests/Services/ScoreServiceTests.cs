@@ -9,7 +9,6 @@ namespace AutoPayout.Sportsbook.UnitTests.Services;
 
 public class ScoreServiceTests
 {
-    private readonly IOptions<AppSettingsKey> appSettingsKey;
     private readonly IDynamicRepository dynamicRepository;
     private readonly MatchQueryService matchQueryService;
     private readonly ScoreServiceImp service;
@@ -22,10 +21,10 @@ public class ScoreServiceTests
             RetryCount = 1,
             EnvironmentName = "Local",
         };
-        appSettingsKey = Options.Create(settings);
+        var appSettingsKey1 = Options.Create(settings);
         dynamicRepository = Substitute.For<IDynamicRepository>();
         matchQueryService = Substitute.For<MatchQueryService>();
-        service = new ScoreServiceImp(dynamicRepository, appSettingsKey, matchQueryService);
+        service = new ScoreServiceImp(dynamicRepository, appSettingsKey1, matchQueryService);
     }
 
     [Fact]

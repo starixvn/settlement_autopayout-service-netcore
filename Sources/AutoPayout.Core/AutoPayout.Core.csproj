@@ -5,6 +5,6 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ONEbook.UM" Version="3.1.8" />
+    <PackageReference Include="ONEbook.UM" Version="3.2.4" />
   </ItemGroup>
 </Project>
