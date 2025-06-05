@@ -5,6 +5,7 @@ using DirectPayout.Early.Services;
 using Fanex.Data.Repository;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
+using MassTransit;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 
@@ -24,13 +25,14 @@ public class SettleServiceTests
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         autoPayoutResultService = Substitute.For<AutoPayoutResultService>();
         logSettleService = Substitute.For<LogSettleService>();
-
+        var publishEndpoint1 = Substitute.For<IPublishEndpoint>();
         settleService = new SettleServiceImp(
             scaleOutSettleService,
             repository,
             appSettingsKey,
             autoPayoutResultService,
-            logSettleService);
+            logSettleService,
+            publishEndpoint1);
     }
 
     [Fact]

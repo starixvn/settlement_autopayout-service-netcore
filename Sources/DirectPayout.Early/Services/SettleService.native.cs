@@ -4,7 +4,7 @@ using DirectPayout.Early.Models;
 using Fanex.Settlement.MessageBridge.RefundEvents;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
-using MassTransit.Transports;
+using MassTransit;
 using Microsoft.Extensions.Options;
 
 namespace DirectPayout.Early.Services;
@@ -20,7 +20,7 @@ public class SettleServiceImp(
     IOptions<AppSettingsKey> appSettings,
     AutoPayoutResultService autoPayoutResultService,
     LogSettleService logSettleService,
-    PublishEndpoint publishEndpoint)
+    IPublishEndpoint publishEndpoint)
     : SettleService
 {
     public async Task Settle(Match match, SettleCriteria settleCriteria)
@@ -48,7 +48,6 @@ public class SettleServiceImp(
                 ResourceId = x.ResourceId,
                 HomeValue = x.HomeValue,
                 AwayValue = x.AwayValue,
-
             }).ToList()), new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
     }
 
