@@ -33,9 +33,10 @@ public class ValidationSettingMatchServiceImp(ScoreService scoreService) : Valid
     {
         var resultDetails = await scoreService.GetResultDetail(match, true);
         var resultMainMatch = resultDetails.Where(r => r.MatchId == match.MatchId).ToList();
+
         if (match.TypeId == SettleType.Halftime)
         {
-            resultMainMatch = resultMainMatch.Where(r => r.ResourceId == ResourceId.HalfTime).ToList();
+            resultMainMatch = [.. resultMainMatch.Where(r => r.ResourceId == ResourceId.HalfTime)];
         }
 
         if (resultMainMatch.Exists(r => r.IsHold))

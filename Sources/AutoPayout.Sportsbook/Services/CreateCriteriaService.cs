@@ -38,11 +38,17 @@ public class CreateCriteriaServiceImp(
         else
         {
             var betStatus = BetStatusFullTime(match, matchChecking);
-            return (match.IsSabaPenaltyShootout || match.IsNthCorner)
+            return IsMatchSettleAll(match)
                 ? new MatchSettleAllCriteria(match, betStatus)
                 : new MatchSettleFullTimeCriteria(match, betStatus);
         }
     }
+
+    private bool IsMatchSettleAll(Match match)
+        => match.IsSabaPenaltyShootout
+            || match.IsNthCorner
+            || match.MatchType == MatchTypes.InjuryTimeFirstHalf
+            || match.MatchType == MatchTypes.InjuryTimeSecondHalf;
 
     private string BetStatusHalftime(Match match, MatchChecking matchChecking)
     {

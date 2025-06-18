@@ -92,11 +92,13 @@ public class Match
     public short AutoType { get; set; } // For Saba Soccer
 
     public bool IsSabaPenaltyShootout => AutoType == SabaSoccer.AutoDirectType
-        && ChildMatchType is MatchType.PenaltyShootoutHdp or MatchType.PenaltyShootoutOu;
+        && ChildMatchType is MatchTypes.PenaltyShootoutHdp or MatchTypes.PenaltyShootoutOu;
 
-    public bool IsTotalCornerGoalMatch => MainType == MatchType.TotalCornerMainLeague && ChildLeagueType == MatchType.TotalCornerChildLeague;
+    public bool IsTotalCornerGoalMatch => MainType == MatchTypes.TotalCornerMainLeague && ChildLeagueType == MatchTypes.TotalCornerChildLeague;
 
     public bool IsNthCorner => SubType is >= TwentyOneAndOne and <= TwentyOneAndNinetyNine or >= TwentySixAndOne and <= TwentySixAndNinetyNine;
+
+    public byte MatchType { get; set; }
 
     public override bool Equals(object obj)
     {
