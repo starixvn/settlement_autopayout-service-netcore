@@ -100,6 +100,8 @@ public class Match
 
     public byte MatchType { get; set; }
 
+    public int SourceId { get; set; }
+
     public override bool Equals(object obj)
     {
         return obj is Match match

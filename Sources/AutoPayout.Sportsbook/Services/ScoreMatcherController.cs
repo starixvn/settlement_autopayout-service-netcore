@@ -26,7 +26,7 @@ public class ScoreMatcherControllerImp(
         if (match.IsDirectSettlement)
         {
             validationGoalRecordService.VerifyGoalRecord(match);
-            return Source.AdminSite;
+            return match.SourceId;
         }
 
         return await GetSourceId(match);
