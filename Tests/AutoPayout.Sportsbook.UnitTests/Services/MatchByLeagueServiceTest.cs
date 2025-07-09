@@ -3,28 +3,20 @@ using AutoPayout.Core.Models;
 using AutoPayout.Sportsbook.Models;
 using AutoPayout.Sportsbook.Services;
 using Fanex.Caching;
-using Fanex.Caching.Redis;
 using Microsoft.Extensions.Options;
 
 namespace AutoPayout.Sportsbook.UnitTests.Services;
 
 public class MatchByLeagueServiceTest
 {
-    private readonly ICache cache = new RedisCache(new RedisCacheOptions
-    {
-        ConnectionString = "10.18.200.195:16379,password=foo1@bared,defaultDatabase=11",
-        ApplicationName = "Settlement-LOCAL"
-    });
-
+    private readonly ICache cache = Substitute.For<ICache>();
     private readonly MatchQueryService matchQueryService = Substitute.For<MatchQueryService>();
-
     private MatchByLeagueServiceImp matchByLeagueService;
 
     private void SetLeague(int leagueId)
     {
-        const int cacheExpiredInDays = 1095;
-        var cachePolicy = new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromDays(cacheExpiredInDays));
-        cache.Set(CacheKey.LeagueId, leagueId, cachePolicy);
+        cache.TryGetAsync<int>(CacheKey.LeagueId)
+            .Returns(Task.FromResult((true, leagueId)));
     }
 
     private static IEnumerable<Match> CreateMatchesWithLeagueOne(params int[] matchIds)
@@ -66,6 +58,9 @@ public class MatchByLeagueServiceTest
     public async Task GetMatches_NotExistLeagueTest_ReturnsAllMatches()
     {
         // Arrange
+        cache.TryGetAsync<int>(CacheKey.LeagueId)
+            .Returns(Task.FromResult((false, 0)));
+
         var settings = new AppSettingsKey()
         {
             RetryInterval = 1000,
@@ -104,11 +99,11 @@ public class MatchByLeagueServiceTest
         matchQueryService.GetWaitingMatches().Returns(CreateMatches);
 
         // Act
-        await Task.Delay(2000);
         var matches = await matchByLeagueService.GetMatches();
 
         // Assert
         Assert.Single(matches);
+        Assert.All(matches, m => Assert.Equal(1, m.LeagueId));
     }
 
     [Fact]
@@ -131,10 +126,10 @@ public class MatchByLeagueServiceTest
         matchQueryService.GetWaitingMatches().Returns(createMatches);
 
         // Act
-        await Task.Delay(2000);
         var matches = await matchByLeagueService.GetMatches();
 
         // Assert
         Assert.Equal(2, matches.Count);
+        Assert.All(matches, m => Assert.NotEqual(1, m.LeagueId));
     }
 }
