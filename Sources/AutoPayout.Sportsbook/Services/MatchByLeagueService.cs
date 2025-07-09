@@ -41,10 +41,14 @@ public class MatchByLeagueServiceImp(
     {
         if (match.ChildMatchType == MatchTypes.PenaltyShootoutHdp ||
             match.ChildMatchType == MatchTypes.PenaltyShootoutOu)
+        {
             return MatchTypes.PenaltyShootout;
+        }
 
         if (match.ChildMatchType == MatchTypes.ExtraTime)
+        {
             return MatchTypes.ExtraTime;
+        }
 
         return (match.ChildLeagueType, match.MainType, match.SubType) switch
         {

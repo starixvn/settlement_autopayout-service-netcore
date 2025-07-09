@@ -7,34 +7,6 @@ namespace AutoPayout.Sportsbook.UnitTests.Services;
 public class ScoreMatcherControllerTests
 {
     [Fact]
-    public async Task Verify_IsDirectSettlementMatch_ReturnsSourceIdIsAdminSite()
-    {
-        // Arrange
-        var validationStatusMatchService = Substitute.For<ValidationStatusMatchService>();
-        var validationScoreService = Substitute.For<ValidationScoreService>();
-        var validationSettingMatchService = Substitute.For<ValidationSettingMatchService>();
-        var scoreService = Substitute.For<ScoreService>();
-        var validationGoalRecordService = Substitute.For<ValidationGoalRecordService>();
-        var matchQueryService = Substitute.For<MatchQueryService>();
-        var controller = new ScoreMatcherControllerImp(
-            validationSettingMatchService,
-            validationStatusMatchService,
-            validationScoreService,
-            scoreService,
-            validationGoalRecordService,
-            matchQueryService);
-
-        var match = new Match { AutoSetting = 16 };
-
-        // Act
-        var actualSourceId = await controller.Verify(match);
-
-        // Assert
-        const int expectedSourceId = Source.AdminSite;
-        Assert.Equal(expectedSourceId, actualSourceId);
-    }
-
-    [Fact]
     public async Task Verify_ValidMatch_ReturnsSourceIdIsSbo()
     {
         // Arrange

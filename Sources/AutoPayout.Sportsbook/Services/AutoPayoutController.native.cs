@@ -13,16 +13,12 @@ public class AutoPayoutControllerImp(
     public async Task ProcessAsync()
     {
         var newMatches = await matchSettlingPoolService.PeekNewMatch();
-        //newMatches.ForEach(m =>
-        //{
-        //    Task.Run(() => matchSettleController.Process(m))
-        //        .ConfigureAwait(false);
-        //});
 
-        foreach (var match in newMatches)
+        newMatches.ForEach(m =>
         {
-            await matchSettleController.Process(match);
-        }
+            Task.Run(() => matchSettleController.Process(m))
+                .ConfigureAwait(false);
+        });
     }
 
 }
