@@ -11,8 +11,8 @@
     <PackageReference Include="Fanex.Caching" Version="2.2.8" />
     <PackageReference Include="Fanex.Logging.Extensions" Version="2.0.2.1" />
     <PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
-    <PackageReference Include="ONEbook.UM" Version="3.2.4" />
-    <PackageReference Include="Polly" Version="8.5.2" />
+    <PackageReference Include="ONEbook.UM" Version="3.2.6" />
+    <PackageReference Include="Polly" Version="8.6.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AutoPayout.Sportsbook\AutoPayout.Sportsbook.csproj" />

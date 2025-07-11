@@ -29,6 +29,7 @@ builder.AddDirectPayoutEarlyModule();
 
 builder.Services.AddHostedService<AutoPayoutService>();
 builder.Services.AddHostedService<DirectPayoutEarlyService>();
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
@@ -36,5 +37,5 @@ app.Run(async context =>
 {
     await context.Response.WriteAsync("OK");
 });
-
+app.MapHealthChecks("/healthz");
 await app.RunAsync();
