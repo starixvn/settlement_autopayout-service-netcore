@@ -18,10 +18,7 @@ public class MatchSettleCriteriaServiceTests
     {
         actionResourceService = Substitute.For<ActionResourceService>();
         xmlConvertService = Substitute.For<XmlConvertService>();
-        var mapperConfig = new MapperConfigurationExpression();
-        mapperConfig.AddProfile<AutoMapperProfile>();
-        var config = new MapperConfiguration(mapperConfig);
-        mapper = new Mapper(config);
+        mapper = Substitute.For<IMapper>();
     }
 
     [Fact]

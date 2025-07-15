@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using AutoPayout.Result.Services;
+﻿using AutoPayout.Result.Services;
 using AutoPayout.Sportsbook;
 using AutoPayout.Sportsbook.Services;
 using Fanex.Caching;
@@ -67,13 +66,10 @@ public static class AutoPayoutInjector
 
     public static void AddAutoMapper(this IServiceCollection service)
     {
-        var mapperConfig = new MapperConfiguration(mc =>
+        service.AddAutoMapper(mc =>
         {
-            mc.AddProfile(typeof(AutoMapperProfile));
-            mc.AddProfile(typeof(ScaleOutMappingProfile));
+            mc.AddProfile<AutoMapperProfile>();
+            mc.AddProfile<ScaleOutMappingProfile>();
         });
-
-        var mapper = mapperConfig.CreateMapper();
-        service.AddSingleton(mapper);
     }
 }
