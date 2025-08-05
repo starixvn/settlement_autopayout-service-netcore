@@ -1,6 +1,7 @@
 ﻿using AutoPayout.Result.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
+using MassTransit;
 
 namespace AutoPayout.Sportsbook.Services;
 
@@ -20,7 +21,8 @@ public class MatchSettleServiceImp(
     OtherInfoService otherInfoService,
     ScaleOutSettleService scaleOutSettleService,
     InsertInfoService insertInfoService,
-    LogService logService)
+    LogService logService,
+    IPublishEndpoint publishEndpoint)
     : MatchSettleService
 {
     public async Task<Core.Models.Result> Settle(Match match, int sourceId)
@@ -41,6 +43,7 @@ public class MatchSettleServiceImp(
             await UpdateAutoRefundChildMatch(match, actionName);
             await InsertMessageToLetstalk(match);
             await SettleHedgeMatch(match, matchChecking, resourceResult, actionName, sourceId);
+            await SendRequestJackTime(match);
         }
 
         return resultValidation;
@@ -158,7 +161,11 @@ public class MatchSettleServiceImp(
 
             return $"{mainScore}; {cornerScore}";
         }
-
         return string.Empty;
+    }
+
+    private async Task SendRequestJackTime(Match match)
+    {
+        await publishEndpoint.Publish(createCriteriaService.CreateRequestJT(match), new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
     }
 }
