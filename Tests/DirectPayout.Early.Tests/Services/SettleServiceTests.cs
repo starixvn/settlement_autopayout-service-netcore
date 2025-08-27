@@ -3,8 +3,10 @@ using DirectPayout.Early.Criteria;
 using DirectPayout.Early.Models;
 using DirectPayout.Early.Services;
 using Fanex.Data.Repository;
+using Fanex.Settlement.Converter.Services;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
+using MassTransit;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 
@@ -15,6 +17,9 @@ public class SettleServiceTests
     private readonly ScaleOutSettleService scaleOutSettleService;
     private readonly AutoPayoutResultService autoPayoutResultService;
     private readonly LogSettleService logSettleService;
+    private readonly IPublishEndpoint publishEndpoint;
+    private readonly XmlConvertService xmlConvertService;
+
     private readonly SettleServiceImp settleService;
 
     public SettleServiceTests()
@@ -24,13 +29,17 @@ public class SettleServiceTests
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         autoPayoutResultService = Substitute.For<AutoPayoutResultService>();
         logSettleService = Substitute.For<LogSettleService>();
+        publishEndpoint = Substitute.For<IPublishEndpoint>();
+        xmlConvertService = Substitute.For<XmlConvertService>();
 
         settleService = new SettleServiceImp(
             scaleOutSettleService,
             repository,
             appSettingsKey,
             autoPayoutResultService,
-            logSettleService);
+            logSettleService,
+            publishEndpoint,
+            xmlConvertService);
     }
 
     [Fact]
