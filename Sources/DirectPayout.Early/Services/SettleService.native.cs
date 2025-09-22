@@ -7,7 +7,7 @@ using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using MassTransit;
 using Microsoft.Extensions.Options;
-
+using LogService = Fanex.Logging.LogService;
 namespace DirectPayout.Early.Services;
 
 public interface SettleService
@@ -85,18 +85,31 @@ public class SettleServiceImp(
 
         if (mainResource.Any())
         {
-            var resources = new Resources<ResultDetail>
+            try
             {
-                ResourceItems = mainResource
-            };
+                var resources = new Resources<ResultDetail>
+                {
+                    ResourceItems = mainResource
+                };
 
+                var message = new SoccerResult
+                {
+                    MatchId = match.MatchId,
+                    Action = "CAL",
+                    SelectedResources = xmlConvertService.Serialize(resources)
+                };
 
-            await publishEndpoint.Publish(new SoccerResult
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+                await publishEndpoint.Publish(message, cts.Token);
+            }
+            catch (OperationCanceledException)
             {
-                MatchId = match.MatchId,
-                Action = "CAL",
-                SelectedResources = xmlConvertService.Serialize(resources)
-            }, new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
+                await LogService.ErrorAsync($"SendRequestJT timeout for MatchId: {match.MatchId}");
+            }
+            catch (Exception ex)
+            {
+                await LogService.ErrorAsync($"SendRequestJT failed for MatchId: {match.MatchId}, Error: {ex.Message}");
+            }
         }
     }
 }

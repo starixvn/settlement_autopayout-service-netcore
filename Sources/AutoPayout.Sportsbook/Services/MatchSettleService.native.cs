@@ -39,11 +39,11 @@ public class MatchSettleServiceImp(
             await scaleOutSettleService.UpdateUnderSettlementFlag(match.MatchId, 0, actionName);
             await insertInfoService.InsertResult(match, sourceId, MatchStatus.Waiting);
             await Execute(match, matchChecking, resourceResult, sourceId);
+            await SendRequestJackTime(match);
 
             await UpdateAutoRefundChildMatch(match, actionName);
             await InsertMessageToLetstalk(match);
             await SettleHedgeMatch(match, matchChecking, resourceResult, actionName, sourceId);
-            await SendRequestJackTime(match);
         }
 
         return resultValidation;
@@ -166,6 +166,20 @@ public class MatchSettleServiceImp(
 
     private async Task SendRequestJackTime(Match match)
     {
-        await publishEndpoint.Publish(createCriteriaService.CreateRequestJT(match), new CancellationTokenSource(TimeSpan.FromSeconds(3)).Token);
+        try
+        {
+            var message = createCriteriaService.CreateRequestJT(match);
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+            
+            await publishEndpoint.Publish(message, cts.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            await Fanex.Logging.LogService.ErrorAsync($"SendRequestJackTime timeout for MatchId: {match.MatchId}");
+        }
+        catch (Exception ex)
+        {
+            await Fanex.Logging.LogService.ErrorAsync($"SendRequestJackTime failed for MatchId: {match.MatchId}, Error: {ex.Message}");
+        }
     }
 }

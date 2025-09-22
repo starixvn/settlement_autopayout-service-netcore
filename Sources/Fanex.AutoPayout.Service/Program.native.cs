@@ -37,15 +37,17 @@ builder.Services.AddMassTransit(x =>
 {
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host(builder.Configuration["RabbitMQ:Host"], builder.Configuration["RabbitMQ:VirtualHost"], h =>
+        cfg.Host(builder.Configuration.GetSection("RabbitMQ:Hosting").Value, builder.Configuration.GetSection("RabbitMQ:VirtualHost").Value, h =>
         {
-            h.Username(builder.Configuration.GetValue("RabbitMQ:Username", "guest"));
-            h.Password(builder.Configuration.GetValue("RabbitMQ:Password", "guest"));
+            h.Username(builder.Configuration.GetSection("RabbitMQ:Username").Value);
+            h.Password(builder.Configuration.GetSection("RabbitMQ:Password").Value);
         });
 
         cfg.UseMessageRetry(retryConfig =>
         {
-            retryConfig.Interval(1, TimeSpan.FromSeconds(1));
+            retryConfig.Interval(3, TimeSpan.FromSeconds(5));
+            retryConfig.Handle<RabbitMqConnectionException>();
+            retryConfig.Handle<TimeoutException>();
         });
 
         cfg.ConfigureEndpoints(context);
