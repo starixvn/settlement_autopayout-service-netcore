@@ -84,6 +84,7 @@ public class MatchSettleServiceImp(
             await scaleOutSettleService.UpdateUnderSettlementFlag(match.MatchId, 0, actionName);
             await insertInfoService.InsertResult(match, sourceId, MatchStatus.Waiting);
             await Execute(match, matchChecking, resourceResult, sourceId);
+            await SendRequestJackTime(match);
         }
     }
 
@@ -170,7 +171,7 @@ public class MatchSettleServiceImp(
         {
             var message = createCriteriaService.CreateRequestJT(match);
             using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-            
+
             await publishEndpoint.Publish(message, cts.Token);
         }
         catch (OperationCanceledException)
