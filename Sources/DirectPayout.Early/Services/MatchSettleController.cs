@@ -35,10 +35,6 @@ public class MatchSettleControllerImp(
         {
             await HandleAutoPayoutException(match, exception);
         }
-        catch (IgnoreSettlementException exception)
-        {
-            await LogService.InfoAsync(exception.Message);
-        }
         finally
         {
             matchSettlingPoolService.Remove(match);
