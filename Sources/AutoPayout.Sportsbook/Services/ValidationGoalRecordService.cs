@@ -45,7 +45,7 @@ public class ValidationGoalRecordServiceImp(ScoreAndGoalRecordService scoreAndGo
         }
     }
 
-    private bool IsUnCheckgoalRecord(Match match)
+    private static bool IsUnCheckgoalRecord(Match match)
     {
         return match.IsSabaPenaltyShootout
             || match.IsNthCorner

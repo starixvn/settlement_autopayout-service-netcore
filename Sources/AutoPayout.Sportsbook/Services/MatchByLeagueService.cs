@@ -37,7 +37,7 @@ public class MatchByLeagueServiceImp(
         };
     }
 
-    private byte GetMatchType(Match match)
+    private static byte GetMatchType(Match match)
     {
         if (match.ChildMatchType == MatchTypes.PenaltyShootoutHdp ||
             match.ChildMatchType == MatchTypes.PenaltyShootoutOu)
