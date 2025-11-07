@@ -39,6 +39,9 @@ public class MatchSettleServiceImp(
             await scaleOutSettleService.UpdateUnderSettlementFlag(match.MatchId, 0, actionName);
             await insertInfoService.InsertResult(match, sourceId, MatchStatus.Waiting);
             await Execute(match, matchChecking, resourceResult, sourceId);
+
+            await insertInfoService.UpdateAutoResult(match, MatchStatus.Completed, sourceId);
+
             await SendRequestJackTime(match);
 
             await UpdateAutoRefundChildMatch(match, actionName);
@@ -121,6 +124,8 @@ public class MatchSettleServiceImp(
 
     private async Task<Core.Models.Result> ValidateBeforePushing(Match match, string actionName, string resourceResult)
     {
+        await Task.Delay(TimeSpan.FromSeconds(30));
+
         var request = createCriteriaService.CreateEventTicketRequest(match, actionName, resourceResult);
 
         var result = await scaleOutSettleService.ValidateEventAndTicket(request);

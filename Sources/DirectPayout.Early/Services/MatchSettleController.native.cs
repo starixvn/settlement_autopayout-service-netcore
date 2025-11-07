@@ -27,6 +27,7 @@ public class MatchSettleControllerImp(
             await validationService.VerifyNoRunningOdds(match);
 
             var settleCriteria = CreateSettleCriteria(match);
+            await Task.Delay(TimeSpan.FromSeconds(30));
             await validationService.VerifyEventAndTicket(settleCriteria);
 
             await settleService.Settle(match, settleCriteria);
