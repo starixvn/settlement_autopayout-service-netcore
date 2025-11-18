@@ -11,4 +11,6 @@ public static class MatchType
     public const int TotalCornerChildLeague = 1029;
 
     public const int TotalCornerMainLeague = 33;
+
+    public const int ExtraTime = 201;
 }

@@ -14,6 +14,11 @@ public class ValidationGoalRecordServiceImp(ScoreAndGoalRecordService scoreAndGo
 {
     public void VerifyGoalRecord(Match match)
     {
+        if (IsUnCheckgoalRecord(match))
+        {
+            return;
+        }
+
         if (match.TypeId == SettleType.Halftime)
         {
             if (!scoreAndGoalRecordService.IsExistedSemiColon(match.GoalRecord))
@@ -25,18 +30,25 @@ public class ValidationGoalRecordServiceImp(ScoreAndGoalRecordService scoreAndGo
             {
                 throw new GoalRecordHalftimeScoreNotConsistentException();
             }
+            return;
         }
-        else
-        {
-            if (!match.IsSabaPenaltyShootout && !match.IsNthCorner && !scoreAndGoalRecordService.IsConsistentHalftime(match))
-            {
-                throw new GoalRecordHalftimeScoreNotConsistentException();
-            }
 
-            if (!match.IsSabaPenaltyShootout && !match.IsNthCorner && !scoreAndGoalRecordService.IsConsistentFullTime(match))
-            {
-                throw new GoalRecordFinalScoreNotConsistentException();
-            }
+        if (!scoreAndGoalRecordService.IsConsistentHalftime(match))
+        {
+            throw new GoalRecordHalftimeScoreNotConsistentException();
         }
+
+        if (!scoreAndGoalRecordService.IsConsistentFullTime(match))
+        {
+            throw new GoalRecordFinalScoreNotConsistentException();
+        }
+
+    }
+
+
+    private static bool IsUnCheckgoalRecord(Match match)
+    {
+        return match.IsSabaPenaltyShootout
+            || match.IsNthCorner;
     }
 }
